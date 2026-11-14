@@ -303,7 +303,7 @@ function start3D(THREE,OrbitControls){
  const ports=group("ports");for(let i=0;i<4;i++){add(ports,box(.58,.18,.25,M.darkMetal,-2.8+i*1.85,.07,-3.41))}
  const caseScrews=[];
  const caseXY=[[-4.6,-2.92],[-2.7,-2.92],[0,-2.92],[2.7,-2.92],[4.6,-2.92],[-4.62,0],[4.62,0],[-4.58,2.9],[-1.45,2.9],[1.45,2.9],[4.58,2.9]];
- caseXY.forEach(([x,z],i)=>caseScrews.push(screw("caseScrew",[x,.79,z],i)));
+ caseXY.forEach(([x,z],i)=>caseScrews.push(screw("caseScrew",[x,.89,z],i)));
  const plateScrews=[];
  [[-.53,-.89],[.53,-.89],[0,.91]].forEach(([x,z],i)=>plateScrews.push(screw("plateScrew",[3.06+x,.635,.52+z],i)));
  const fanScrews=[];
@@ -350,7 +350,6 @@ function start3D(THREE,OrbitControls){
   objectsKeys.get("caseScrew").forEach((g,i)=>{g.visible=!state.caseScrews.has(i);g.userData.goal.copy(g.userData.base)});
   objectsKeys.get("plateScrew").forEach((g,i)=>{g.visible=seeInside&&state.platePresent&&!state.plateScrews.has(i);g.userData.goal.copy(g.userData.base)});
   objectsKeys.get("fanScrew").forEach((g,i)=>{g.visible=seeInside&&state.fansPresent&&!state.fanScrews.has(i);g.userData.goal.copy(g.userData.base)});
-  ssdScrew.visible=seeInside&&!state.ssdFastener;
   // The SSD screw is initially installed; show it unless removed.
   ssdScrew.visible=seeInside&&state.ssdPresent&&state.ssdFastener&&!state.platePresent;
   if(!open&&!exp){
@@ -377,6 +376,7 @@ function start3D(THREE,OrbitControls){
  const selection=new THREE.Mesh(new THREE.RingGeometry(.47,.54,56),new THREE.MeshBasicMaterial({color:0x69f8d8,transparent:true,opacity:.82,side:THREE.DoubleSide,depthTest:false}));
  selection.rotation.x=-Math.PI/2;selection.renderOrder=17;scene.add(selection);
  function resize(){const w=viewport.clientWidth,h=viewport.clientHeight;camera.aspect=w/Math.max(1,h);camera.updateProjectionMatrix();renderer.setSize(Math.max(1,w),Math.max(1,h),false)}
+ function shown(mesh){for(let n=mesh;n;n=n.parent){if(!n.visible)return false}return true}
  const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();let start=null;
  renderer.domElement.addEventListener("pointerdown",e=>{start={x:e.clientX,y:e.clientY,pointerId:e.pointerId}});
  renderer.domElement.addEventListener("pointerup",e=>{
@@ -385,14 +385,14 @@ function start3D(THREE,OrbitControls){
   const rect=renderer.domElement.getBoundingClientRect();if(!rect.width||!rect.height)return;
   pointer.x=(e.clientX-rect.left)/rect.width*2-1;pointer.y=-(e.clientY-rect.top)/rect.height*2+1;
   ray.setFromCamera(pointer,camera);
-  const hit=ray.intersectObjects(hitMeshes,false).find(x=>x.object.visible&&x.object.parent?.visible&&x.object.userData.pickKey);
+  const hit=ray.intersectObjects(hitMeshes,false).find(x=>shown(x.object)&&x.object.userData.pickKey);
   if(!hit)return;
   const key=hit.object.userData.pickKey,idx=hit.object.userData.pickIndex;
   selectedPart(key);
   const s=current();if(s&&s.target===key){attempt(key,idx)}else if(s){inform("Seleccionaste «"+PARTS[key].name+"». Para continuar debes trabajar sobre: "+(PARTS[s.target]?.name||s.title)+".")}
  });
  renderer.domElement.addEventListener("pointercancel",()=>{start=null});
- renderer.domElement.addEventListener("pointermove",e=>{if(e.buttons)return;const r=renderer.domElement.getBoundingClientRect();if(!r.width)return;pointer.x=(e.clientX-r.left)/r.width*2-1;pointer.y=-(e.clientY-r.top)/r.height*2+1;ray.setFromCamera(pointer,camera);renderer.domElement.style.cursor=ray.intersectObjects(hitMeshes,false).some(x=>x.object.visible&&x.object.parent?.visible)?"pointer":"grab"});
+ renderer.domElement.addEventListener("pointermove",e=>{if(e.buttons)return;const r=renderer.domElement.getBoundingClientRect();if(!r.width)return;pointer.x=(e.clientX-r.left)/r.width*2-1;pointer.y=-(e.clientY-r.top)/r.height*2+1;ray.setFromCamera(pointer,camera);renderer.domElement.style.cursor=ray.intersectObjects(hitMeshes,false).some(x=>shown(x.object))?"pointer":"grab"});
  window.addEventListener("resize",resize);
  if(window.ResizeObserver)new ResizeObserver(resize).observe(viewport);
  function cameraHome(){camera.position.set(9.6,10.2,11.8);controls.target.set(0,0,0);controls.update()}
@@ -405,9 +405,7 @@ function start3D(THREE,OrbitControls){
  function animate(){
   requestAnimationFrame(animate);const dt=Math.min(.05,clock.getDelta());
   for(const groups of objectsKeys.values())for(const g of groups)g.position.lerp(g.userData.goal,Math.min(1,dt*7));
-  if(!reduced&&state.rotate)world.rotation.y+=dt*.2;
-  if(!reduced&&state.fansPresent)for(const ch of fans.children){if(ch.type==="Group"&&!state.fanCleaned){const blades=ch.children.filter(m=>m.geometry?.type==="BoxGeometry"&&m.material===M.fanBlade);for(const b of blades){/* fan blades remain static in safety training mode */}}}
-  if(selection.visible&&!reduced)selection.material.opacity=.55+.3*Math.sin(performance.now()*.003);
+    if(selection.visible&&!reduced)selection.material.opacity=.55+.3*Math.sin(performance.now()*.003);
   controls.update();renderer.render(scene,camera);
  }
  resize();sync(true);animate();
