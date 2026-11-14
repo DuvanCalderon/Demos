@@ -188,7 +188,7 @@ const example=simRevealed?'<div class="sim-example"><strong>Una respuesta posibl
 const result=r.status?'<div class="sim-result"><b>'+esc(r.status==='done'?'✅ Último intento: completada':'🟡 Último intento: por reforzar')+'</b><p class="sim-note">Puedes repetir esta situación sin perder tus otros ejercicios.</p></div>':'';
 $('#sim-play').innerHTML='<div class="sim-kicker"><span class="sim-place">'+esc(s.place)+'</span><span class="muted" style="font-size:12px">Escena '+(simIndex+1)+' de '+SIMULATIONS.length+'</span></div><h2 style="margin-top:18px">'+esc(s.title)+'</h2><div class="sim-story">'+esc(s.story)+'</div><div class="tasktype">Decisión contextual</div><h3 style="margin-top:9px">'+esc(s.question)+'</h3><div class="sim-options">'+options+'</div>'+feedback+writing+example+result+
 '<div class="sim-actions"><button class="btn ghost small" id="sim-next">Siguiente escena →</button><button class="btn ghost small" id="sim-repeat">↻ Empezar esta escena de nuevo</button></div>';
-$$('[data-sim-choice]').forEach(b=>b.addEventListener('click',()=>simChoose(Number(b.dataset.simChoice))));
+// Las opciones se manejan desde el contenedor estable #sim-play.
 const another=$('#sim-rechoose');if(another)another.onclick=simChangeMind;
 const area=$('#sim-response');if(area){area.addEventListener('input',()=>{simDraft=area.value})}
 const compare=$('#sim-compare');if(compare)compare.onclick=simCompare;
@@ -199,6 +199,15 @@ $('#sim-repeat').onclick=simRetry;
 }
 $('#sim-menu').addEventListener('click',e=>{const b=e.target.closest('[data-sim-index]');if(b)simSwitch(Number(b.dataset.simIndex))});
 $('#sim-restart').onclick=simRestart;
+// Escucha delegada: los botones se recrean con innerHTML en cada decisión.
+$('#sim-play').addEventListener('click',event=>{
+ const choice=event.target.closest('[data-sim-choice]');
+ if(!choice || !$('#sim-play').contains(choice) || choice.disabled)return;
+ const index=Number(choice.dataset.simChoice);
+ if(Number.isInteger(index) && index>=0 && index<SIMULATIONS[simIndex].options.length){
+   simChoose(index);
+ }
+});
 
 $$('[data-mode]').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;$$('[data-mode]').forEach(x=>x.classList.toggle('active',x===b));onlyErrors=false;$('#errors-only').textContent='↻ Repasar mis errores';startRound()}));
 $('#errors-only').addEventListener('click',()=>{onlyErrors=!onlyErrors;$('#errors-only').textContent=onlyErrors?'✓ Solo mis errores':'↻ Repasar mis errores';startRound()});
