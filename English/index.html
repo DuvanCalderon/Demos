@@ -37,6 +37,30 @@ h2.title{margin:0;font-size:20px;font-weight:850;letter-spacing:-.4px}p.subtitle
 .progress-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px}.statbig{font-size:46px;font-weight:850;letter-spacing:-2px;margin:3px 0;color:var(--mint)}.barrow{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin:17px 0 6px}.resultrow{display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #ffffff1b;padding:12px 0;font-size:14px}.resultrow strong{color:var(--mint)}
 footer.footer{color:var(--muted);font-size:12px;padding:28px 0 38px;border-top:1px solid #ffffff1b}.hide{display:none!important}.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 dialog{background:#1e2941;color:white;border:1px solid #737f9e;border-radius:19px;padding:25px;max-width:420px;width:calc(100% - 32px)}dialog::backdrop{background:#020713b9}dialog h3{margin-top:0}dialog p{color:var(--muted)}.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,100px);opacity:0;border-radius:12px;background:var(--lilac);color:#1b2032;padding:12px 18px;font-weight:800;font-size:13px;transition:.25s;max-width:90vw;pointer-events:none;z-index:99}.toast.show{transform:translate(-50%,0);opacity:1}
+
+/* Listening stories */
+.listening-layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(285px,.85fr);gap:16px;align-items:start}
+.story-cover{display:flex;align-items:center;gap:16px;background:radial-gradient(circle at 78% 18%,#d8baff35,transparent 47%),linear-gradient(135deg,#303a5e,#253651);border-radius:15px;padding:22px;margin:15px 0 20px}
+.story-cover .art{display:grid;place-items:center;flex:none;width:68px;height:68px;border-radius:17px;background:#a8efd71a;font-size:38px}
+.story-cover h2{font-size:clamp(24px,3.5vw,33px);letter-spacing:-.7px;line-height:1.15;margin:6px 0}
+.story-cover p{font-size:13px;color:var(--muted);margin:0}
+.story-controls{display:flex;gap:9px;flex-wrap:wrap}
+.story-settings{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:19px 0 5px}
+.story-settings label{display:grid;gap:6px;color:var(--muted);font-size:12px;font-weight:750}
+.story-settings select{width:100%;min-width:0;color:var(--ink);background:#111d32;border:1px solid #69748e;padding:10px;border-radius:10px}
+.story-status{color:var(--mint);font-size:13px;min-height:22px;margin:13px 0 7px}
+.transcript{margin-top:13px;background:#101b30;padding:20px;border-radius:15px;border:1px solid #62708d}
+.transcript p{font-size:15px;line-height:1.85;color:#e5e9f7;margin:0 0 12px}
+.transcript p:last-child{margin-bottom:0}
+.transcript mark{background:#a8f0d12a;color:#a8f0d1;border-radius:4px;padding:1px 3px}
+.listening-side .qtitle{font-size:19px;line-height:1.45;margin:19px 0 12px}
+.listening-side .choices{grid-template-columns:1fr;gap:9px}
+.listening-side .choice{min-height:54px;padding:10px 12px}
+.listen-score{color:var(--muted);font-size:13px}
+.listen-summary{text-align:center;padding:16px 0 4px}
+.listen-summary .big{font-size:46px;color:var(--mint);font-weight:850;letter-spacing:-2px}
+@media(max-width:920px){.listening-layout{grid-template-columns:1fr}}
+@media(max-width:600px){.story-settings{grid-template-columns:1fr}.story-cover{padding:15px;gap:12px}.story-cover .art{width:53px;height:53px;font-size:30px}.transcript{padding:14px}}
 @media(max-width:920px){.header{flex-wrap:wrap;padding:10px 0}.header nav{width:100%;order:3;overflow-x:auto}.header nav button{flex:1}.two,.practice-layout,.progress-layout{grid-template-columns:1fr}.bank{grid-template-columns:repeat(2,minmax(0,1fr))}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.container{width:calc(100% - 24px)}main{padding:23px 0 40px}.giant{display:none}.metrics{gap:9px;margin:17px 0}.metric{padding:15px}.metric .value{font-size:24px}.panel{padding:18px}.flash{min-height:285px;padding:18px}.choices{grid-template-columns:1fr}.bank{grid-template-columns:1fr}.counter{margin-left:0}.btn{padding:10px 12px}.header{gap:8px}h1{letter-spacing:-1.4px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
@@ -48,6 +72,7 @@ dialog{background:#1e2941;color:white;border:1px solid #737f9e;border-radius:19p
  <nav aria-label="Main navigation">
   <button type="button" data-tab="learn" aria-current="page">✦ Learn</button>
   <button type="button" data-tab="practice">◇ Practice</button>
+  <button type="button" data-tab="listening">♫ Listening</button>
   <button type="button" data-tab="bank">▦ Word bank</button>
   <button type="button" data-tab="progress">◷ Progress</button>
  </nav>
@@ -95,6 +120,55 @@ dialog{background:#1e2941;color:white;border:1px solid #737f9e;border-radius:19p
 <aside class="panel"><h2 class="title">How to play</h2><p class="subtitle">Build confidence one level at a time.</p>
 <div class="aside-text"><p><b>01 · Recognize</b><br>Choose the word that matches an English definition.</p><p><b>02 · Complete</b><br>Fill the missing word in a real-life sentence.</p><p><b>03 · Recall</b><br>Produce the exact vocabulary word using only an English clue.</p><p><b>Hints</b> reveal clues gradually. <b>Show solution</b> explains the correct answer but gives no point.</p><p>Only your <b>first attempt</b> counts toward accuracy. You can retry after a mistake.</p></div><div class="barrow"><span>Current round</span><span id="roundPct">0%</span></div><div class="bar"><div id="roundBar"></div></div>
 </aside></div></section>
+
+<section id="view-listening" class="view hide">
+<div class="listening-layout">
+<article class="panel">
+ <div class="row"><span class="pill">♫ LISTENING LAB</span><span class="chip">A2–B1 · About 2 minutes</span></div>
+ <div class="story-cover"><div class="art" aria-hidden="true">💐</div><div><div class="eyebrow">STORY 01 · EVERYDAY ENGLISH</div><h2>The Missing Bouquet</h2><p>A wedding surprise, a mischievous dog, and a friendship worth celebrating.</p></div></div>
+ <p class="subtitle">First, listen without reading. Then reveal the transcript and listen again. Finally, answer the questions.</p>
+ <div class="story-controls">
+  <button type="button" id="storyPlay" class="btn primary">▶ Play story</button>
+  <button type="button" id="storyPause" class="btn secondary" disabled>⏸ Pause</button>
+  <button type="button" id="storyStop" class="btn secondary" disabled>■ Stop</button>
+ </div>
+ <div class="story-settings">
+  <label for="storyVoice">Narrator voice<select id="storyVoice"><option value="">Best available English voice</option></select></label>
+  <label for="storySpeed">Playback speed<select id="storySpeed"><option value="0.75">0.75× · Slower</option><option value="0.85" selected>0.85× · Learning pace</option><option value="1">1× · Normal</option><option value="1.15">1.15× · Faster</option></select></label>
+ </div>
+ <p id="storyStatus" class="story-status" role="status" aria-live="polite">Ready to listen. Press Play story.</p>
+ <div class="controls"><button id="storyTranscriptToggle" type="button" class="btn secondary" aria-expanded="false" aria-controls="storyTranscript">📖 Show transcript</button><span class="chip">Vocabulary in context</span></div>
+ <div id="storyTranscript" class="transcript hide">
+  <p>On Saturday morning, Emma woke up with <mark>bleary</mark> eyes. She had stayed up late helping her best friend, Lily, get ready for her wedding.</p>
+  <p>At the wedding venue, the <mark>bride</mark> looked worried. “My <mark>bouquet</mark> is gone!” she said. Emma checked every room, but the flowers were nowhere to be found. Then she noticed a small <mark>bush</mark> moving outside the window.</p>
+  <p>Behind the bush was Max, Lily’s dog, sitting next to the missing bouquet. He had taken it from a table and hidden it in the garden. Emma ran outside. When she bent down to pick up the flowers, Max jumped on her <mark>back</mark>. She fell to the ground and started laughing.</p>
+  <p>When Emma returned with the bouquet, Lily began to <mark>blush</mark>. “I thought the wedding was ruined,” she said. Emma smiled. “A little adventure makes a better story.”</p>
+  <p>Later, Max sat quietly at the <mark>bottom</mark> of the stairs while everyone celebrated. Emma did not <mark>boast</mark> about saving the day. She simply felt happy about the strong <mark>bond</mark> she shared with her friend.</p>
+ </div>
+ <div class="hint">Tip: Listen once with the transcript hidden. Try to understand the situation rather than every single word.</div>
+ <p class="aside-text" style="margin-bottom:0">Audio is narrated using the English voices installed in your browser or operating system. Choose a different voice if one sounds unnatural.</p>
+</article>
+<aside class="panel listening-side">
+ <div class="row"><span class="pill">◇ COMPREHENSION CHECK</span><span class="chip" id="listenCount">1 / 7</span></div>
+ <h2 class="title" style="margin-top:18px">Did you catch the story?</h2>
+ <p class="subtitle">Select one answer. You’ll get instant feedback and an explanation.</p>
+ <div class="bar"><div id="listenBar" style="width:0"></div></div>
+ <div id="listeningActive">
+  <div class="qtitle" id="listenQuestion"></div>
+  <div class="choices" id="listenChoices"></div>
+  <div id="listenFeedback" class="feedback hide" role="status" aria-live="polite"></div>
+  <div class="quiz-actions"><span class="spacer"></span><button type="button" id="listenNext" class="btn primary" disabled>Next question →</button></div>
+ </div>
+ <div id="listeningResult" class="listen-summary hide">
+  <div aria-hidden="true" style="font-size:38px">🎉</div><div class="big" id="listenFinal">0 / 7</div>
+  <h3>Story completed!</h3><p class="subtitle" id="listenFinalMessage"></p>
+  <button type="button" id="listenAgain" class="btn primary">↻ Try the quiz again</button>
+ </div>
+ <div class="resultrow" style="margin-top:20px"><span>Your first-try score</span><strong id="listenCurrent">0 / 7</strong></div>
+ <div class="resultrow"><span>Best score (this browser)</span><strong id="listenBest">0 / 7</strong></div>
+</aside>
+</div>
+</section>
 <section id="view-bank" class="view hide">
 <div class="panel"><h2 class="title">Explore the word bank</h2><p class="subtitle">Definitions and examples in English only. Search, listen, and mark words as mastered.</p>
 <div class="tools"><label class="sr" for="search">Search vocabulary</label><input class="search" id="search" type="search" placeholder="Search words or meanings…"><label class="sr" for="filter">Filter vocabulary</label><select class="filter" id="filter"><option value="all">All 12 words</option><option value="mastered">Mastered</option><option value="learning">Still learning</option><option value="weak">Needs review</option></select></div>
@@ -130,7 +204,7 @@ const STORAGE='wordbloom-unit-b-v1';
 const $=id=>document.getElementById(id);
 const safeLoad=()=>{try{let raw=JSON.parse(localStorage.getItem(STORAGE));return raw&&typeof raw==='object'?raw:{}}catch(e){return {}}};
 const saved=safeLoad();
-const state={mastered:Array.isArray(saved.mastered)?saved.mastered.filter(w=>WORDS.some(x=>x.w===w)):[],attempts:Number(saved.attempts)||0,correct:Number(saved.correct)||0,streak:Number(saved.streak)||0,best:Number(saved.best)||0,wins:saved.wins&&typeof saved.wins==='object'?saved.wins:{},misses:saved.misses&&typeof saved.misses==='object'?saved.misses:{},voice:saved.voice!==false,sfx:saved.sfx===true};
+const state={mastered:Array.isArray(saved.mastered)?saved.mastered.filter(w=>WORDS.some(x=>x.w===w)):[],attempts:Number(saved.attempts)||0,correct:Number(saved.correct)||0,streak:Number(saved.streak)||0,best:Number(saved.best)||0,wins:saved.wins&&typeof saved.wins==='object'?saved.wins:{},misses:saved.misses&&typeof saved.misses==='object'?saved.misses:{},voice:saved.voice!==false,sfx:saved.sfx===true,listeningBest:Math.max(0,Math.min(7,Number(saved.listeningBest)||0))};
 let cardOrder=WORDS.map((_,i)=>i),cardPos=0,flipped=false,level=0,weakOnly=false,queue=[],qpos=0,quiz=null,audioContext=null,toastTimer;
 function persist(){try{localStorage.setItem(STORAGE,JSON.stringify(state))}catch(e){}}
 function toast(t){$('toast').textContent=t;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),2400)}
@@ -146,7 +220,7 @@ $('speechToggle').setAttribute('aria-pressed',String(state.voice));$('speechTogg
 }
 function sound(ok){if(!state.sfx)return;try{let C=window.AudioContext||window.webkitAudioContext;if(!C)return;audioContext=audioContext||new C();let t=audioContext.currentTime;let osc=audioContext.createOscillator(),gain=audioContext.createGain();osc.type='sine';osc.frequency.setValueAtTime(ok?590:240,t);osc.frequency.exponentialRampToValueAtTime(ok?800:190,t+.12);gain.gain.setValueAtTime(.045,t);gain.gain.exponentialRampToValueAtTime(.001,t+.17);osc.connect(gain).connect(audioContext.destination);osc.start(t);osc.stop(t+.18)}catch(e){}}
 function speak(text){if(!state.voice){toast('Speech is muted. Enable it with the speaker button.');return}if(!('speechSynthesis' in window)){toast('Speech is not supported in this browser.');return}try{speechSynthesis.cancel();let utterance=new SpeechSynthesisUtterance(text);utterance.lang='en-US';utterance.rate=.87;utterance.pitch=1;let voices=speechSynthesis.getVoices().filter(v=>v.lang.toLowerCase().startsWith('en'));voices.sort((a,b)=>{let score=v=>(/natural|enhanced|premium|google|samantha|aria|jenny/i.test(v.name)?5:0)+(v.lang==='en-US'?2:0)+(v.localService?1:0);return score(b)-score(a)});if(voices.length)utterance.voice=voices[0];speechSynthesis.speak(utterance)}catch(e){toast('Speech is unavailable right now.')}}
-function navigate(tab){document.querySelectorAll('.view').forEach(el=>el.classList.toggle('hide',el.id!=='view-'+tab));document.querySelectorAll('[data-tab]').forEach(b=>{if(b.dataset.tab===tab)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});if(tab==='bank')renderBank();if(tab==='progress')renderProgress();window.scrollTo({top:0,behavior:'smooth'})}
+function navigate(tab){document.querySelectorAll('.view').forEach(el=>el.classList.toggle('hide',el.id!=='view-'+tab));document.querySelectorAll('[data-tab]').forEach(b=>{if(b.dataset.tab===tab)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});if(tab!=='listening'&&storySpeaking)stopStory();if(tab==='bank')renderBank();if(tab==='progress')renderProgress();window.scrollTo({top:0,behavior:'smooth'})}
 document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.tab)));
 function renderCard(){let w=WORDS[cardOrder[cardPos]];flipped=false;$('cardIndex').textContent=String(cardPos+1).padStart(2,'0')+' / 12';$('cardWord').textContent=w.w[0].toUpperCase()+w.w.slice(1);$('cardPrompt').textContent='What does this word mean?';$('cardDetails').classList.add('hide');$('flip').textContent='Reveal meaning';$('master').classList.add('hide');}
 function revealCard(){let w=WORDS[cardOrder[cardPos]];flipped=!flipped;if(flipped){$('cardPrompt').textContent=w.pos;$('cardMeaning').textContent=w.def;$('cardExample').textContent='“'+w.example+'”';$('cardTip').textContent='Watch out: '+w.trap;$('cardDetails').classList.remove('hide');$('flip').textContent='Hide meaning';$('master').classList.remove('hide');$('master').textContent=state.mastered.includes(w.w)?'✓ Mastered · undo':'✓ Mark mastered'}else{renderCard()}}
@@ -178,11 +252,129 @@ $('advanceBtn').addEventListener('click',()=>{qpos++;loadQuestion()});$('againBt
 document.querySelectorAll('[data-level]').forEach(b=>b.addEventListener('click',()=>{level=Number(b.dataset.level);startRound()}));
 $('weakMode').addEventListener('click',()=>{weakOnly=!weakOnly;startRound()});$('reviewWeak').addEventListener('click',()=>{weakOnly=true;startRound();navigate('practice')});
 function renderBank(){let query=$('search').value.toLowerCase().trim();let filter=$('filter').value;let arr=WORDS.filter(w=>(w.w+' '+w.def+' '+w.example).toLowerCase().includes(query)).filter(w=>filter==='all'||(filter==='mastered'&&state.mastered.includes(w.w))||(filter==='learning'&&!state.mastered.includes(w.w))||(filter==='weak'&&(state.misses[w.w]||0)>0));$('bank').innerHTML='';if(!arr.length){$('bank').innerHTML='<p class="subtitle">No matching words found. Try another search or filter.</p>';return}arr.forEach(w=>{let el=document.createElement('article');el.className='wordcard';el.innerHTML='<div class="id">'+w.n+' · '+escapeHtml(w.pos)+'</div><h3>'+escapeHtml(w.w[0].toUpperCase()+w.w.slice(1))+'</h3><div class="meaning">'+escapeHtml(w.def)+'</div><p class="example">“'+escapeHtml(w.example)+'”</p><div class="extra">Common confusion: '+escapeHtml(w.trap)+'</div><footer></footer>';let say=document.createElement('button');say.type='button';say.className='btn secondary small';say.textContent='▶ Listen';say.addEventListener('click',()=>speak(w.w));let learned=document.createElement('button');learned.type='button';learned.className='btn secondary small';learned.textContent=state.mastered.includes(w.w)?'✓ Mastered':'Mark mastered';learned.addEventListener('click',()=>{markMastered(w.w);renderBank()});el.querySelector('footer').append(say,learned);$('bank').append(el)})}
+
+/* Listening Lab: browser-based story narration and instant comprehension feedback. */
+const listeningQuestions=[
+ {q:'Why did Emma wake up with bleary eyes?',a:['She stayed up late helping Lily.','She was sick.','She had been running.','She went to bed early.'],correct:0,why:'She stayed up late helping her friend prepare for the wedding. “Bleary eyes” suggests tiredness.'},
+ {q:'What was missing at the wedding venue?',a:['The wedding cake.','Lily’s bouquet.','The wedding rings.','Max’s collar.'],correct:1,why:'Lily, the bride, could not find her bouquet of flowers.'},
+ {q:'Where did Emma find the flowers?',a:['In her bag.','At the bottom of the stairs.','Behind a bush in the garden.','Inside the wedding car.'],correct:2,why:'Emma spotted Max behind a bush, sitting next to the missing bouquet.'},
+ {q:'Who had taken the bouquet?',a:['The photographer.','A guest.','Emma.','Max the dog.'],correct:3,why:'Max, Lily’s dog, had carried the flowers into the garden.'},
+ {q:'Why did Emma fall to the ground?',a:['Max jumped on her back.','She slipped on water.','She tripped on the stairs.','She was feeling dizzy.'],correct:0,why:'Max jumped on Emma’s back while she was picking up the bouquet.'},
+ {q:'How did Lily react when Emma brought back the flowers?',a:['She left the wedding.','She began to blush.','She fell asleep.','She became angry with Emma.'],correct:1,why:'The story says Lily began to blush, showing a strong emotional reaction.'},
+ {q:'What does “bond” mean at the end of the story?',a:['A piece of jewelry.','An official document.','A close friendship or connection.','A wedding decoration.'],correct:2,why:'In this context, “bond” means the strong personal connection between Lily and Emma.'}
+];
+let listeningIndex=0,listeningScore=0,listeningAnswered=false;
+let storySpeaking=false,storyPaused=false,storyChunk=0,storyVoice=null,storyUtterance=null;
+const storyParagraphs=Array.from(document.querySelectorAll('#storyTranscript p')).map(p=>p.textContent.trim());
+function refreshStoryVoices(){
+ if(!('speechSynthesis' in window))return;
+ const picker=$('storyVoice'),old=picker.value,voices=speechSynthesis.getVoices().filter(v=>/^en(-|$)/i.test(v.lang));
+ voices.sort((a,b)=>{
+  const weight=v=>(/natural|enhanced|premium|google|samantha|aria|jenny/i.test(v.name)?5:0)+(/en-US/i.test(v.lang)?2:0)+(v.localService?1:0);
+  return weight(b)-weight(a)||a.name.localeCompare(b.name)
+ });
+ picker.innerHTML='<option value="">Best available English voice</option>';
+ voices.forEach(v=>{const o=document.createElement('option');o.value=v.voiceURI;o.textContent=v.name+' · '+v.lang;picker.appendChild(o)});
+ if([...picker.options].some(o=>o.value===old))picker.value=old;
+ return voices;
+}
+function storyControls(){
+ $('storyPlay').disabled=storySpeaking&&!storyPaused;
+ $('storyPlay').textContent=storyPaused?'▶ Resume story':'▶ Play story';
+ $('storyPause').disabled=!storySpeaking||storyPaused;
+ $('storyStop').disabled=!storySpeaking;
+}
+function stopStory(){
+ if('speechSynthesis' in window)speechSynthesis.cancel();
+ storySpeaking=false;storyPaused=false;storyUtterance=null;storyChunk=0;
+ $('storyStatus').textContent='Stopped. Press Play story to listen again.';storyControls();
+}
+function speakStoryChunk(){
+ if(!storySpeaking||storyChunk>=storyParagraphs.length){
+  storySpeaking=false;storyPaused=false;storyUtterance=null;
+  $('storyStatus').textContent='Story finished! Now check your understanding.';storyControls();return
+ }
+ const u=new SpeechSynthesisUtterance(storyParagraphs[storyChunk]);
+ u.lang='en-US';u.rate=Number($('storySpeed').value)||0.85;u.pitch=1;u.volume=1;
+ if(storyVoice)u.voice=storyVoice;
+ u.onstart=()=>{if(storySpeaking){$('storyStatus').textContent='Playing paragraph '+(storyChunk+1)+' of '+storyParagraphs.length+'…';storyControls()}};
+ u.onend=()=>{if(!storySpeaking)return;storyChunk++;speakStoryChunk()};
+ u.onerror=e=>{if(!storySpeaking||e.error==='canceled'||e.error==='interrupted')return;storySpeaking=false;storyPaused=false;$('storyStatus').textContent='Playback failed. Try another English voice or browser.';storyControls()};
+ storyUtterance=u;speechSynthesis.speak(u);
+}
+$('storyPlay').addEventListener('click',()=>{
+ if(!('speechSynthesis' in window)){ $('storyStatus').textContent='Your browser does not support speech narration.';return }
+ if(storySpeaking&&storyPaused){speechSynthesis.resume();storyPaused=false;$('storyStatus').textContent='Playback resumed.';storyControls();return}
+ if(storySpeaking)return;
+ speechSynthesis.cancel();
+ const voices=refreshStoryVoices()||[];
+ storyVoice=voices.find(v=>v.voiceURI===$('storyVoice').value)||voices[0]||null;
+ storyChunk=0;storySpeaking=true;storyPaused=false;storyControls();speakStoryChunk();
+});
+$('storyPause').addEventListener('click',()=>{
+ if(!storySpeaking||storyPaused)return;
+ speechSynthesis.pause();storyPaused=true;$('storyStatus').textContent='Paused. Press Resume story to continue.';storyControls();
+});
+$('storyStop').addEventListener('click',stopStory);
+$('storyTranscriptToggle').addEventListener('click',()=>{
+ const shown=!$('storyTranscript').classList.contains('hide');
+ $('storyTranscript').classList.toggle('hide',shown);
+ $('storyTranscriptToggle').setAttribute('aria-expanded',String(!shown));
+ $('storyTranscriptToggle').textContent=shown?'📖 Show transcript':'📕 Hide transcript';
+});
+$('storyVoice').addEventListener('change',()=>{if(storySpeaking){stopStory();$('storyStatus').textContent='Narrator changed. Press Play to restart the story.'}});
+$('storySpeed').addEventListener('change',()=>{if(storySpeaking){stopStory();$('storyStatus').textContent='Speed changed. Press Play to restart the story.'}});
+if('speechSynthesis' in window){
+ refreshStoryVoices();
+ if(typeof speechSynthesis.addEventListener==='function')speechSynthesis.addEventListener('voiceschanged',refreshStoryVoices);
+}else{$('storyStatus').textContent='Speech is unavailable in this browser. You can still reveal and read the transcript.';$('storyPlay').disabled=true}
+function renderListening(){
+ $('listenBest').textContent=state.listeningBest+' / '+listeningQuestions.length;
+ $('listenCurrent').textContent=listeningScore+' / '+listeningQuestions.length;
+ $('listenBar').style.width=Math.round(listeningIndex/listeningQuestions.length*100)+'%';
+ $('listenCount').textContent=Math.min(listeningIndex+1,listeningQuestions.length)+' / '+listeningQuestions.length;
+ if(listeningIndex===listeningQuestions.length){
+  $('listeningActive').classList.add('hide');$('listeningResult').classList.remove('hide');
+  $('listenBar').style.width='100%';$('listenCount').textContent='Completed';
+  $('listenFinal').textContent=listeningScore+' / '+listeningQuestions.length;
+  $('listenFinalMessage').textContent=listeningScore===7?'Perfect listening! You caught every detail.':listeningScore>=5?'Nice work! Listen again to catch the details you missed.':'Good practice. Replay the story with the transcript, then try again.';
+  if(listeningScore>state.listeningBest){state.listeningBest=listeningScore;persist();$('listenBest').textContent=state.listeningBest+' / 7'}
+  return;
+ }
+ $('listeningActive').classList.remove('hide');$('listeningResult').classList.add('hide');
+ const q=listeningQuestions[listeningIndex];listeningAnswered=false;
+ $('listenQuestion').textContent=q.q;$('listenChoices').innerHTML='';
+ $('listenFeedback').className='feedback hide';$('listenFeedback').textContent='';
+ $('listenNext').disabled=true;
+ $('listenNext').textContent=listeningIndex===listeningQuestions.length-1?'See my results →':'Next question →';
+ q.a.forEach((option,i)=>{
+  const b=document.createElement('button');b.className='choice';b.type='button';
+  const letter=document.createElement('span');letter.className='letter';letter.textContent='ABCD'[i];
+  b.append(letter,document.createTextNode(option));b.addEventListener('click',()=>selectListening(i));$('listenChoices').appendChild(b)
+ });
+}
+function selectListening(i){
+ if(listeningAnswered)return;
+ listeningAnswered=true;const q=listeningQuestions[listeningIndex],ok=i===q.correct;
+ if(ok)listeningScore++;sound(ok);
+ [...$('listenChoices').children].forEach((b,j)=>{b.disabled=true;if(j===q.correct)b.classList.add('correct');if(j===i&&!ok)b.classList.add('wrong')});
+ $('listenFeedback').className='feedback '+(ok?'ok':'no');
+ const strong=document.createElement('strong');strong.textContent=ok?'✓ Correct!':'✗ Not quite.';
+ const msg=document.createElement('p');msg.textContent=q.why;
+ $('listenFeedback').replaceChildren(strong,msg);
+ $('listenCurrent').textContent=listeningScore+' / '+listeningQuestions.length;
+ $('listenNext').disabled=false;
+}
+$('listenNext').addEventListener('click',()=>{if(!listeningAnswered)return;listeningIndex++;renderListening()});
+function resetListeningQuiz(){listeningIndex=0;listeningScore=0;listeningAnswered=false;renderListening()}
+$('listenAgain').addEventListener('click',resetListeningQuiz);
+renderListening();
+
 $('search').addEventListener('input',renderBank);$('filter').addEventListener('change',renderBank);
 function renderProgress(){$('wordResults').innerHTML='';WORDS.forEach(w=>{let el=document.createElement('div');el.className='resultrow';let a=document.createElement('span');a.textContent=w.w[0].toUpperCase()+w.w.slice(1);let b=document.createElement('strong');let wins=Number(state.wins[w.w])||0,misses=Number(state.misses[w.w])||0;b.textContent=(state.mastered.includes(w.w)?'✓ Mastered · ':'')+wins+' correct · '+misses+' missed';el.append(a,b);$('wordResults').append(el)});updateStats()}
 $('resetBtn').addEventListener('click',()=>{if(typeof $('confirmDialog').showModal==='function')$('confirmDialog').showModal();else if(confirm('Reset all learning progress?'))resetAll()});
 $('cancelReset').addEventListener('click',()=>$('confirmDialog').close());$('confirmReset').addEventListener('click',()=>{resetAll();$('confirmDialog').close()});
-function resetAll(){Object.assign(state,{mastered:[],attempts:0,correct:0,streak:0,best:0,wins:{},misses:{}});persist();cardPos=0;cardOrder=WORDS.map((_,i)=>i);renderCard();weakOnly=false;startRound();renderBank();renderProgress();toast('All learning progress has been reset.')}
+function resetAll(){Object.assign(state,{mastered:[],attempts:0,correct:0,streak:0,best:0,wins:{},misses:{},listeningBest:0});persist();resetListeningQuiz();cardPos=0;cardOrder=WORDS.map((_,i)=>i);renderCard();weakOnly=false;startRound();renderBank();renderProgress();toast('All learning progress has been reset.')}
 $('speechToggle').addEventListener('click',()=>{state.voice=!state.voice;if(!state.voice&&'speechSynthesis' in window)speechSynthesis.cancel();persist();updateStats();toast(state.voice?'Speech enabled':'Speech muted')});
 $('sfxToggle').addEventListener('click',()=>{state.sfx=!state.sfx;persist();updateStats();toast(state.sfx?'Feedback sounds enabled':'Feedback sounds muted');if(state.sfx)sound(true)});
 document.addEventListener('keydown',e=>{if(e.target.matches('input, select, button, textarea'))return;if(document.getElementById('view-learn').classList.contains('hide'))return;if(e.key==='ArrowRight'){cardPos=(cardPos+1)%12;renderCard()}else if(e.key==='ArrowLeft'){cardPos=(cardPos+11)%12;renderCard()}else if(e.key===' '){e.preventDefault();revealCard()}});
