@@ -200,7 +200,7 @@ $('#sim-repeat').onclick=simRetry;
 $('#sim-menu').addEventListener('click',e=>{const b=e.target.closest('[data-sim-index]');if(b)simSwitch(Number(b.dataset.simIndex))});
 $('#sim-restart').onclick=simRestart;
 
-$('[data-mode]').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;$$('[data-mode]').forEach(x=>x.classList.toggle('active',x===b));onlyErrors=false;$('#errors-only').textContent='↻ Repasar mis errores';startRound()}));
+$$('[data-mode]').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;$$('[data-mode]').forEach(x=>x.classList.toggle('active',x===b));onlyErrors=false;$('#errors-only').textContent='↻ Repasar mis errores';startRound()}));
 $('#errors-only').addEventListener('click',()=>{onlyErrors=!onlyErrors;$('#errors-only').textContent=onlyErrors?'✓ Solo mis errores':'↻ Repasar mis errores';startRound()});
 $('#review-practice').onclick=()=>{mode='basic';$$('[data-mode]').forEach(x=>x.classList.toggle('active',x.dataset.mode==='basic'));onlyErrors=WORDS.some(w=>statsFor(w.t).bad>0);$('#errors-only').textContent=onlyErrors?'✓ Solo mis errores':'↻ Repasar mis errores';startRound();goto('train')};
 $('#reset').addEventListener('click',()=>{if(!window.confirm('¿Borrar todos los puntos, respuestas e historial? Esta acción no se puede deshacer.'))return;const sound=store.sound;store={version:1,words:{},points:0,sound};save();onlyErrors=false;$('#errors-only').textContent='↻ Repasar mis errores';startRound();simSwitch(0);toast('Progreso reiniciado. ¡Nuevo comienzo!')});
