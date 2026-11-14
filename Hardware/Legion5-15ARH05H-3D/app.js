@@ -126,7 +126,7 @@ function updateUI(){
 }
 function toolName(id){return {none:"sin herramienta",hand:"mano / pinza",driver:"destornillador",pry:"palanca plástica",brush:"brocha"}[id]||id}
 function isSafetyReady(){return Object.values(state.checks).every(Boolean)}
-function next(){state.step++;state.count=0;state.hint=false;const finished=state.step>=state.steps.length;if(finished){completedRoutes.add(state.route);save();refreshScore();inform("✓ ¡Bien hecho! Completaste y reensamblaste la práctica de "+state.route.toUpperCase()+".","good")}else{inform("✓ Paso completado. Ahora: "+current().title,"good")}updateUI();if(renderer3D)renderer3D.sync(true)}
+function next(){state.step++;state.count=0;state.hint=false;const finished=state.step>=state.steps.length;if(finished){completedRoutes.add(state.route);save();refreshScore();inform("✓ ¡Bien hecho! Completaste y reensamblaste la práctica de "+state.route.toUpperCase()+".","good")}else{inform("✓ Paso completado. Ahora: "+current().title,"good");selectedPart(PARTS[current().target]?current().target:"cover")}updateUI();if(renderer3D)renderer3D.sync(true)}
 function selectedPart(id){if(PARTS[id]){state.selected=id;const p=PARTS[id];$("partName").textContent=p.name;$("partDescription").textContent=p.desc;$("partExtraTitle").textContent="¿Qué debes recordar?";$("partExtra").textContent=p.desc;$("partRisk").textContent="⚠ "+p.risk;document.querySelectorAll("[data-part]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.part===id)));if(renderer3D)renderer3D.highlight()}}
 function setStepEffect(id,index){
  function moveOne(set,count,add){let chosen=Number.isInteger(index)?index:undefined;if(chosen===undefined || (add?set.has(chosen):!set.has(chosen)))chosen=Array.from({length:count},(_,i)=>i).find(i=>add?!set.has(i):set.has(i));if(chosen===undefined)return false;if(add)set.add(chosen);else set.delete(chosen);return true}
@@ -203,7 +203,7 @@ document.addEventListener("click",e=>{
  const tool=e.target.closest("[data-tool]");if(tool){changeTool(tool.dataset.tool);return}
  const page=e.target.closest("[data-tab]");if(page){tab(page.dataset.tab);return}
  const part=e.target.closest("[data-part]");if(part){selectedPart(part.dataset.part);return}
- const view=e.target.closest("[data-viewpart]");if(view){tab("lab");selectedPart(view.dataset.viewpart);if(renderer3D)renderer3D.focus(view.dataset.viewpart);return}
+ const view=e.target.closest("[data-viewpart]");if(view){tab("lab");selectedPart(view.dataset.viewpart);if(state.coverPresent&&!state.exploded&&!["cover","caseScrew"].includes(view.dataset.viewpart)){state.exploded=true;$("explodeView").setAttribute("aria-pressed","true");$("explodeView").textContent="▣ Vista ensamblada";if(renderer3D)renderer3D.sync(true)}if(renderer3D)renderer3D.focus(view.dataset.viewpart);return}
  const level=e.target.closest("[data-level]");if(level){quizLevel=level.dataset.level;quizPos=0;qReset();return}
  const answer=e.target.closest("[data-answer]");if(answer){reply(Number(answer.dataset.answer));return}
 });
@@ -362,8 +362,7 @@ function start3D(THREE,OrbitControls){
   highlight();
  }
  function highlight(){
-  const key=state.selected||current()?.target;
-  const id=current()?.target&&current().target!=="none"?current().target:key;
+  const id=state.selected||current()?.target;
   const list=objectsKeys.get(id)||[];
   selection.visible=false;
   let obj=list.find(g=>g.visible);if(!obj)return;
