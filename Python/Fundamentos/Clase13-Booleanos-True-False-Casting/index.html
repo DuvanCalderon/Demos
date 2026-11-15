@@ -16,7 +16,7 @@
 </style>
 </head>
 <body>
-<div class="app"><aside class="side"><div class="brand"><div class="brandmark">🐍</div><div>Truth Lab<div class="small">Python · Clase 13</div></div></div><nav class="menu" aria-label="Secciones"><button class="nav active" data-view="inicio">🏠 Inicio</button><button class="nav" data-view="laboratorio">🧪 Laboratorio</button><button class="nav" data-view="casos">🕹 Casos reales</button><button class="nav" data-view="retos">🎯 Retos</button><button class="nav" data-view="guia">📖 Guía</button></nav><div class="sidefoot">Un archivo HTML · sin dependencias · progreso guardado en este navegador.</div></aside>
+<div class="app"><aside class="side"><div class="brand"><div class="brandmark">🐍</div><div>Truth Lab<div class="small">Python · Clase 13</div></div></div><nav class="menu" aria-label="Secciones"><button class="nav active" data-view="inicio">🏠 Inicio</button><button class="nav" data-view="laboratorio">🧪 Laboratorio</button><button class="nav" data-view="none">🕳️ None</button><button class="nav" data-view="casos">🕹 Casos reales</button><button class="nav" data-view="retos">🎯 Retos</button><button class="nav" data-view="guia">📖 Guía</button></nav><div class="sidefoot">Un archivo HTML · sin dependencias · progreso guardado en este navegador.</div></aside>
 <main><div class="top"><span class="kicker">Fundamentos de Python / 13 de 32</span><button class="sound" id="soundToggle" aria-pressed="false">🔇 Sonido apagado</button></div>
 <section class="view active" id="inicio"><div class="hero"><div class="kicker">Aprende haciendo</div><h1>Verdadero o falso. <em>Python decide.</em></h1><p>Descubre cómo Python interpreta números, textos y listas; valida tipos con <code>isinstance()</code> y toma decisiones como lo haría una aplicación real.</p><div class="actions"><button class="btn primary" data-jump="laboratorio">Experimentar con bool() →</button><button class="btn ghost" data-jump="retos">Resolver desafíos</button></div></div>
 <div class="metrics"><div class="metric"><b id="statDone">0/18</b><span>Retos completados</span></div><div class="metric"><b id="statScore">0</b><span>Puntos ganados</span></div><div class="metric"><b id="statPct">0%</b><span>Dominio general</span></div></div>
@@ -28,6 +28,37 @@
 <div id="labLogica" class="hidden"><h3>Construye condiciones</h3><p class="helper">Activa o desactiva A y B; prueba cómo responden los operadores <code>and</code>, <code>or</code> y <code>not</code>.</p><div class="switchrow"><label for="switchA">Condición A</label><button class="switch on" id="switchA" aria-pressed="true">True</button></div><div class="switchrow"><label for="switchB">Condición B</label><button class="switch" id="switchB" aria-pressed="false">False</button></div><div class="gates"><div class="gate"><span class="helper">A and B</span><b id="gateAnd">False</b></div><div class="gate"><span class="helper">A or B</span><b id="gateOr">True</b></div><div class="gate"><span class="helper">not A</span><b id="gateNot">False</b></div></div><table class="truthTable"><thead><tr><th>A</th><th>B</th><th>and</th><th>or</th></tr></thead><tbody id="truthRows"></tbody></table><p class="helper">Aquí A y B son booleanos, por lo que las salidas también lo son. Con otros tipos, <code>and</code> y <code>or</code> pueden devolver operandos.</p></div>
 <div class="actions"><button id="exampleBtn" class="btn">🎲 Otro ejemplo</button><button id="restoreBtn" class="btn ghost">↺ Restaurar</button></div></div>
 <div class="panel"><h3>Resultado del intérprete</h3><p class="helper">Este laboratorio simula las reglas de los literales compatibles de Python.</p><div id="labCode" class="code">bool("False")</div><div id="outputBox" class="output"><div class="helper">Evaluación</div><div class="result" id="resultText">True</div><div class="helper" id="typeInfo">Tipo resultante: bool</div></div><div id="labReason" class="reason" aria-live="polite">El string tiene caracteres.</div><div class="summary" id="labStatus"></div></div></div></section>
+<section class="view" id="none">
+<div class="sectionhead"><h2>🕳️ None no es cero ni vacío</h2><p>Una mini práctica: los tres pueden ser «falsy», pero representan cosas diferentes.</p></div>
+<div class="cols">
+  <div class="panel">
+    <h3>¿Hay un valor o no?</h3>
+    <p class="helper"><strong>None</strong> significa «todavía no hay dato»; <code>0</code> es un número conocido y <code>""</code> es un texto vacío.</p>
+    <div class="field"><label for="noneValue">Selecciona un valor de Python</label>
+      <select id="noneValue">
+        <option value="None">None · sin dato</option>
+        <option value="0">0 · número cero</option>
+        <option value="&quot;&quot;">"" · string vacío</option>
+        <option value="False">False · booleano falso</option>
+        <option value="[]">[] · lista vacía</option>
+        <option value="&quot;None&quot;">"None" · texto no vacío</option>
+      </select>
+    </div>
+    <div class="code" id="noneCode">dato = None
+print(dato is None)
+print(bool(dato))</div>
+    <p class="helper">Antes de ver la respuesta: ¿qué devolverá <code>dato is None</code>?</p>
+    <div class="actions"><button class="btn primary" data-none-guess="True">True</button><button class="btn" data-none-guess="False">False</button></div>
+  </div>
+  <div class="panel">
+    <h3>La respuesta de Python</h3>
+    <p class="helper">Primero haz tu predicción; así no ves la solución de inmediato.</p>
+    <div class="feedback" id="noneFeedback" role="status" aria-live="polite" hidden></div>
+    <div class="reason"><b>Regla que debes recordar</b><p><code>dato is None</code> pregunta si el dato está ausente. No uses <code>if not dato</code> para distinguirlo de <code>0</code>, <code>False</code> o <code>""</code>.</p></div>
+    <p class="helper">Ejemplo real: <code>edad = None</code> = edad no registrada; <code>edad = 0</code> = edad registrada, cero años.</p>
+  </div>
+</div>
+</section>
 <section class="view" id="casos"><div class="sectionhead"><h2>🕹 Casos reales: tú decides</h2><p>No hay opciones correctas predeterminadas: modifica datos de un usuario y observa por qué una aplicación permite o bloquea una acción.</p></div><div class="scenarioTabs"><button class="scenarioBtn active" data-case="login">🔐 Ingreso</button><button class="scenarioBtn" data-case="compra">🛒 Compra</button><button class="scenarioBtn" data-case="registro">🧑‍💻 Registro</button></div><div class="cols" style="margin-top:16px"><div class="panel"><h3 id="caseTitle">¿Puede ingresar?</h3><p class="helper" id="caseLead">El sistema exige usuario, contraseña y cuenta activa.</p><div class="controlGroup" id="caseControls"></div><div class="actions"><button class="btn primary" id="runCase">▶ Ejecutar validación</button><button class="btn" id="resetCase">↺ Restaurar datos</button></div></div><div class="panel"><h3>Así decidiría Python</h3><div class="code" id="caseCode"></div><div class="output" id="caseOutput"><div class="helper">Decisión</div><div class="result" id="caseResult">True</div><div class="helper" id="caseVerdict"></div></div><div class="reason" id="caseExplain"></div></div></div><div class="notice"><b>💡 Método Feynman:</b> en una validación, cada expresión responde una pregunta simple. Un <code>if</code> solo ejecuta su bloque cuando la condición es truthy.</div></section>
 <section class="view" id="retos"><div class="sectionhead"><h2>🎯 18 retos de lógica Python</h2><p>Predice, analiza y construye expresiones. Todas las soluciones permanecen ocultas hasta que lo solicites.</p></div><div class="levels"><button class="level active" data-level="basico">🟢 Básico</button><button class="level" data-level="intermedio">🟡 Intermedio</button><button class="level" data-level="avanzado">🔴 Avanzado</button></div><div class="quizheader"><div><b id="challengeNumber">Reto 1 / 6</b><div class="helper" id="levelDone">0 de 6 completados</div></div><div style="flex:1;max-width:340px"><div class="progressTrack"><div class="progressBar" id="progressBar"></div></div></div></div><div class="quiz"><div class="kicker" id="challengeType">Predice el resultado</div><div class="question" id="challengeTitle">¿Qué imprime Python?</div><div class="code" id="challengeCode"></div><p class="helper" id="challengeInstruction">Responde True o False.</p><form id="challengeForm" class="quizform" autocomplete="off"><input class="answer" id="challengeAnswer" aria-label="Tu respuesta" spellcheck="false" placeholder="Escribe True o False"><button class="btn primary" type="submit">Comprobar ✓</button></form><div class="feedback" id="challengeFeedback" role="status" aria-live="polite" hidden></div><div class="quizFooter"><button class="btn" id="hintBtn">💡 Pista</button><button class="btn" id="solutionBtn">👁 Mostrar solución</button><button class="btn" id="retryBtn">↺ Reintentar</button><button class="btn primary" id="nextBtn">Siguiente →</button></div><p class="summary">Obtienes hasta 10 puntos por reto. Cada pista o intento fallido reduce la recompensa; revelar la solución no da puntos.</p></div><div class="actions" style="justify-content:space-between"><button class="btn" id="previousBtn">← Anterior</button><button class="btn danger" id="clearBtn">🗑 Reiniciar todo el progreso</button></div></section>
 <section class="view guide" id="guia"><div class="sectionhead"><h2>📖 Reglas claras y trampas frecuentes</h2><p>Despliega cada regla cuando necesites un recordatorio.</p></div><details open><summary>1. True y False van con mayúscula inicial</summary><p>En Python son literales booleanos: <code>True</code> y <code>False</code>. <code>true</code> y <code>false</code> no están definidos por defecto y producirán NameError.</p></details><details><summary>2. bool("False") vale True</summary><p>El texto <code>"False"</code> no es el valor booleano <code>False</code>. Como es un string no vacío, <code>bool("False")</code> devuelve <code>True</code>. Igual sucede con <code>"0"</code> y <code>" "</code>.</p></details><details><summary>3. Estos valores son falsy</summary><p><code>False</code>, <code>None</code>, <code>0</code>, <code>0.0</code>, <code>""</code>, <code>[]</code>, <code>()</code> y <code>{}</code>, entre otros contenedores vacíos. Los números negativos son truthy.</p></details><details><summary>4. isinstance(True, int) es True</summary><p>En Python, <code>bool</code> es una subclase de <code>int</code>. Por eso <code>isinstance(True, int)</code> es True, pero <code>type(True) == int</code> es False. <code>type(True)</code> es exactamente <code>bool</code>.</p></details><details><summary>5. = no es lo mismo que ==</summary><p><code>x = 5</code> asigna un valor. <code>x == 5</code> produce un booleano al comparar. Además, <code>"5" == 5</code> es False: los tipos importan.</p></details><details><summary>6. and / or / not</summary><p>Con booleanos: <code>and</code> exige las dos condiciones verdaderas, <code>or</code> exige al menos una, y <code>not</code> invierte el resultado. Con otros operandos, <code>and</code> y <code>or</code> pueden devolver un valor no booleano.</p></details><details><summary>7. bool() y casting no ejecutan expresiones de texto</summary><p>El laboratorio admite literales de práctica y no implementa todo Python. Es intencional: nunca se ejecuta código enviado por el usuario. Para Python completo, usa tu propio intérprete.</p></details><div class="notice"><b>Pregunta Feynman:</b> ¿por qué <code>bool(0)</code> es False, pero <code>bool("0")</code> es True? Si puedes explicarlo con tus palabras, has comprendido el casting.</div></section>
@@ -120,6 +151,36 @@ $('hintBtn').addEventListener('click',()=>{const q=qNow();hints=Math.min(2,hints
 $('solutionBtn').addEventListener('click',()=>{const q=qNow();revealed=true;if(!progress[q.id]?.points){progress[q.id]={points:0,seenSolution:true};save();}const correct=q.kind==='expr'?(q.target==='bool'?'bool('+q.variable+')':'isinstance('+q.variable+', float)'):q.answer;feedback('👁 Solución: '+correct+'. '+q.why+' No se suman puntos por revelar.');$('solutionBtn').disabled=true;});
 $('retryBtn').addEventListener('click',renderChallenge);$('nextBtn').addEventListener('click',()=>{ix=(ix+1)%6;renderChallenge();});$('previousBtn').addEventListener('click',()=>{ix=(ix+5)%6;renderChallenge();});
 $('clearBtn').addEventListener('click',()=>{if(!window.confirm('¿Borrar todos los puntos y ejercicios completados?'))return;progress={};save();renderChallenge();feedback('Progreso reiniciado. ¡Puedes volver a empezar!');});
+// Mini laboratorio None: usa el mismo parser seguro de literales del demo.
+const noneReasons={
+  'None':'No hay dato asignado. Solo None supera la prueba «is None».',
+  '0':'Es un número conocido, aunque bool(0) sea False.',
+  '""':'Es un string existente que contiene cero caracteres.',
+  'False':'Es un valor booleano explícito, no la ausencia de un valor.',
+  '[]':'Es una lista existente, aunque todavía no tenga elementos.',
+  '"None"':'Son las letras N-o-n-e entre comillas: un string con contenido.'
+};
+function updateNone(){
+  const lit=$('noneValue').value;
+  $('noneCode').textContent='dato = '+lit+'\nprint(dato is None)\nprint(bool(dato))';
+  $('noneFeedback').hidden=true;
+  $('noneFeedback').textContent='';
+  $('noneFeedback').className='feedback';
+}
+$('noneValue').addEventListener('change',updateNone);
+document.querySelectorAll('[data-none-guess]').forEach(btn=>btn.addEventListener('click',()=>{
+  const lit=$('noneValue').value;
+  const isNone=lit==='None';
+  const guessed=btn.dataset.noneGuess==='True';
+  const truth=parseLiteral(lit).truth;
+  const box=$('noneFeedback');
+  box.hidden=false;
+  box.className='feedback '+(isNone===guessed?'ok':'error');
+  box.textContent=(isNone===guessed?'✅ ¡Correcto! ':'❌ Casi. ')+
+    'dato is None → '+boolText(isNone)+'. bool(dato) → '+boolText(truth)+'. '+noneReasons[lit];
+  beep(isNone===guessed);
+}));
+updateNone();
 chooseLab('casting');populateCase('login');renderChallenge();
 })();
 </script>
