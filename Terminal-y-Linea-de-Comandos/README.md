@@ -1,0 +1,10 @@
+# Terminal y línea de comandos
+
+Demos educativos para el [Curso de Introducción a la Terminal y Línea de Comandos](https://platzi.com/cursos/terminal/).
+
+| Clase | Demo | GitHub Pages |
+|---|---|---|
+| 04 | Primeros comandos esenciales (CommandLab) | [Abrir](https://duvancalderon.github.io/Demos/Terminal-y-Linea-de-Comandos/04-Comandos-Esenciales/) |
+| 05 | Navegación entre directorios (Linux Navigator) | [Abrir](https://duvancalderon.github.io/Demos/Terminal-y-Linea-de-Comandos/05-Navegacion-Directorios/) |
+
+Cada demo está en una carpeta independiente y se abre directamente con `index.html`. No se necesitan dependencias.
