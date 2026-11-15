@@ -197,3 +197,14 @@ h1 em{color:var(--accent);font-style:normal}
 .view-badge.real{color:#ddffed;background:#285243eb;border-color:#65af95}
 .model-credit{font-size:.6rem;color:#90a6c5;margin-left:auto}
 @media(max-width:620px){.orientation-switch{width:100%}.orientation-switch button{flex:1}.view-helper{width:100%}}
+
+/* A recoverable GLB download failure must not require a full page reload. */
+.three-retry{
+ position:absolute;left:50%;top:calc(42% + 114px);transform:translateX(-50%);
+ z-index:6;cursor:pointer;border:1px solid #87e7ce;border-radius:10px;
+ background:#a8ecdf;color:#092b36;padding:10px 16px;font-weight:800;
+ box-shadow:0 10px 25px #07131db3;white-space:nowrap;max-width:90%;
+}
+.three-retry:hover{background:#cffff1;}
+.three-retry:focus-visible{outline:3px solid #fff;outline-offset:3px;}
+.three-retry[hidden]{display:none!important;}
