@@ -300,8 +300,8 @@ async function loadRealModel(kind){
  }
 }
 function retryRealModel(){
- if(!modelType||detailLoadState==='loading')return;
- loadRealModel(modelType);
+ if(!modelType||detailLoadState==='loading')return Promise.resolve(false);
+ return loadRealModel(modelType);
 }
 function createNameSprite(label){
  const canvas=document.createElement('canvas');canvas.width=300;canvas.height=80;
