@@ -101,6 +101,7 @@ function clearFigure(){
  figure.removeFromParent();
 }
 function buildFigure(kind){
+ if(activeReal){activeReal.removeFromParent();activeReal=null;}
  clearFigure();
  figure=new THREE.Group();figure.name='Schematic human '+kind;
  scene.add(figure);modelType=kind;
@@ -187,8 +188,8 @@ async function loadRealModel(kind){
   for(const obj of body.children){
    if(['skeleton','muscles','organs','vessels','nerves','joints'].includes(obj.name.toLowerCase()))obj.visible=false;
   }
-  body.traverse(obj=>{
-   if(obj.isMesh&&obj.parent&&obj.name.toLowerCase().includes('skin')){
+  skin.traverse(obj=>{
+   if(obj.isMesh){
     obj.material=new THREE.MeshStandardMaterial({color:kind==='female'?0xebc9b7:0xd5ab94,roughness:.85,metalness:0,side:THREE.DoubleSide});
    }
   });
