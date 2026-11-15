@@ -7,7 +7,16 @@
   <meta name="description" content="An interactive English vocabulary lab for human body parts: explore an anatomy diagram, drag labels, and complete missions.">
   <title>Body Atlas • Interactive English Lab</title>
   <link rel="stylesheet" href="./styles.css">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/"
+    }
+  }
+  </script>
   <script src="./app.js" defer></script>
+  <script type="module" src="./model3d.js"></script>
 </head>
 <body>
   <div class="app">
@@ -41,6 +50,14 @@
             <button id="modelMale" type="button" aria-pressed="false">Male</button>
           </div>
         </div>
+        <div class="view-toolbar" role="group" aria-label="Choose 2D or 3D anatomy model">
+          <span class="view-label">MODEL VIEW</span>
+          <div class="view-switch">
+            <button id="view2dBtn" type="button" class="selected" aria-pressed="true">◫ &nbsp;2D diagram</button>
+            <button id="view3dBtn" type="button" aria-pressed="false">⬡ &nbsp;3D interactive</button>
+          </div>
+          <span class="view-helper" id="viewHelper">Select parts on the interactive diagram</span>
+        </div>
 
         <div class="visual-zone">
           <div class="visual-side left-caption">
@@ -48,7 +65,7 @@
             <span class="line-decoration"></span>
             <span>BODY PARTS</span>
           </div>
-          <div class="figure-wrap">
+          <div id="twoDViewport" class="figure-wrap">
             <svg id="bodySvg" viewBox="0 0 420 710" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="Interactive front-view human silhouette. Choose the glowing anatomical locations.">
               <defs>
                 <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1">
@@ -86,8 +103,21 @@
               <g id="hotspots"></g>
             </svg>
           </div>
+          <div class="three-viewport" id="threeViewport" hidden aria-label="Interactive 3D body view">
+            <div class="three-canvas" id="scene3d"></div>
+            <div class="three-top-badges"><span class="view-badge">3D • INTERACTIVE</span><span class="view-badge secondary">SCHEMATIC MODEL</span></div>
+            <div id="threeMessage" class="three-message" role="status">Loading the 3D model… An internet connection is required for Three.js. If it does not load, choose 2D.</div>
+            <div class="three-toolbar" aria-label="3D camera controls">
+              <button type="button" id="rotateLeft3dBtn" title="Rotate camera left 45 degrees" aria-label="Rotate left">↶</button>
+              <button type="button" id="rotateRight3dBtn" title="Rotate camera right 45 degrees" aria-label="Rotate right">↷</button>
+              <button type="button" id="zoomIn3dBtn" title="Zoom in" aria-label="Zoom in">＋</button>
+              <button type="button" id="zoomOut3dBtn" title="Zoom out" aria-label="Zoom out">－</button>
+              <button type="button" id="center3dBtn" class="reset-camera" title="Reset to the front view">⌖ Reset camera</button>
+            </div>
+            <div id="threeStatus" class="three-status" role="status">Drag to rotate • scroll to zoom • tap anatomical markers</div>
+          </div>
           <div class="visual-side right-caption">
-            <span>FRONT VIEW</span>
+            <span id="orientationLabel">FRONT VIEW</span>
             <span class="line-decoration"></span>
             <span>ENGLISH • A1–B1</span>
           </div>
