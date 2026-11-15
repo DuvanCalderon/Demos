@@ -185,9 +185,9 @@ async function loadRealModel(kind){
   const body=glb.scene;
   const skin=body.getObjectByName('skin');
   if(!skin)throw new Error('The anatomical model has no named external skin mesh');
-  for(const obj of body.children){
-   if(['skeleton','muscles','organs','vessels','nerves','joints'].includes(obj.name.toLowerCase()))obj.visible=false;
-  }
+  body.traverse(obj=>{
+   if(obj!==skin&&['skeleton','muscles','organs','vessels','nerves','joints'].includes(obj.name.toLowerCase()))obj.visible=false;
+  });
   skin.traverse(obj=>{
    if(obj.isMesh){
     obj.material=new THREE.MeshStandardMaterial({color:kind==='female'?0xebc9b7:0xd5ab94,roughness:.85,metalness:0,side:THREE.DoubleSide});
@@ -215,11 +215,15 @@ async function loadRealModel(kind){
    if(hits.length)p.z=hits[0].point.z+(rear?-.08:.08);
   }
   if(message)message.hidden=true;
+  const detailBadge=document.getElementById('modelDetailBadge');
+  if(detailBadge){detailBadge.textContent='DETAILED BODY MESH';detailBadge.classList.add('real');}
   if(status)status.textContent='Detailed 3D human mesh • orbit to explore front and back';
   requestRender();
  }catch(err){
   if(token!==loadingToken)return;
   console.warn('Anatomical GLB unavailable, using procedural backup:',err);
+  const detailBadge=document.getElementById('modelDetailBadge');
+  if(detailBadge){detailBadge.textContent='SCHEMATIC BACKUP';detailBadge.classList.remove('real');}
   if(message){message.hidden=false;message.classList.add('error');message.textContent='Detailed model could not load. Showing the simpler 3D fallback; the 2D diagrams and all exercises remain usable.';}
   requestRender();
  }
@@ -396,6 +400,7 @@ function setup(){
  if(message)message.hidden=true;
  window.BodyAtlas3D={update,hitTest,resetCamera,rotateCamera,zoomCamera,goToSide,ready:true};
  update(bridge.getState());
+ if(bridge.getState().orientation==='back')goToSide('back');
  requestAnimationFrame(resize);
 }
 try{setup();}catch(err){notifyFailure(err);}
