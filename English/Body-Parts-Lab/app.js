@@ -22,6 +22,7 @@ const PARTS = [
  {id:"shin",name:"Shin",x:245,y:561,side:"right",labelY:560,group:"Legs",definition:"The front of the lower leg, between the knee and ankle, over the shinbone.",example:"I bumped my shin against the table.",clue:"The front of the lower leg."},
  {id:"foot",name:"Foot",x:168,y:662,side:"right",labelY:657,group:"Legs",definition:"The lowest part of the leg, used for standing and walking.",example:"My left foot is inside my shoe.",clue:"You wear a shoe on this part."}
 ];
+PARTS.push(...window.BODY_ATLAS_BACK_PARTS);
 const BY_ID=Object.fromEntries(PARTS.map(part=>[part.id,part]));
 const MISSIONS=[
  {id:"neck",scene:"You are choosing where to wear a necklace. Tap the part of the body the necklace goes around.",hint:"It connects your head to your shoulders."},
@@ -33,8 +34,9 @@ const MISSIONS=[
  {id:"knee",scene:"You kneel down to tie a shoe. Which joint bends in the middle of your leg?",hint:"It is between the thigh and the lower leg."},
  {id:"groin",scene:"A soccer player strains the region where the lower abdomen meets the inner thigh. Locate it.",hint:"Look at the crease at the top of the inner thigh."}
 ];
+MISSIONS.push(...window.BODY_ATLAS_BACK_MISSIONS);
 const STORAGE_KEY="body-atlas-en-v2";
-function defaults(){return {mode:"explore",model:"female",difficulty:"beginner",selected:null,explored:[],matched:[],xp:0,streak:0,labMistakes:0,labHinted:[],missionIndex:0,missionMistakes:0,missionHinted:[],missionCompleted:0,showNames:false,view:"2d",threeNames:false};}
+function defaults(){return {mode:"explore",model:"female",difficulty:"beginner",selected:null,explored:[],matched:[],xp:0,streak:0,labMistakes:0,labHinted:[],missionIndex:0,missionMistakes:0,missionHinted:[],missionCompleted:0,showNames:false,view:"2d",threeNames:false,orientation:"front"};}
 function restore(){
  try{
   const raw=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");
@@ -50,6 +52,7 @@ function restore(){
   next.showNames=!!next.showNames;
   next.threeNames=!!next.threeNames;
   next.view=["2d","3d"].includes(next.view)?next.view:"2d";
+  next.orientation=next.orientation==="back"?"back":"front";
   return next;
  }catch{return defaults();}
 }
@@ -58,7 +61,8 @@ let armed=null,highlightId=null,errorId=null;
 let feedback=null,gesture=null,suppressClickUntil=0;
 const $=id=>document.getElementById(id);
 const SVG_NS="http://www.w3.org/2000/svg";
-const svg=$("bodySvg"),spots=$("hotspots"),activity=$("activityView"),glossary=$("glossaryList"),ghost=$("dragGhost");
+let svg=$("bodySvg"),spots=$("hotspots");
+const activity=$("activityView"),glossary=$("glossaryList"),ghost=$("dragGhost");
 function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch{/* private browsing */}}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function setFeedback(kind,title,detail){feedback={kind,title,detail};drawFeedback();}
@@ -71,7 +75,18 @@ function drawFeedback(){
 function setMode(mode){
  if(!["explore","label","missions"].includes(mode))return;
  state.mode=mode;armed=null;highlightId=null;errorId=null;
+ if(mode==="missions"&&state.missionIndex<MISSIONS.length)state.orientation=sideFor(MISSIONS[state.missionIndex].id);
  clearFeedback();save();render();
+}
+function sideFor(id){return BY_ID[id]?.view||"front";}
+function setOrientation(side){
+ if(!["front","back"].includes(side))return;
+ state.orientation=side;highlightId=null;errorId=null;save();render();
+ if(state.view==="3d")window.BodyAtlas3D?.goToSide?.(side);
+}
+function showSideOf(id){
+ const side=sideFor(id);if(side!==state.orientation){state.orientation=side;save();}
+ if(state.view==="3d")window.BodyAtlas3D?.goToSide?.(side);
 }
 function changeModel(model){
  state.model=model;save();render();setFeedback("info",model==="female"?"Female silhouette selected.":"Male silhouette selected.","Anatomical vocabulary applies to both models; the drawing is schematic.");
@@ -91,8 +106,11 @@ function updateModel(){
 }
 function makeSvg(tag,attrs){const el=document.createElementNS(SVG_NS,tag);for(const [key,val] of Object.entries(attrs||{}))el.setAttribute(key,String(val));return el;}
 function renderSpots(){
+ svg=$(state.orientation==="back"?"bodyBackSvg":"bodySvg");
+ spots=$(state.orientation==="back"?"backHotspots":"hotspots");
  spots.replaceChildren();
  PARTS.forEach((part,i)=>{
+  if((part.view||"front")!==state.orientation)return;
   const completed=state.matched.includes(part.id)&&state.mode==="label";
   const selected=state.selected===part.id||armed===part.id;
   const highlight=highlightId===part.id,wrong=errorId===part.id;
@@ -135,7 +153,7 @@ function attemptLabel(wordId,locationId){
   const gained=state.labHinted.includes(wordId)?5:10;
   state.xp+=gained;armed=null;highlightId=null;errorId=null;
   save();render();
-  if(state.matched.length===PARTS.length)setFeedback("success","Lab completed — 17 / 17!","All labels are in the correct places. Restart the labels to practice again.");
+  if(state.matched.length===PARTS.length)setFeedback("success","Lab completed — 30 / 30!","All labels are in the correct places. Restart the labels to practice again.");
   else setFeedback("success",`Correct! ${BY_ID[wordId].name}`,`+${gained} XP · ${BY_ID[wordId].definition}`);
  }else{
   state.labMistakes++;state.streak=0;errorId=locationId;highlightId=null;save();render();
@@ -148,8 +166,10 @@ function attemptMission(locationId){
  if(correct){
   const gained=state.missionHinted.includes(task.id)?8:15;
   state.xp+=gained;state.missionIndex++;state.selected=task.id;highlightId=null;errorId=null;state.streak++;
+  if(state.missionIndex<MISSIONS.length)state.orientation=sideFor(MISSIONS[state.missionIndex].id);
   if(state.missionIndex===MISSIONS.length)state.missionCompleted++;
   save();render();
+  if(state.view==="3d"&&state.missionIndex<MISSIONS.length)window.BodyAtlas3D?.goToSide?.(state.orientation);
   setFeedback("success",`Great choice — ${BY_ID[task.id].name}!`,`+${gained} XP · ${BY_ID[task.id].definition}`);
  }else{
   state.missionMistakes++;state.streak=0;errorId=locationId;highlightId=null;save();render();
@@ -158,7 +178,10 @@ function attemptMission(locationId){
 }
 function chooseWord(id){
  if(state.matched.includes(id))return;
- armed=armed===id?null:id;highlightId=null;errorId=null;render();
+ armed=armed===id?null:id;highlightId=null;errorId=null;
+ if(armed)state.orientation=sideFor(armed);
+ save();render();
+ if(armed&&state.view==="3d")window.BodyAtlas3D?.goToSide?.(state.orientation);
  if(armed)setFeedback("info",`Place: ${BY_ID[armed].name}`,"Drag this chip to the body or tap the correct glowing point.");
  else clearFeedback();
 }
@@ -166,7 +189,7 @@ function nextUnmatched(){return PARTS.find(p=>!state.matched.includes(p.id));}
 function giveHint(reveal=false){
  const id=armed||nextUnmatched()?.id;
  if(!id){setFeedback("success","Everything is placed!","Use Restart labels for a fresh round.");return;}
- armed=id;highlightId=reveal?id:null;
+ armed=id;state.orientation=sideFor(id);highlightId=reveal?id:null;
  if(!state.labHinted.includes(id))state.labHinted.push(id);
  save();render();
  setFeedback("info",reveal?`Location shown: ${BY_ID[id].name}`:`Hint for ${BY_ID[id].name}`,reveal?"Follow the gold halo, then place the chip yourself. A reveal does not complete the task.":BY_ID[id].clue+" (Hints reduce XP for this word.)");
@@ -174,15 +197,17 @@ function giveHint(reveal=false){
 function missionHint(reveal=false){
  const task=MISSIONS[state.missionIndex];if(!task)return;
  if(!state.missionHinted.includes(task.id))state.missionHinted.push(task.id);
- highlightId=reveal?task.id:null;save();render();
+ state.orientation=sideFor(task.id);highlightId=reveal?task.id:null;save();render();
+ if(state.view==="3d")window.BodyAtlas3D?.goToSide?.(state.orientation);
  setFeedback("info",reveal?"Target highlighted":"Mission hint",reveal?`The gold halo marks the ${BY_ID[task.id].name.toLowerCase()}. Tap it yourself to complete the mission.`:task.hint+" (Hints reduce XP.)");
 }
 function resetLab(){
  state.matched=[];state.labHinted=[];state.labMistakes=0;armed=null;highlightId=null;errorId=null;save();render();
- setFeedback("info","Labels restarted.","All 17 chips are available again. Your overall XP and discoveries are preserved.");
+ setFeedback("info","Labels restarted.","All 30 chips are available again. Your overall XP and discoveries are preserved.");
 }
 function resetMissions(){
- state.missionIndex=0;state.missionMistakes=0;state.missionHinted=[];highlightId=null;errorId=null;save();render();
+ state.missionIndex=0;state.missionMistakes=0;state.missionHinted=[];highlightId=null;errorId=null;state.orientation="front";save();render();
+ if(state.view==="3d")window.BodyAtlas3D?.goToSide?.("front");
  setFeedback("info","Missions restarted.","Begin again at mission 1. Your saved XP remains.");
 }
 function renderActivity(){
@@ -199,7 +224,7 @@ function renderActivity(){
    ${p?`<div class="detail-card">
       <div class="detail-row"><div><span class="tag">${esc(p.group)}</span><h4>${esc(p.name)}</h4></div><button id="speakButton" type="button" class="audio-btn" title="Listen to the pronunciation of ${esc(p.name)}" aria-label="Pronounce ${esc(p.name)}">♫</button></div>
       <p>${esc(p.definition)}</p><p class="usage">“${esc(p.example)}”</p>
-   </div>`:`<div class="tip" style="margin-top:18px"><strong>Start here.</strong> Touch the head, neck, or another point on the model. All 17 words are available on both silhouettes.</div>`}
+   </div>`:`<div class="tip" style="margin-top:18px"><strong>Start here.</strong> Touch the head, neck, or another point on the model. All 30 words are available on both silhouettes.</div>`}
    <div class="button-row"><button id="goLabel" class="primary-button" type="button">Practice labeling →</button></div>`;
  }else if(state.mode==="label"){
   activity.innerHTML=`<span class="overline">MODE 02 — ACTIVE RECALL</span>
@@ -218,7 +243,7 @@ function renderActivity(){
  }else{
   const i=state.missionIndex;
   if(i>=MISSIONS.length){
-   activity.innerHTML=`<span class="overline">MODE 03 — COMPLETED</span><div class="mission-result"><h3>Mission accomplished!</h3><div class="score-big">8 / 8</div><p>You correctly identified every scenario. The best learning comes from doing it again without hints.</p><p>Incorrect attempts this round: ${state.missionMistakes}</p></div><div class="button-row"><button type="button" id="missionRestart" class="primary-button">↺ Replay missions</button><button type="button" id="goLabel" class="secondary-button">Try Label Lab</button></div>`;
+   activity.innerHTML=`<span class="overline">MODE 03 — COMPLETED</span><div class="mission-result"><h3>Mission accomplished!</h3><div class="score-big">18 / 18</div><p>You correctly identified every scenario. The best learning comes from doing it again without hints.</p><p>Incorrect attempts this round: ${state.missionMistakes}</p></div><div class="button-row"><button type="button" id="missionRestart" class="primary-button">↺ Replay missions</button><button type="button" id="goLabel" class="secondary-button">Try Label Lab</button></div>`;
   }else{
    const task=MISSIONS[i];
    activity.innerHTML=`<span class="overline">MODE 03 — APPLY YOUR KNOWLEDGE</span>
@@ -244,7 +269,8 @@ function renderGlossary(){
   const index=String(PARTS.indexOf(part)+1).padStart(2,"0");
   btn.innerHTML=`<span class="glossary-index">${index}</span><span class="glossary-name">${esc(part.name)}<span class="glossary-sub">${esc(part.group)}</span></span><span class="glossary-arrow">↗</span>`;
   btn.addEventListener("click",()=>{
-   state.mode="explore";armed=null;highlightId=null;errorId=null;clearFeedback();pickSpot(part.id);
+   state.mode="explore";armed=null;highlightId=null;errorId=null;state.orientation=sideFor(part.id);clearFeedback();pickSpot(part.id);
+   if(state.view==="3d")window.BodyAtlas3D?.goToSide?.(state.orientation);
   });
   glossary.append(btn);
  }
@@ -260,10 +286,16 @@ function render(){
  $("view3dBtn").classList.toggle("selected",state.view==="3d");
  $("view2dBtn").setAttribute("aria-pressed",String(state.view==="2d"));
  $("view3dBtn").setAttribute("aria-pressed",String(state.view==="3d"));
+ $("frontSideBtn").classList.toggle("selected",state.orientation==="front");
+ $("backSideBtn").classList.toggle("selected",state.orientation==="back");
+ $("frontSideBtn").setAttribute("aria-pressed",String(state.orientation==="front"));
+ $("backSideBtn").setAttribute("aria-pressed",String(state.orientation==="back"));
+ $("bodySvg").hidden=state.orientation!=="front";
+ $("bodyBackSvg").hidden=state.orientation!=="back";
  $("twoDViewport").hidden=state.view==="3d";
  $("threeViewport").hidden=state.view!=="3d";
  $("viewHelper").textContent=state.view==="3d"?"Orbit 360° • zoom • select anatomy markers":"Select parts on the interactive diagram";
- $("orientationLabel").textContent=state.view==="3d"?"360° 3D VIEW":"FRONT VIEW";
+ $("orientationLabel").textContent=state.view==="3d"?"360° 3D VIEW":(state.orientation==="back"?"BACK VIEW":"FRONT VIEW");
  $("stageInstruction").textContent=state.view==="3d"
     ?(state.mode==="explore"?"Tap a 3D marker to discover a word":state.mode==="label"?"Drop a label onto a 3D marker":"Read the scenario • tap the 3D marker")
     :(state.mode==="explore"?"Tap a glowing marker • discover a new word":state.mode==="label"?"Drag a label or tap a label, then tap its spot":"Read the scenario • tap the correct point");
@@ -292,7 +324,7 @@ function dropTargetAt(clientX,clientY){
  const point=svg.createSVGPoint();point.x=clientX;point.y=clientY;
  const mapped=point.matrixTransform(ctm.inverse());
  let closest=null,distance=Infinity;
- PARTS.forEach(p=>{const d=Math.hypot(mapped.x-p.x,mapped.y-p.y);if(d<distance){distance=d;closest=p;}});
+ PARTS.filter(p=>(p.view||"front")===state.orientation).forEach(p=>{const d=Math.hypot(mapped.x-p.x,mapped.y-p.y);if(d<distance){distance=d;closest=p;}});
  return distance<=27?closest?.id:null;
 }
 function pointerStart(e){
@@ -347,12 +379,15 @@ document.querySelectorAll(".mode-tab").forEach(btn=>btn.addEventListener("click"
 function setView(view){
  if(!["2d","3d"].includes(view))return;
  state.view=view;save();render();
+ if(view==="3d")window.BodyAtlas3D?.goToSide?.(state.orientation);
  if(view==="3d"&&!window.BodyAtlas3D?.ready){
   setFeedback("info","3D is loading","The 3D view needs an internet connection for Three.js and a browser with WebGL. The 2D view always remains available.");
  }
 }
 $("view2dBtn").addEventListener("click",()=>setView("2d"));
 $("view3dBtn").addEventListener("click",()=>setView("3d"));
+$("frontSideBtn").addEventListener("click",()=>setOrientation("front"));
+$("backSideBtn").addEventListener("click",()=>setOrientation("back"));
 $("modelFemale").addEventListener("click",()=>changeModel("female"));
 $("modelMale").addEventListener("click",()=>changeModel("male"));
 $("toggleNamesBtn").addEventListener("click",()=>{if(state.mode!=="explore")return;if(state.view==="3d")state.threeNames=!state.threeNames;else state.showNames=!state.showNames;save();render();});
@@ -367,13 +402,13 @@ function resetEverything(){
 }
 // Both renderers use the SAME authoritative learning state.
 window.BodyAtlasBridge=Object.freeze({
- parts:PARTS.map(({id,name})=>({id,name})),
+ parts:PARTS.map(({id,name,view})=>({id,name,view:view||"front"})),
  getState:()=>({
-  mode:state.mode,view:state.view,model:state.model,difficulty:state.difficulty,
+  mode:state.mode,view:state.view,model:state.model,difficulty:state.difficulty,orientation:state.orientation,
   selected:state.selected,matched:[...state.matched],armed,highlightId,errorId,
   threeNames:state.threeNames
  }),
- selectSpot:id=>pickSpot(id)
+ selectSpot:id=>{state.orientation=sideFor(id);pickSpot(id);}
 });
 window.BodyAtlas3DFailed=()=>{
  const el=$("threeMessage");
