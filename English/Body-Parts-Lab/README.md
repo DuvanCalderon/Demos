@@ -1,100 +1,78 @@
-# Body Atlas — English Body Parts Laboratory (2D + 3D)
+# Body Atlas — realistic 3D + 2D English Vocabulary Lab
 
-**Live demo:** https://duvancalderon.github.io/Demos/English/Body-Parts-Lab/
+Live: **https://duvancalderon.github.io/Demos/English/Body-Parts-Lab/**
 
-A responsive, interactive **English-only** vocabulary learning application for 17 human body areas, now with **both an interactive SVG diagram and an orbitable Three.js 3D model**. The model and diagram are alternate representations of the *same learning state*, not separate quizzes.
+An English-only virtual lab covering **30 human body parts** from two supplied reference pictures: 17 front-view terms and 13 back-view terms.
 
-## Features
+## How to learn
 
-| Feature | 2D SVG | 3D Three.js |
-| --- | --- | --- |
-| Explore 17 anatomical markers | Yes | Yes |
-| Label Lab: select a word, then select its target | Yes | Yes |
-| Drag word chips onto valid markers | Yes | Yes |
-| Contextual missions with correct/wrong validation | Yes | Yes |
-| Shared XP, progress, hints, missions, localStorage | Yes | Yes |
-| Male / female educational silhouettes | Yes | Yes |
-| English pronunciation (browser text-to-speech) | Yes | Yes |
-| Marker names in Explore mode | Yes | Yes |
-| 360° camera rotation, zoom and pan | Not applicable | Yes |
+1. Choose **2D diagram** or **3D interactive**.
+2. Choose **Front** or **Back**, or rotate the 3D body to the desired side.
+3. **Explore:** tap a location, hear the English pronunciation using browser speech synthesis, and read an example sentence. In Explore, you may show or hide all names.
+4. **Label Lab:** select or drag the matching word to the correct interactive hotspot. Hints are available; they never count as correct placements.
+5. **Missions:** complete **19** everyday contextual tasks (eight original front missions, eleven new back missions).
+6. Scores, discovered words, correct placements and mission progress are shared across all views via localStorage. Switching views does not reset progress. Use Reset progress to erase saved data.
 
-The three primary learning modes are **Explore**, **Label Lab**, and **Missions**.
+The 2D diagram works without Internet. The 3D view downloads Three.js modules and an anatomy model from a CDN. You can rotate, zoom, pan, select hotspots with Raycaster and reset the camera. **There is no physical or biomechanical simulation**; this is a visual vocabulary teaching tool.
 
-### 3D controls
+## Vocabulary
 
-- Choose **3D interactive** at the top of the anatomy stage. You can switch back to **2D diagram** at any time with no loss of progress.
-- Drag the 3D model with the mouse or one finger to orbit (360° around the vertical axis).
-- Scroll or pinch to zoom. Use right-drag (or two-finger drag) to pan.
-- Use the camera buttons for **45° left/right**, **zoom in/out**, and **reset camera**.
-- Click or tap the circular anatomical markers on the **front** of the 3D body. Markers are hidden when the camera faces its back, because they identify front-view anatomy.
-- In **Label Lab**, drag a word chip to the visible 3D anatomical marker, or click/tap a chip and then a marker. Both methods use the same validation logic.
-- **Show 3D names** is available in Explore mode; labels are suppressed during challenges to avoid revealing the answers. Hints can still reveal one target without completing it.
-- **Female / Male** switches two simplified procedural body variations in both views.
+**Front (17):** head, neck, chest, breast, nipple, abdomen, waist, navel, hip, forearm, groin, genitals, thigh, knee, leg, shin, foot.
 
-### 2D controls
+**Back (13):** nape, shoulder, back, armpit, arm, elbow, small of the back, wrist, buttock, hand, calf, ankle, heel.
 
-- Click/tap the SVG hotspots; you may also keyboard-tab to the SVG markers and press Enter/Space.
-- In Label Lab, drag or tap a chip to match a target.
-- Toggle map labels in Explore mode.
+The back picture supplied in the request is the source for the rear terms. The names and positions are approximate teaching annotations, not validated clinical coordinates.
 
-### Learning rules
+## Improved 3D model
 
-- A discovery awards **2 XP once** for each of the 17 body parts.
-- Correct label placements award **10 XP**, or **5 XP after a hint**.
-- Correct mission answers award **15 XP**, or **8 XP after a hint**.
-- Wrong selections never advance a mission or count as correct labels.
-- A hint or highlighted location never completes a step automatically.
-- Progress is saved in browser localStorage and shared between both views.
-- **Reset progress** clears discoveries, correct placements, missions and XP.
+The old geometric mannequin is retained as a **backup** only.
 
-## Files
+The upgraded 3D model attempts to load an anatomically detailed male or female GLB body with a proper surface mesh from the **open-anatomy-3d v0.1.0** model package. The source combines BodyParts3D, HuBMAP and MakeHuman data. It supports front/back orbiting and has GLTFLoader + MeshoptDecoder because the packaged GLBs use EXT_meshopt_compression. Models are 7.6 and 8.1 MB and require an active Internet connection.
 
-- `index.html` — UI, SVG illustration, 2D/3D control panels, and the pinned import map.
-- `styles.css` — responsive page styling and 3D viewport layout.
-- `app.js` — shared vocabulary dataset, both learning modes' validation logic, drag and drop, progress, hints, voice output.
-- `model3d.js` — Three.js procedural mannequin, 3D markers, OrbitControls, camera controls, Raycaster-based selection.
-- `README.md` — user guide and technical notes.
+GLB URL (male): https://cdn.jsdelivr.net/npm/open-anatomy-3d@0.1.0/models/anatomy-male.glb
 
-## Technology, installation and connection
+GLB URL (female): https://cdn.jsdelivr.net/npm/open-anatomy-3d@0.1.0/models/anatomy-female.glb
 
-The **2D app works offline** in a local browser, without installing anything.
+3D anatomy marker positions are **approximate annotations** and, where the skin ray meets the external surface, are projected onto it. This improves visual placement but does not make the annotations clinically exact.
 
-The **3D view needs internet access** to download the following matched-version ES modules from a CDN:
+If WebGL or the model download fails, use the 2D diagram. A procedural 3D mannequin also serves as a fallback if the realistic model download fails after Three.js has loaded.
 
-- `three` at `https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js`
-- `three/addons/controls/OrbitControls.js` at `https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/controls/OrbitControls.js`
+## Third-party model attribution and licensing
 
-These are referenced through a native HTML import map. Use a modern browser with WebGL and import-map support. The project is ready to deploy as static files to GitHub Pages; no build step or npm installation is required. For local 3D testing, serve the directory over HTTP using a simple static server if the browser restricts ES modules on `file://` URLs.
+**Required credit line:**
 
-If WebGL fails or the CDN is blocked, the **2D lab remains usable**. The 3D pane contains a failure/help notice.
+> Anatomy: BodyParts3D © The Database Center for Life Science (CC BY 4.0); female organs: Human Reference Atlas 3D Reference Organs, HuBMAP (CC BY 4.0); female body: MakeHuman (CC0). Modified by open-anatomy-3d (https://github.com/MervinR07/open-anatomy-3d), CC BY 4.0.
 
-## Accuracy and references
+Sources:
+- https://github.com/MervinR07/open-anatomy-3d
+- https://github.com/MervinR07/open-anatomy-3d/blob/main/ATTRIBUTION.md
+- https://github.com/MervinR07/open-anatomy-3d/blob/main/LICENSE-MODELS.md
+- https://www.npmjs.com/package/open-anatomy-3d
 
-All anatomical names and learning themes come from the **body-parts illustration supplied with the original user request**. The SVG and the Three.js character are **original, schematic educational representations**, not anatomically exact, medically validated 3D assets or biomechanical simulations. The model's proportions and marker locations are approximations for understanding vocabulary. The pelvic region is visually covered. Anatomy can vary, and breast tissue is present in all sexes.
+Original local SVG diagrams and custom teaching logic are authored for this lab. The externally sourced body surface data retains its CC BY 4.0 attribution obligations. This is **for learning English**, not for medical diagnosis.
 
-Three.js implementation references:
-- Installation / import map: https://threejs.org/manual/#en/installation
-- OrbitControls: https://threejs.org/docs/#examples/en/controls/OrbitControls
-- Raycaster: https://threejs.org/docs/#api/en/core/Raycaster
+## Project files
 
-## Testing record
+- `index.html`: front and back SVG maps, view selectors, Three.js import map, anatomy credit.
+- `styles.css`: responsive styles for both diagrams and the 3D viewport.
+- `back-vocabulary.js`: 13 back terms and 11 contextual missions.
+- `app.js`: 30-word vocabulary, 19 missions, validation, shared state and drag/drop.
+- `model3d.js`: WebGL scene, procedural fallback, anatomical GLB loading, marker projection, camera navigation.
+- `README.md`: documentation and license notes.
 
-- The original 2D lab underwent **21 in-memory learning-rule tests** and **14 simulated user-input tests**.
-- Both modified JavaScript files passed syntax parsing checks after adding 3D.
-- A simulated Three.js runtime was used to exercise 3D scene initialization (not a physical WebGL test).
-- Published files can be inspected and GitHub Pages deployment status checked through GitHub Actions.
+## Suggested live checks
 
-**Not claimed:** a real device's mouse/touch input, live WebGL rendering, camera frame rate, or cross-browser visual behavior were not validated with a real interactive browser session. Perform a quick browser smoke test before presenting this as a validated software deliverable.
+1. Verify 2D Front shows 17 target positions and 2D Back shows 13.
+2. Click the rear `calf` marker; use pronunciation.
+3. Open Label Lab, select `wrist`, place it on `elbow`: it must **not** score. Place it correctly.
+4. Toggle 2D/3D and Front/Back; progress should remain.
+5. In 3D, check that an anatomically detailed model loads (requires network); try both male/female GLB models.
+6. Orbit a full turn, zoom, and click both front and back target markers.
+7. Request hints and reveal in Label Lab and Missions. They must not complete the current task.
+8. Complete all 19 missions; test one incorrect pick per mission.
+9. Refresh halfway through a mission; verify progress persists.
+10. Test touch and keyboard controls; test Reset progress.
 
-### Recommended live browser smoke test
+## Validation scope
 
-1. Open the live URL and select **3D interactive**. Confirm that the 3D body is visible.
-2. Drag to rotate a full turn; pinch or scroll to zoom and use Reset camera.
-3. Tap **head** on the 3D body in Explore mode; its details should appear and award XP only once.
-4. Switch to 2D. The head should still be discovered.
-5. Open Label Lab, select `shin`, and deliberately select `knee` in 3D: it must reject the choice.
-6. Select the correct `shin` marker. Switch to 2D and verify that placement remains.
-7. Drag `foot` onto the 3D foot marker using mouse and, separately, a touchscreen.
-8. Request a hint and reveal in Label Lab. Neither should increase the correct count.
-9. Start Missions. Try a wrong spot, then the right one. Only the right spot should advance.
-10. Reload. Verify persistence. Use Reset progress and confirm all counters are cleared.
+JavaScript syntax and in-memory simulated application state can be tested using repository source. Neither the 3D GLB rendering, CDN response, performance nor actual mobile gestures should be considered visually verified without a live browser run. GitHub Pages deployment status is checked separately.
