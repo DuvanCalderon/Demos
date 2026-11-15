@@ -37,6 +37,12 @@ GLB URL (female): https://cdn.jsdelivr.net/npm/open-anatomy-3d@0.1.0/models/anat
 
 If WebGL or the model download fails, use the 2D diagram. A procedural 3D mannequin also serves as a fallback if the realistic model download fails after Three.js has loaded.
 
+### Switching between male and female (regression fix)
+
+Each sex's detailed GLB is loaded once, scaled/positioned once, and kept in a separate prepared-model cache. Switching `Female → Male → Female` reattaches the already prepared scene without recalculating or rejecting its dimensions. Concurrent downloads are deduplicated, and outdated responses cannot replace the model the learner has since selected.
+
+If an individual GLB request fails temporarily, choose **Retry detailed model** in the 3D viewport to try again **without refreshing the page**. This retry does not erase your vocabulary discoveries or exercise progress. The 2D view continues to work when model downloads are unavailable.
+
 ## Third-party model attribution and licensing
 
 **Required credit line:**
@@ -76,3 +82,5 @@ Original local SVG diagrams and custom teaching logic are authored for this lab.
 ## Validation scope
 
 JavaScript syntax and in-memory simulated application state can be tested using repository source. Neither the 3D GLB rendering, CDN response, performance nor actual mobile gestures should be considered visually verified without a live browser run. GitHub Pages deployment status is checked separately.
+
+**Regression checks performed on the model-loader code with simulated GLB assets:** eight sequential female/male switches (each model normalized once); failure → retry → successful detailed model; and a delayed male download that must not replace the subsequently selected female model. These tests exercise the loading rules, **not** actual browser-rendered GLB geometry.
