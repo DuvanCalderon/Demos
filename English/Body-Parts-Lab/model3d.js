@@ -248,7 +248,7 @@ function update(viewState){
  if(!renderer||!viewState)return;
  lastState=viewState;
  if(modelType!==viewState.model)buildFigure(viewState.model);
- showAllNames=!!viewState.threeNames;
+ showAllNames=viewState.mode==='explore'&&!!viewState.threeNames;
  const matched=new Set(viewState.matched||[]);
  const hinted=viewState.mode==='label'?(viewState.highlightId||null):viewState.mode==='missions'?(viewState.highlightId||null):null;
  for(const part of bridge.parts){
@@ -260,7 +260,7 @@ function update(viewState){
   const wrong=viewState.errorId===part.id;
   const c=wrong?markerWarn:highlight?markerHint:completed?markerFinished:selected?markerBase:markerBase;
   halo.material.color.copy(c);
-  halo.material.opacity=wrong||highlight?.95:.63;
+  halo.material.opacity=(wrong||highlight)?0.95:0.63;
   core.material.color.set(wrong?0xa0374f:highlight?0x9a5b22:completed?0x8375d6:selected?0x389a97:0x0b4657);
   center.material.color.set(completed?0xffffff:highlight?0xffe4b7:0xc5fff4);
   label.visible=showAllNames||(viewState.mode==='explore'&&viewState.selected===part.id);
@@ -313,6 +313,7 @@ function setup(){
  bind('rotateRight3dBtn',()=>rotateCamera(-Math.PI/4));
  bind('zoomIn3dBtn',()=>zoomCamera(.77));
  bind('zoomOut3dBtn',()=>zoomCamera(1.30));
+ document.querySelectorAll('.three-toolbar button').forEach(button=>{button.disabled=false;});
  const observer=typeof ResizeObserver==='function'?new ResizeObserver(resize):null;
  if(observer)observer.observe(mount);
  else window.addEventListener('resize',resize);
