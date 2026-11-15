@@ -125,7 +125,21 @@ if(oldValue===""){const a=chars(text);let out="",used=0;for(let i=0;i<=a.length;
 let out="",pos=0,used=0;while(max<0||used<max){const at=text.indexOf(oldValue,pos);if(at<0)break;out+=text.slice(pos,at)+newValue;pos=at+oldValue.length;used++}return out+text.slice(pos)
 }
 function pySplit(text,sep=null,max=-1){
-if(sep===null){const t=text.trim();if(!t)return [];const words=t.split(/\s+/u);if(max<0)return words;if(max===0)return [text.trimStart().replace(/\s+$/u,"")];if(words.length<=max+1)return words;return words.slice(0,max).concat([words.slice(max).join(" ")])}
+if(sep===null){
+const isWs=c=>/\s/u.test(c);let pos=0;
+while(pos<text.length&&isWs(text[pos]))pos++;
+if(pos===text.length)return [];
+if(max===0)return [text.slice(pos)];
+const out=[];let cuts=0;
+while(pos<text.length){
+if(max>=0&&cuts>=max){out.push(text.slice(pos));return out}
+let end=pos;while(end<text.length&&!isWs(text[end]))end++;
+out.push(text.slice(pos,end));
+while(end<text.length&&isWs(text[end]))end++;
+pos=end;cuts++;
+}
+return out;
+}
 if(sep==="")throw Error("ValueError: separador vacío");
 if(max===0)return [text];
 const out=[];let pos=0;while(max<0||out.length<max){const i=text.indexOf(sep,pos);if(i<0)break;out.push(text.slice(pos,i));pos=i+sep.length}out.push(text.slice(pos));return out;
