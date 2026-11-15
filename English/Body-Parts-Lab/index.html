@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0c1223">
+  <meta name="description" content="An interactive English vocabulary lab for human body parts: explore an anatomy diagram, drag labels, and complete missions.">
+  <title>Body Atlas • Interactive English Lab</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="identity">
+        <div class="brand-symbol" aria-hidden="true">✳</div>
+        <div>
+          <div class="eyebrow">ENGLISH LEARNING STUDIO <span class="tiny-separator">/</span> VOCABULARY</div>
+          <h1>Body <em>Atlas</em><span class="title-dot">.</span></h1>
+          <p>Learn anatomy words by finding, placing, and testing them.</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="stat"><span class="stat-icon">✦</span><div><strong id="xpCount">0</strong><small>TOTAL XP</small></div></div>
+        <button id="resetAllBtn" class="quiet-button" type="button" title="Erase saved progress and restart">↺ <span>Reset progress</span></button>
+      </div>
+    </header>
+
+    <nav class="mode-nav" aria-label="Learning modes">
+      <button type="button" class="mode-tab active" data-mode="explore" aria-pressed="true"><span>◈</span> Explore <small>01</small></button>
+      <button type="button" class="mode-tab" data-mode="label" aria-pressed="false"><span>⊞</span> Label Lab <small>02</small></button>
+      <button type="button" class="mode-tab" data-mode="missions" aria-pressed="false"><span>⚑</span> Missions <small>03</small></button>
+    </nav>
+
+    <main class="workspace">
+      <section class="stage-card" aria-label="Interactive body map">
+        <div class="stage-heading">
+          <div><span class="section-kicker">INTERACTIVE MODEL</span><h2>The human body <span class="live-indicator"><i></i> LIVE</span></h2></div>
+          <div class="model-switch" role="group" aria-label="Choose a silhouette">
+            <button id="modelFemale" type="button" class="selected" aria-pressed="true">Female</button>
+            <button id="modelMale" type="button" aria-pressed="false">Male</button>
+          </div>
+        </div>
+
+        <div class="visual-zone">
+          <div class="visual-side left-caption">
+            <span class="guide-number">01—17</span>
+            <span class="line-decoration"></span>
+            <span>BODY PARTS</span>
+          </div>
+          <div class="figure-wrap">
+            <svg id="bodySvg" viewBox="0 0 420 710" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="Interactive front-view human silhouette. Choose the glowing anatomical locations.">
+              <defs>
+                <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#e6cbbb"/><stop offset=".5" stop-color="#d4ab9b"/><stop offset="1" stop-color="#c99083"/>
+                </linearGradient>
+                <linearGradient id="skinLight" x1="0" y1="0" x2=".8" y2="1">
+                  <stop offset="0" stop-color="#f0d8ca"/><stop offset="1" stop-color="#d5ad9f"/>
+                </linearGradient>
+                <linearGradient id="shadowBody" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#29345a"/><stop offset="1" stop-color="#172441"/>
+                </linearGradient>
+                <filter id="bodyShadow"><feDropShadow dx="0" dy="15" stdDeviation="14" flood-color="#020715" flood-opacity=".37"/></filter>
+                <pattern id="mesh" width="16" height="16" patternUnits="userSpaceOnUse"><path d="M16 0H0V16" fill="none" stroke="#bfc8ed" stroke-width=".4" opacity=".17"/></pattern>
+              </defs>
+              <ellipse cx="210" cy="665" rx="115" ry="14" fill="#0a1224" opacity=".55"/>
+              <g id="bodyArtwork" filter="url(#bodyShadow)">
+                <!-- Legs are separate vector shapes; these are a schematic, not a medical 3D scan. -->
+                <path class="body-skin" d="M145 369 Q142 388 145 424 L150 490 Q146 509 151 546 L153 612 Q153 635 147 645 Q140 656 141 663 Q145 671 160 675 L196 676 Q207 671 200 663 L182 644 Q182 630 188 611 L195 545 Q207 497 206 464 L207 388Z"/>
+                <path class="body-skin" d="M214 384 L214 464 Q215 499 222 540 L231 610 Q235 636 230 645 L218 657 Q211 667 219 674 L261 675 Q277 672 279 664 Q279 656 268 647 Q261 625 264 607 L269 545 Q272 509 268 484 L277 416 Q280 385 274 365Z"/>
+                <path class="body-skin" d="M151 185 Q129 176 119 200 Q109 220 105 245 L89 311 Q83 331 81 351 L71 395 Q66 413 71 427 Q73 435 80 435 Q84 435 85 428 L83 411 Q88 440 96 442 Q103 442 102 434 L98 411 Q103 430 109 429 Q114 427 110 420 L102 393 L116 347 Q124 334 133 311 L157 238Z"/>
+                <path class="body-skin" d="M269 185 Q291 176 301 200 Q311 220 315 245 L331 311 Q337 331 339 351 L349 395 Q354 413 349 427 Q347 435 340 435 Q336 435 335 428 L337 411 Q332 440 324 442 Q317 442 318 434 L322 411 Q317 430 311 429 Q306 427 310 420 L318 393 L304 347 Q296 334 287 311 L263 238Z"/>
+                <path class="body-skin" d="M193 121 L193 158 Q171 165 153 177 Q148 192 154 218 Q159 250 158 278 Q154 311 142 357 Q138 379 147 392 Q170 405 210 407 Q250 405 273 392 Q282 379 278 357 Q266 314 262 278 Q261 251 267 219 Q272 192 267 177 Q248 165 228 158 L228 121Z" />
+                <ellipse class="body-skin face" cx="210" cy="83" rx="41" ry="53"/>
+                <path class="body-detail" d="M193 144 Q210 150 228 144" />
+                <path class="body-detail" d="M186 86 L195 85 M225 85 L235 86 M207 101 Q210 105 214 101 M203 116 Q210 119 217 116"/>
+                <path class="body-detail torso-line" d="M160 244 Q184 254 208 248 Q235 254 261 244 M209 269 L209 295 M166 354 Q210 371 254 354"/>
+                <path id="femaleChest" class="body-detail" d="M162 231 Q181 252 201 234 M219 234 Q239 251 258 231"/>
+                <path id="maleChest" class="body-detail hidden" d="M166 235 Q188 243 205 232 M216 232 Q238 243 254 235"/>
+                <path class="body-detail" d="M170 490 Q183 503 196 490 M224 490 Q241 503 258 490"/>
+                <circle cx="210" cy="333" r="2.7" fill="#956d65" opacity=".7"/>
+                <path id="underwear" d="M147 372 Q210 390 273 372 L273 402 Q251 418 224 429 L210 408 L196 429 Q169 418 147 402Z" fill="#5c6e92" opacity=".92"/>
+                <path id="underwearHighlight" d="M148 375 Q210 392 272 375" stroke="#b6c5db" stroke-width="1.2" fill="none" opacity=".75"/>
+              </g>
+              <g id="meshOverlay" opacity="0"><path d="M116 198H304V600H116Z" fill="url(#mesh)"/></g>
+              <g id="hotspots"></g>
+            </svg>
+          </div>
+          <div class="visual-side right-caption">
+            <span>FRONT VIEW</span>
+            <span class="line-decoration"></span>
+            <span>ENGLISH • A1–B1</span>
+          </div>
+          <div class="canvas-note" id="stageInstruction">Select a glowing point to discover a body part.</div>
+        </div>
+
+        <div class="stage-bottom">
+          <div class="legend"><span class="legend-pip"></span><span>Interactive target</span><span class="legend-pip picked"></span><span>Selected / placed</span></div>
+          <button type="button" id="toggleNamesBtn" class="text-button">Show map labels</button>
+        </div>
+      </section>
+
+      <aside class="side-panel" aria-label="Lab controls and learning content">
+        <section class="lab-card" id="activityCard">
+          <div class="panel-title"><span class="section-kicker" id="activityKicker">YOUR LEARNING SPACE</span><span id="activityCounter">01 / 03</span></div>
+          <div id="activityView"></div>
+          <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+        </section>
+
+        <section class="discovery-card">
+          <div class="discovery-heading"><div><span class="section-kicker">WORD EXPLORER</span><h3>Vocabulary index <span id="wordCount">17</span></h3></div><span class="search-glyph">⌕</span></div>
+          <label class="sr-only" for="wordSearch">Find a body part</label>
+          <input type="search" id="wordSearch" placeholder="Search 17 body parts…" autocomplete="off">
+          <div id="glossaryList" class="glossary-list" aria-label="Body part vocabulary"></div>
+        </section>
+      </aside>
+    </main>
+
+    <footer class="footer"><span>BODY ATLAS • HUMAN BODY VOCABULARY</span><span>A learning diagram, not a medical reference. Built with SVG + JavaScript.</span></footer>
+  </div>
+  <div id="dragGhost" class="drag-ghost" hidden aria-hidden="true"></div>
+  <dialog id="resetDialog" class="reset-dialog">
+    <h2>Start completely fresh?</h2>
+    <p>All vocabulary discoveries, label placements, mission results, and XP saved on this device will be erased.</p>
+    <div class="dialog-buttons"><button type="button" id="cancelReset" class="secondary-button">Keep my progress</button><button type="button" id="confirmReset" class="danger-button">Erase & restart</button></div>
+  </dialog>
+</body>
+</html>
