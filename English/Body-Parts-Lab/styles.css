@@ -186,3 +186,14 @@ h1 em{color:var(--accent);font-style:normal}
  .three-status{bottom:59px;left:11px;transform:none;max-width:calc(100% - 125px);font-size:.56rem;padding:7px 9px}
  .three-message{font-size:.73rem}
 }
+
+/* Front/back control and companion rear-view 2D map */
+.orientation-switch{display:inline-flex;gap:4px;padding:4px;border-radius:12px;background:#101c30;border:1px solid #42516b}
+.orientation-switch button{border:none;background:transparent;border-radius:8px;color:#b3c3d8;padding:9px 13px;font-size:.79rem;font-weight:800}
+.orientation-switch button.selected{background:#d2d5ff;color:#21213a}
+.orientation-switch button:not(.selected):hover{color:#fff;background:#263850}
+#bodyBackSvg{width:auto;height:100%;max-width:100%;overflow:visible;touch-action:pan-y}
+#bodyBackSvg[hidden],#bodySvg[hidden]{display:none!important}
+.view-badge.real{color:#ddffed;background:#285243eb;border-color:#65af95}
+.model-credit{font-size:.6rem;color:#90a6c5;margin-left:auto}
+@media(max-width:620px){.orientation-switch{width:100%}.orientation-switch button{flex:1}.view-helper{width:100%}}
