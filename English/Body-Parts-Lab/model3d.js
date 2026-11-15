@@ -18,12 +18,23 @@ const points = {
  hip:[-.60,-.20,.32], forearm:[1.32,.12,.20],
  groin:[.30,-.43,.42], genitals:[0,-.56,.49],
  thigh:[.43,-1.02,.29], knee:[.40,-1.75,.28],
- leg:[-.40,-2.21,.27], shin:[.40,-2.52,.24], foot:[-.40,-3.37,.67]
+ leg:[-.40,-2.21,.27], shin:[.40,-2.52,.24], foot:[-.40,-3.37,.67],
+ nape:[0,2.50,-.39],shoulder:[-.70,2.12,-.27],back:[.13,1.36,-.48],
+ armpit:[.93,1.73,-.17],arm:[-1.02,1.12,-.22],elbow:[-1.17,.71,-.26],
+ "small-of-back":[0,.28,-.43],wrist:[-1.40,-.25,-.17],
+ buttock:[.35,-.45,-.52],hand:[-1.47,-.49,-.16],
+ calf:[.42,-2.36,-.32],ankle:[-.42,-3.11,-.22],heel:[.41,-3.48,-.33]
 };
 
 let renderer, scene, camera, controls, figure, markers, raycaster, pointer;
 let pickedTargets = [], markerNodes = new Map(), materialSkin, modelType = null;
 let lastState, showAllNames = false, renderRequested = false, destroyed = false;
+let activeReal = null, loadingToken=0;
+const modelCache=new Map();
+const MODEL_URLS={
+ male:"https://cdn.jsdelivr.net/npm/open-anatomy-3d@0.1.0/models/anatomy-male.glb",
+ female:"https://cdn.jsdelivr.net/npm/open-anatomy-3d@0.1.0/models/anatomy-female.glb"
+};
 const background = 0x15243a;
 const tempVector = new THREE.Vector3();
 const skinMat = new THREE.MeshStandardMaterial({color:0xdfc1ae,roughness:.82,metalness:.015});
@@ -153,13 +164,72 @@ function buildFigure(kind){
   ellipsoid(figure,[side*.43,-3.40,.31],[.225,.15,.53],skinMat);
  }
 }
+async function loadRealModel(kind){
+ const token=++loadingToken;
+ if(message){message.hidden=false;message.classList.remove('error');message.textContent='Loading anatomically detailed human model… The original mannequin is available as a fallback.';}
+ try{
+  let glb=modelCache.get(kind);
+  if(!glb){
+   // Import on demand: the basic mannequin and the offline SVG still work if this fails.
+   const [{GLTFLoader},{MeshoptDecoder}]=await Promise.all([
+    import('three/addons/loaders/GLTFLoader.js'),
+    import('three/addons/libs/meshopt_decoder.module.js')
+   ]);
+   const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
+   glb=await loader.loadAsync(MODEL_URLS[kind]);
+   modelCache.set(kind,glb);
+  }
+  if(token!==loadingToken||modelType!==kind)return;
+  if(activeReal){activeReal.removeFromParent();activeReal=null;}
+  const body=glb.scene;
+  const skin=body.getObjectByName('skin');
+  if(!skin)throw new Error('The anatomical model has no named external skin mesh');
+  for(const obj of body.children){
+   if(['skeleton','muscles','organs','vessels','nerves','joints'].includes(obj.name.toLowerCase()))obj.visible=false;
+  }
+  body.traverse(obj=>{
+   if(obj.isMesh&&obj.parent&&obj.name.toLowerCase().includes('skin')){
+    obj.material=new THREE.MeshStandardMaterial({color:kind==='female'?0xebc9b7:0xd5ab94,roughness:.85,metalness:0,side:THREE.DoubleSide});
+   }
+  });
+  const bounds=new THREE.Box3().setFromObject(skin);
+  const size=bounds.getSize(new THREE.Vector3());
+  if(size.y<.6||size.y>3)throw new Error('Unexpected human-model scale');
+  const center=bounds.getCenter(new THREE.Vector3());
+  const ratio=6.9/size.y;
+  body.scale.setScalar(ratio);
+  body.position.set(-center.x*ratio,-3.46-bounds.min.y*ratio,-center.z*ratio);
+  scene.add(body);scene.updateMatrixWorld(true);
+  activeReal=body;
+  clearFigure();figure=null;
+  // Place each labeled point on the visible skin surface whenever the coordinate ray meets it.
+  const skinMeshes=[];skin.traverse(obj=>{if(obj.isMesh)skinMeshes.push(obj);});
+  const surfaceRay=new THREE.Raycaster();
+  for(const [id,rec] of markerNodes){
+   const p=rec.node.position;
+   const rear=bridge.parts.find(v=>v.id===id)?.view==='back';
+   const dir=rear?1:-1;
+   surfaceRay.set(new THREE.Vector3(p.x,p.y,rear?-8:8),new THREE.Vector3(0,0,dir));
+   const hits=surfaceRay.intersectObjects(skinMeshes,false);
+   if(hits.length)p.z=hits[0].point.z+(rear?-.08:.08);
+  }
+  if(message)message.hidden=true;
+  if(status)status.textContent='Detailed 3D human mesh • orbit to explore front and back';
+  requestRender();
+ }catch(err){
+  if(token!==loadingToken)return;
+  console.warn('Anatomical GLB unavailable, using procedural backup:',err);
+  if(message){message.hidden=false;message.classList.add('error');message.textContent='Detailed model could not load. Showing the simpler 3D fallback; the 2D diagrams and all exercises remain usable.';}
+  requestRender();
+ }
+}
 function createNameSprite(label){
  const canvas=document.createElement('canvas');canvas.width=300;canvas.height=80;
  const ctx=canvas.getContext('2d');
  ctx.fillStyle='rgba(13,28,48,.89)';
  ctx.beginPath();ctx.roundRect(5,5,290,70,17);ctx.fill();
  ctx.strokeStyle='rgba(160,232,221,.65)';ctx.lineWidth=3;ctx.stroke();
- ctx.font='bold 35px system-ui, sans-serif';ctx.fillStyle='#efffff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,150,40);
+ ctx.font=`bold ${label.length>11?23:35}px system-ui, sans-serif`;ctx.fillStyle='#efffff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,150,40);
  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
  const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,depthTest:false,transparent:true}));
  sprite.scale.set(1.05,.28,1);sprite.renderOrder=22;
@@ -177,7 +247,7 @@ function buildMarkers(){
   const center=new THREE.Mesh(new THREE.SphereGeometry(.029,12,10),new THREE.MeshBasicMaterial({color:0xc5fff4,depthTest:false}));
   center.renderOrder=22;node.add(center);
   const hit=new THREE.Mesh(new THREE.SphereGeometry(.17,12,10),new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthTest:false,depthWrite:false}));
-  hit.userData.partId=part.id;hit.renderOrder=23;node.add(hit);pickedTargets.push(hit);
+  hit.userData.partId=part.id;hit.userData.view=part.view||'front';hit.renderOrder=23;node.add(hit);pickedTargets.push(hit);
   const label=createNameSprite(part.name);
   label.position.set(loc[0]<0?-.73:.73,.19,0);node.add(label);
   markers.add(node);markerNodes.set(part.id,{node,halo,core,center,hit,label});
@@ -192,29 +262,29 @@ function resize(){
  camera.aspect=width/height;camera.updateProjectionMatrix();
  requestRender();
 }
-function viewIsFront(){return camera.position.z-controls.target.z>0.4;}
+function currentFacing(){return camera.position.z-controls.target.z>=0?'front':'back';}
 function requestRender(){
  if(renderRequested||!renderer||stage.hidden||destroyed)return;
  renderRequested=true;
  requestAnimationFrame(()=>{
   renderRequested=false;
   if(stage.hidden||destroyed)return;
-  const front=viewIsFront();
-  if(status)status.textContent=front?'Drag to orbit • scroll/pinch to zoom • tap markers':'Back view • rotate to the front to select markers';
-  markerNodes.forEach(({node,halo})=>{
-   node.visible=front;
+  const facing=currentFacing();
+  if(status)status.textContent=(facing==='front'?'Front':'Back')+' view • drag to orbit • pinch/scroll to zoom • tap markers';
+  markerNodes.forEach(({node,halo},id)=>{
+   node.visible=(bridge.parts.find(p=>p.id===id)?.view||'front')===facing;
    halo.quaternion.copy(camera.quaternion);
   });
   renderer.render(scene,camera);
  });
 }
 function hitTest(clientX,clientY){
- if(!renderer||stage.hidden||!viewIsFront())return null;
+ if(!renderer||stage.hidden)return null;
  const rect=renderer.domElement.getBoundingClientRect();
  if(!rect.width||!rect.height||clientX<rect.left||clientX>rect.right||clientY<rect.top||clientY>rect.bottom)return null;
  const ndc=new THREE.Vector2(((clientX-rect.left)/rect.width)*2-1,-((clientY-rect.top)/rect.height)*2+1);
  raycaster.setFromCamera(ndc,camera);
- const intersection=raycaster.intersectObjects(pickedTargets,false);
+ const intersection=raycaster.intersectObjects(pickedTargets.filter(p=>p.userData.view===currentFacing()),false);
  return intersection.length?intersection[0].object.userData.partId:null;
 }
 function onPointerDown(e){
@@ -232,6 +302,11 @@ function resetCamera(){
  camera.position.set(0,1.0,12.7);controls.target.set(0,.17,0);
  controls.update();requestRender();
 }
+function goToSide(side){
+ const distance=Math.max(6,Math.min(24,camera.position.clone().sub(controls.target).length()));
+ camera.position.set(0,controls.target.y+.5,(side==='back'?-1:1)*distance);
+ controls.update();requestRender();
+}
 function rotateCamera(delta){
  const offset=camera.position.clone().sub(controls.target);
  offset.applyAxisAngle(new THREE.Vector3(0,1,0),delta);
@@ -247,7 +322,7 @@ function zoomCamera(factor){
 function update(viewState){
  if(!renderer||!viewState)return;
  lastState=viewState;
- if(modelType!==viewState.model)buildFigure(viewState.model);
+ if(modelType!==viewState.model){buildFigure(viewState.model);loadRealModel(viewState.model);}
  showAllNames=viewState.mode==='explore'&&!!viewState.threeNames;
  const matched=new Set(viewState.matched||[]);
  const hinted=viewState.mode==='label'?(viewState.highlightId||null):viewState.mode==='missions'?(viewState.highlightId||null):null;
@@ -318,7 +393,7 @@ function setup(){
  if(observer)observer.observe(mount);
  else window.addEventListener('resize',resize);
  if(message)message.hidden=true;
- window.BodyAtlas3D={update,hitTest,resetCamera,rotateCamera,zoomCamera,ready:true};
+ window.BodyAtlas3D={update,hitTest,resetCamera,rotateCamera,zoomCamera,goToSide,ready:true};
  update(bridge.getState());
  requestAnimationFrame(resize);
 }
