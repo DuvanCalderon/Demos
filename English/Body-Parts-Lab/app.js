@@ -34,7 +34,7 @@ const MISSIONS=[
  {id:"groin",scene:"A soccer player strains the region where the lower abdomen meets the inner thigh. Locate it.",hint:"Look at the crease at the top of the inner thigh."}
 ];
 const STORAGE_KEY="body-atlas-en-v2";
-function defaults(){return {mode:"explore",model:"female",difficulty:"beginner",selected:null,explored:[],matched:[],xp:0,streak:0,labMistakes:0,labHinted:[],missionIndex:0,missionMistakes:0,missionHinted:[],missionCompleted:0,showNames:false};}
+function defaults(){return {mode:"explore",model:"female",difficulty:"beginner",selected:null,explored:[],matched:[],xp:0,streak:0,labMistakes:0,labHinted:[],missionIndex:0,missionMistakes:0,missionHinted:[],missionCompleted:0,showNames:false,view:"2d",threeNames:false};}
 function restore(){
  try{
   const raw=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");
@@ -48,6 +48,8 @@ function restore(){
   for(const k of ["xp","labMistakes","missionMistakes","missionCompleted","streak"])next[k]=Math.max(0,Number(next[k])||0);
   next.selected=BY_ID[next.selected]?next.selected:null;
   next.showNames=!!next.showNames;
+  next.threeNames=!!next.threeNames;
+  next.view=["2d","3d"].includes(next.view)?next.view:"2d";
   return next;
  }catch{return defaults();}
 }
@@ -251,9 +253,22 @@ function render(){
  document.querySelectorAll("[data-mode]").forEach(btn=>{const active=btn.dataset.mode===state.mode;btn.classList.toggle("active",active);btn.setAttribute("aria-pressed",String(active));});
  $("xpCount").textContent=String(state.xp);
  $("toggleNamesBtn").disabled=state.mode!=="explore";
- $("toggleNamesBtn").textContent=state.mode==="explore"?(state.showNames?"Hide map labels":"Show map labels"):"Labels available in Explore";
- $("stageInstruction").textContent=state.mode==="explore"?"Tap a glowing marker • discover a new word":state.mode==="label"?"Drag a label or tap a label, then tap its spot":"Read the scenario • tap the correct point";
+ $("toggleNamesBtn").textContent=state.mode==="explore"
+    ?(state.view==="3d"?(state.threeNames?"Hide 3D names":"Show 3D names"):(state.showNames?"Hide map labels":"Show map labels"))
+    :"Names available in Explore";
+ $("view2dBtn").classList.toggle("selected",state.view==="2d");
+ $("view3dBtn").classList.toggle("selected",state.view==="3d");
+ $("view2dBtn").setAttribute("aria-pressed",String(state.view==="2d"));
+ $("view3dBtn").setAttribute("aria-pressed",String(state.view==="3d"));
+ $("twoDViewport").hidden=state.view==="3d";
+ $("threeViewport").hidden=state.view!=="3d";
+ $("viewHelper").textContent=state.view==="3d"?"Orbit 360° • zoom • select anatomy markers":"Select parts on the interactive diagram";
+ $("orientationLabel").textContent=state.view==="3d"?"360° 3D VIEW":"FRONT VIEW";
+ $("stageInstruction").textContent=state.view==="3d"
+    ?(state.mode==="explore"?"Tap a 3D marker to discover a word":state.mode==="label"?"Drop a label onto a 3D marker":"Read the scenario • tap the 3D marker")
+    :(state.mode==="explore"?"Tap a glowing marker • discover a new word":state.mode==="label"?"Drag a label or tap a label, then tap its spot":"Read the scenario • tap the correct point");
  updateModel();renderSpots();renderActivity();renderGlossary();
+ if(window.BodyAtlas3D?.ready)window.BodyAtlas3D.update(window.BodyAtlasBridge.getState());
 }
 function pronounce(){
  const p=BY_ID[state.selected];
@@ -272,6 +287,7 @@ function pronounce(){
 }
 function positionGhost(x,y){ghost.style.left=x+"px";ghost.style.top=y+"px";}
 function dropTargetAt(clientX,clientY){
+ if(state.view==="3d")return window.BodyAtlas3D?.hitTest(clientX,clientY)||null;
  const ctm=svg.getScreenCTM();if(!ctm)return null;
  const point=svg.createSVGPoint();point.x=clientX;point.y=clientY;
  const mapped=point.matrixTransform(ctm.inverse());
@@ -328,9 +344,18 @@ activity.addEventListener("click",e=>{
  }
 });
 document.querySelectorAll(".mode-tab").forEach(btn=>btn.addEventListener("click",()=>setMode(btn.dataset.mode)));
+function setView(view){
+ if(!["2d","3d"].includes(view))return;
+ state.view=view;save();render();
+ if(view==="3d"&&!window.BodyAtlas3D?.ready){
+  setFeedback("info","3D is loading","The 3D view needs an internet connection for Three.js and a browser with WebGL. The 2D view always remains available.");
+ }
+}
+$("view2dBtn").addEventListener("click",()=>setView("2d"));
+$("view3dBtn").addEventListener("click",()=>setView("3d"));
 $("modelFemale").addEventListener("click",()=>changeModel("female"));
 $("modelMale").addEventListener("click",()=>changeModel("male"));
-$("toggleNamesBtn").addEventListener("click",()=>{if(state.mode!=="explore")return;state.showNames=!state.showNames;save();render();});
+$("toggleNamesBtn").addEventListener("click",()=>{if(state.mode!=="explore")return;if(state.view==="3d")state.threeNames=!state.threeNames;else state.showNames=!state.showNames;save();render();});
 $("wordSearch").addEventListener("input",renderGlossary);
 const resetDialog=$("resetDialog");
 $("resetAllBtn").addEventListener("click",()=>{if(typeof resetDialog.showModal==="function")resetDialog.showModal();else if(confirm("Erase all saved Body Atlas progress?"))resetEverything();});
@@ -340,5 +365,20 @@ function resetEverything(){
  state=defaults();armed=null;highlightId=null;errorId=null;$("wordSearch").value="";save();render();
  setFeedback("info","Fresh start!","All saved discoveries, placements, mission results, and XP have been reset.");
 }
+// Both renderers use the SAME authoritative learning state.
+window.BodyAtlasBridge=Object.freeze({
+ parts:PARTS.map(({id,name})=>({id,name})),
+ getState:()=>({
+  mode:state.mode,view:state.view,model:state.model,difficulty:state.difficulty,
+  selected:state.selected,matched:[...state.matched],armed,highlightId,errorId,
+  threeNames:state.threeNames
+ }),
+ selectSpot:id=>pickSpot(id)
+});
+window.BodyAtlas3DFailed=()=>{
+ const el=$("threeMessage");
+ el.hidden=false;el.classList.add("error");
+ el.textContent="The 3D library could not load. Check your internet connection or use the 2D lab, which works offline.";
+};
 render();
-window.BodyAtlasDiagnostics=Object.freeze({getSnapshot:()=>JSON.parse(JSON.stringify(state)),getPartCount:()=>PARTS.length,getMissionCount:()=>MISSIONS.length});
+window.BodyAtlasDiagnostics=Object.freeze({getSnapshot:()=>JSON.parse(JSON.stringify(state)),getPartCount:()=>PARTS.length,getMissionCount:()=>MISSIONS.length,getView:()=>state.view});
