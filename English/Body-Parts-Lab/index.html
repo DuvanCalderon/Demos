@@ -56,12 +56,13 @@
             <button id="view2dBtn" type="button" class="selected" aria-pressed="true">◫ &nbsp;2D diagram</button>
             <button id="view3dBtn" type="button" aria-pressed="false">⬡ &nbsp;3D interactive</button>
           </div>
-          <span class="view-helper" id="viewHelper">Select parts on the interactive diagram</span>
+          <div class="orientation-switch" role="group" aria-label="Body orientation"><button type="button" id="frontSideBtn" class="selected" aria-pressed="true">Front</button><button type="button" id="backSideBtn" aria-pressed="false">Back</button></div>
+ <span class="view-helper" id="viewHelper">Select parts on the interactive diagram</span>
         </div>
 
         <div class="visual-zone">
           <div class="visual-side left-caption">
-            <span class="guide-number">01—17</span>
+            <span class="guide-number">01—30</span>
             <span class="line-decoration"></span>
             <span>BODY PARTS</span>
           </div>
@@ -102,6 +103,26 @@
               <g id="meshOverlay" opacity="0"><path d="M116 198H304V600H116Z" fill="url(#mesh)"/></g>
               <g id="hotspots"></g>
             </svg>
+            <svg id="bodyBackSvg" viewBox="0 0 420 710" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="Interactive rear-view human silhouette" hidden>
+<defs><linearGradient id="backSkin" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#efd7c8"/><stop offset=".5" stop-color="#d6afa0"/><stop offset="1" stop-color="#c58f82"/></linearGradient></defs>
+<ellipse cx="210" cy="668" rx="113" ry="14" fill="#091426" opacity=".54"/>
+<g fill="url(#backSkin)" stroke="#eed4c5" stroke-width="1.1" stroke-opacity=".4" filter="url(#bodyShadow)">
+ <path d="M145 372 Q137 404 146 445 L151 490 Q149 515 152 549 L154 611 Q156 639 147 648 Q139 656 141 665 Q149 674 164 674 L192 674 Q202 671 198 662 L181 644 L190 608 L196 547 Q205 504 207 469 L207 395Z"/>
+ <path d="M213 395 L213 469 Q215 508 222 547 L232 609 L239 643 L223 662 Q217 672 228 675 L259 674 Q274 673 280 665 Q282 657 273 648 Q263 632 266 610 L269 546 Q272 515 270 490 L277 445 Q285 403 275 372Z"/>
+ <path d="M158 182 Q135 172 123 192 Q111 218 107 247 L92 300 Q85 324 85 345 L76 397 Q68 417 66 432 Q61 444 65 450 Q70 454 75 445 L81 431 Q78 449 84 453 Q90 456 93 441 L98 430 Q99 449 106 449 Q114 449 109 437 L106 407 L119 349 Q136 323 140 295 L159 235Z"/>
+ <path d="M262 182 Q285 172 297 192 Q310 218 314 247 L328 300 Q334 324 336 345 L344 397 Q353 417 355 432 Q361 444 356 450 Q350 454 345 445 L339 431 Q342 449 336 453 Q330 456 327 441 L322 430 Q321 449 314 449 Q306 449 311 437 L314 407 L300 349 Q284 323 280 295 L261 235Z"/>
+ <path d="M191 126 L189 159 Q168 166 154 180 Q147 198 153 223 L159 278 Q156 314 144 355 Q138 380 145 400 Q165 421 186 426 Q199 418 210 413 Q221 418 234 426 Q258 422 275 400 Q282 381 276 355 Q265 316 261 278 L267 223 Q273 197 266 180 Q251 166 230 159 L228 126Z"/>
+ <ellipse cx="210" cy="84" rx="41" ry="54"/>
+ <path d="M147 389 Q177 387 210 401 Q243 387 273 389 L271 418 Q246 433 210 414 Q175 432 150 417Z" fill="#5c6e92" opacity=".88"/>
+</g>
+<g fill="none" stroke="#906d65" stroke-width="1.5" stroke-linecap="round" opacity=".47">
+ <path d="M193 140 Q210 146 227 140 M210 151 L210 345"/>
+ <path d="M153 187 Q180 180 192 206 Q209 220 210 230 Q211 220 228 206 Q241 180 267 187"/>
+ <path d="M164 247 Q173 268 196 276 M256 247 Q245 268 224 276"/>
+ <path d="M163 334 Q184 349 201 341 M219 341 Q236 349 257 334"/>
+ <path d="M169 390 Q193 382 210 411 Q226 382 251 390"/>
+ <path d="M156 553 Q177 561 197 553 M223 553 Q244 561 266 553"/>
+</g><g id="backHotspots"></g></svg>
           </div>
           <div class="three-viewport" id="threeViewport" hidden aria-label="Interactive 3D body view">
             <div class="three-canvas" id="scene3d"></div>
@@ -138,9 +159,9 @@
         </section>
 
         <section class="discovery-card">
-          <div class="discovery-heading"><div><span class="section-kicker">WORD EXPLORER</span><h3>Vocabulary index <span id="wordCount">17</span></h3></div><span class="search-glyph">⌕</span></div>
+          <div class="discovery-heading"><div><span class="section-kicker">WORD EXPLORER</span><h3>Vocabulary index <span id="wordCount">30</span></h3></div><span class="search-glyph">⌕</span></div>
           <label class="sr-only" for="wordSearch">Find a body part</label>
-          <input type="search" id="wordSearch" placeholder="Search 17 body parts…" autocomplete="off">
+          <input type="search" id="wordSearch" placeholder="Search 30 body parts…" autocomplete="off">
           <div id="glossaryList" class="glossary-list" aria-label="Body part vocabulary"></div>
         </section>
       </aside>
