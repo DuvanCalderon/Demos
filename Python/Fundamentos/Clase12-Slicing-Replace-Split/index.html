@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101426">
+<title>Python Strings Lab · Slicing, Replace y Split</title>
+<style>
+:root{color-scheme:dark;--bg:#0c1020;--panel:#151b30;--panel2:#1c2540;--line:#303b58;--text:#edf2ff;--muted:#a5b3cf;--mint:#4fe3bd;--blue:#76a8ff;--violet:#b799fa;--amber:#ffce75;--red:#ff8b9a;--radius:18px;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 65% -25%,#222b56 0,transparent 48%),var(--bg);color:var(--text);min-height:100vh;line-height:1.55}button,input,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid var(--mint);outline-offset:3px}a{color:var(--mint)}
+.app{max-width:1250px;margin:auto;display:grid;grid-template-columns:245px minmax(0,1fr);gap:28px;padding:24px}
+.sidebar{align-self:start;position:sticky;top:24px;min-height:calc(100vh - 48px);background:#11172a;border:1px solid var(--line);border-radius:24px;padding:23px 15px}
+.brand{display:flex;align-items:center;gap:12px;padding:4px 10px 24px;font-weight:850;letter-spacing:-.3px}.logo{display:grid;place-items:center;border-radius:13px;width:42px;height:42px;background:linear-gradient(130deg,var(--mint),var(--blue));color:#061925;font-size:24px}.small{font-size:.79rem;color:var(--muted);font-weight:500}
+.menu{display:grid;gap:8px}.navbtn{background:transparent;border:1px solid transparent;color:var(--muted);padding:12px 14px;text-align:left;border-radius:12px;font-weight:650}.navbtn.active,.navbtn:hover{background:#23324b;color:white;border-color:#38526d}.sidebar-bottom{margin-top:24px;border-top:1px solid var(--line);padding:20px 10px;font-size:.85rem;color:var(--muted)}
+main{min-width:0;padding-bottom:48px}.topbar{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:4px 0 23px}.eyebrow{color:var(--mint);letter-spacing:.13em;text-transform:uppercase;font-size:.73rem;font-weight:800}.sound{background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:30px;padding:8px 13px}
+.hero{background:linear-gradient(115deg,#203a51 0%,#24204a 55%,#1a2740 100%);border:1px solid #40516e;border-radius:24px;padding:35px;position:relative;overflow:hidden}.hero:after{content:"[ : ]";position:absolute;right:-22px;bottom:-60px;transform:rotate(-13deg);font:900 150px monospace;color:#ffffff0a;pointer-events:none}h1{font-size:clamp(1.9rem,4vw,3rem);letter-spacing:-1.4px;line-height:1.12;margin:8px 0 13px}h1 span{color:var(--mint)}.hero p{color:#ced9ec;max-width:660px;margin:0 0 22px}.hero-actions{display:flex;gap:10px;flex-wrap:wrap}.btn{border:1px solid #455674;border-radius:11px;background:#2b3851;color:white;padding:11px 17px;font-weight:750;transition:transform .16s,background .16s}.btn:hover{transform:translateY(-2px);background:#364a65}.btn.primary{background:var(--mint);color:#062822;border-color:var(--mint)}.btn.primary:hover{background:#7af0d3}.btn.ghost{background:transparent}.btn.danger{border-color:#a65b6b;color:#ffc2ca}.btn:disabled{opacity:.48;cursor:not-allowed;transform:none}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:18px 0 27px}.stat,.card,.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius)}.stat{padding:18px}.stat strong{display:block;font-size:1.65rem;color:white;font-weight:850}.stat .small{font-size:.83rem}.sectionhead{display:flex;justify-content:space-between;gap:12px;align-items:end;margin:30px 0 15px}.sectionhead h2{margin:0;font-size:1.45rem;letter-spacing:-.5px}.sectionhead p{color:var(--muted);margin:4px 0 0;font-size:.95rem}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.card{padding:20px}.card h3{margin:6px 0;font-size:1.11rem}.card p{color:var(--muted);font-size:.91rem}.pill{display:inline-block;border-radius:999px;padding:4px 9px;background:#243855;color:var(--blue);font-size:.73rem;font-weight:800}.code{font:600 .94rem/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;color:#d2e6ff;background:#0a1225;border:1px solid #30405a;border-radius:12px;padding:11px 13px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}.mini{font-size:.85rem;color:var(--muted)}.hintbar{border-left:3px solid var(--mint);background:#1c3340;border-radius:0 12px 12px 0;padding:15px 18px;color:#d8f8f0;margin-top:18px}
+.view{display:none;animation:fade .2s ease}.view.active{display:block}@keyframes fade{from{opacity:.3;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.lab-tabs,.levels{display:flex;gap:9px;flex-wrap:wrap;margin:18px 0}.tab,.level{border:1px solid var(--line);background:#1d2840;color:var(--muted);padding:9px 15px;border-radius:12px;font-weight:750}.tab.active,.level.active{border-color:var(--mint);color:#0a2f28;background:var(--mint)}.grid2{display:grid;grid-template-columns:1.12fr .88fr;gap:16px}.panel{padding:23px}.panel h3{margin:0 0 6px}.field{margin:13px 0}.field label{font-size:.84rem;color:#c9d5ed;display:block;margin-bottom:7px;font-weight:750}.field input,.field textarea{background:#0c1428;border:1px solid #40506e;border-radius:10px;padding:11px 12px;color:white;width:100%;min-width:0}.field textarea{min-height:86px;resize:vertical}.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.fields.two{grid-template-columns:repeat(2,minmax(0,1fr))}.laboptions{margin-top:10px}.laboptions[hidden]{display:none}.charwrap{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 8px}.char{width:42px;min-height:65px;border:1px solid #485773;border-radius:9px;display:grid;grid-template-rows:18px 24px 18px;align-items:center;justify-items:center;background:#202a42;font:700 1rem ui-monospace,Consolas,monospace;transition:.17s}.char.selected{background:#1c665c;border-color:var(--mint);box-shadow:0 0 0 1px var(--mint)}.char .idx{font:600 .65rem ui-monospace,monospace;color:#9eafd1}.char .symbol{color:white}.char.selected .idx{color:#c9fff1}.char .neg{font:500 .65rem ui-monospace,monospace;color:#a1a9be}.output{background:#081b20;border:1px solid #347769;padding:16px 17px;border-radius:12px;color:#9bf4d8;font:600 1rem/1.7 ui-monospace,Consolas,monospace;overflow-wrap:anywhere;min-height:65px;white-space:pre-wrap}.status{min-height:24px;font-size:.9rem;color:var(--muted);margin:8px 0}.status.bad{color:var(--red)}.status.good{color:var(--mint)}.callout{color:#cbd6ed;background:#18243b;padding:14px 17px;border-radius:12px;margin-top:14px}
+.progress-track{height:10px;background:#2a354c;border-radius:20px;overflow:hidden}.progress-fill{background:linear-gradient(90deg,var(--mint),var(--blue));height:100%;width:0;transition:width .35s}.quiz-header{display:flex;gap:15px;justify-content:space-between;flex-wrap:wrap;align-items:center;margin:17px 0}.quiz-card{padding:28px;background:var(--panel);border:1px solid var(--line);border-radius:20px}.meta{color:var(--muted);font-size:.83rem}.question{font-size:1.25rem;font-weight:800;margin:12px 0}.quiz-code{font-size:1rem}.answer-row{display:flex;gap:10px;margin-top:15px}.answer-row input{flex:1;min-width:0;background:#0b1427;border:1px solid #4e6080;padding:13px;border-radius:10px;color:white}.feedback{padding:13px 15px;border-radius:10px;margin-top:14px;background:#213148;border:1px solid #3c536d}.feedback.good{border-color:#3e9d83;background:#153e37}.feedback.bad{border-color:#a96677;background:#4e2538}.feedback[hidden]{display:none}.quiz-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.hidden{display:none!important}
+details{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:15px 18px;margin:11px 0}summary{font-weight:800;cursor:pointer}details p{color:var(--muted)}footer{margin-top:40px;color:var(--muted);font-size:.83rem;border-top:1px solid var(--line);padding-top:15px}
+@media(max-width:900px){.app{grid-template-columns:1fr;padding:14px}.sidebar{min-height:unset;position:static;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px}.brand{padding:0}.menu{display:flex;flex-wrap:wrap}.navbtn{padding:8px 10px}.sidebar-bottom{display:none}.grid2{grid-template-columns:1fr}.hero{padding:28px}}
+@media(max-width:610px){.sidebar{display:block}.brand{padding:0 0 10px}.menu{display:grid;grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr);gap:6px}.stat{padding:11px}.stat strong{font-size:1.2rem}.stat .small{font-size:.71rem}.hero{padding:21px}.panel,.quiz-card{padding:16px}.fields{grid-template-columns:repeat(2,minmax(0,1fr))}.answer-row{flex-direction:column}.char{width:35px;min-height:60px}.topbar{align-items:flex-start}.sectionhead{display:block}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" aria-label="Navegación">
+<div class="brand"><span class="logo">🐍</span><div>Python Strings Lab<div class="small">Clase 12 · Fundamentos</div></div></div>
+<nav class="menu">
+<button class="navbtn active" data-view="inicio">🏠 Inicio</button>
+<button class="navbtn" data-view="lab">🧪 Laboratorio</button>
+<button class="navbtn" data-view="retos">🎯 Retos</button>
+<button class="navbtn" data-view="guia">📖 Guía rápida</button>
+</nav>
+<div class="sidebar-bottom">Aprende haciendo. Todo funciona sin instalar Python ni conectarte a internet.<p>El progreso se guarda en este navegador.</p></div>
+</aside>
+<main>
+<div class="topbar"><div class="eyebrow">Python / Manipulación de strings</div><button id="soundBtn" class="sound" aria-pressed="false">🔇 Sonido apagado</button></div>
+<section id="inicio" class="view active">
+<div class="hero"><div class="eyebrow">Tu laboratorio interactivo</div><h1>Domina los <span>strings</span> sin memorizar a ciegas.</h1><p>Observa qué carácter toma Python, transforma textos como en un proyecto real y resuelve retos que corrigen tus respuestas. Los corchetes ya no serán un misterio.</p><div class="hero-actions"><button class="btn primary" data-go="lab">Abrir laboratorio →</button><button class="btn ghost" data-go="retos">Practicar con retos</button></div></div>
+<div class="stats"><div class="stat"><strong id="statDone">0/18</strong><span class="small">Retos superados</span></div><div class="stat"><strong id="statScore">0</strong><span class="small">Puntos ganados</span></div><div class="stat"><strong id="statRate">0%</strong><span class="small">Dominio total</span></div></div>
+<div class="sectionhead"><div><h2>Cuatro ideas que vas a dominar</h2><p>Cada concepto tiene un laboratorio con resultados inmediatos.</p></div></div>
+<div class="cards">
+<div class="card"><span class="pill">01 · Extraer</span><h3>Slicing [inicio:fin:paso]</h3><p>Como recortar una foto: eliges dónde empezar, dónde terminar y si saltas posiciones.</p><div class="code">"Python"[1:4] → "yth"</div></div>
+<div class="card"><span class="pill">02 · Cambiar</span><h3>replace()</h3><p>Reemplaza coincidencias en una copia del texto. La cadena original no cambia.</p><div class="code">"hola".replace("o","0") → "h0la"</div></div>
+<div class="card"><span class="pill">03 · Separar</span><h3>split()</h3><p>Convierte una oración o un CSV en una lista de partes, usando un separador.</p><div class="code">"a,b".split(",") → ['a', 'b']</div></div>
+</div>
+<div class="hintbar"><strong>🧠 La idea central:</strong> un string es una secuencia de caracteres con posiciones que comienzan en 0. El índice final de un slice <strong>no se incluye</strong>.</div>
+</section>
+<section id="lab" class="view">
+<div class="sectionhead"><div><h2>🧪 Laboratorio de strings</h2><p>Cambia valores, mira los índices y compara el resultado con lo que predijiste.</p></div></div>
+<div class="lab-tabs" aria-label="Herramientas"><button class="tab active" data-lab="slice">✂️ Slicing</button><button class="tab" data-lab="replace">🔁 Replace</button><button class="tab" data-lab="split">🧩 Split</button><button class="tab" data-lab="search">🔎 Lower + in</button></div>
+<div class="grid2">
+<div class="panel">
+<h3 id="labTitle">Selecciona caracteres</h3><div class="mini" id="labSub">Prueba [inicio:fin:paso]. Los campos vacíos tienen significado.</div>
+<div class="field"><label for="sourceText">Tu texto de ejemplo</label><textarea id="sourceText" spellcheck="false">Aprende Python</textarea></div>
+<div class="laboptions" id="optSlice"><div class="fields"><div class="field"><label for="sliceStart">Inicio</label><input id="sliceStart" type="number" value="0" placeholder="omitido"></div><div class="field"><label for="sliceEnd">Fin (excluido)</label><input id="sliceEnd" type="number" value="7" placeholder="omitido"></div><div class="field"><label for="sliceStep">Paso</label><input id="sliceStep" type="number" value="1" placeholder="1"></div></div></div>
+<div class="laboptions" id="optReplace" hidden><div class="fields"><div class="field"><label for="oldText">Buscar</label><input id="oldText" value="Python"></div><div class="field"><label for="newText">Reemplazar por</label><input id="newText" value="JavaScript"></div><div class="field"><label for="replaceCount">Máximo (vacío=todas)</label><input id="replaceCount" type="number" min="0" placeholder="Todas"></div></div></div>
+<div class="laboptions" id="optSplit" hidden><div class="fields two"><div class="field"><label for="splitSep">Separador (vacío=espacios)</label><input id="splitSep" placeholder="split()"></div><div class="field"><label for="splitMax">Máximo de cortes</label><input id="splitMax" type="number" min="0" placeholder="Todos"></div></div></div>
+<div class="laboptions" id="optSearch" hidden><div class="field"><label for="searchText">Palabra que quieres encontrar</label><input id="searchText" value="python"></div></div>
+<div class="quiz-actions"><button class="btn" id="sampleBtn">🎲 Otro ejemplo</button><button class="btn ghost" id="resetLabBtn">↺ Restaurar ejemplo</button></div>
+</div>
+<div class="panel">
+<h3>Vista de Python</h3><div class="mini">Arriba: índice positivo. Abajo: índice negativo.</div><div id="charGrid" class="charwrap" aria-label="Caracteres indexados"></div>
+<div class="mini">Expresión equivalente en Python</div><pre id="pythonCode" class="code"></pre>
+<div class="mini">Resultado</div><div id="labOutput" class="output" aria-live="polite"></div><div id="labStatus" class="status" aria-live="polite"></div><div class="callout" id="labExplain"></div>
+</div>
+</div>
+</section>
+<section id="retos" class="view">
+<div class="sectionhead"><div><h2>🎯 Misión: dominar los strings</h2><p>18 retos originales. Las respuestas permanecen ocultas hasta que respondas o pidas solución.</p></div></div>
+<div class="levels"><button class="level active" data-level="basico">🟢 Básico</button><button class="level" data-level="intermedio">🟡 Intermedio</button><button class="level" data-level="avanzado">🔴 Avanzado</button></div>
+<div class="quiz-header"><div><span class="meta" id="questionCounter">Reto 1 de 6</span><div id="levelProgress" class="mini">0/6 superados en este nivel</div></div><div style="min-width:170px;flex:1;max-width:330px"><div class="progress-track"><div id="progressFill" class="progress-fill"></div></div></div></div>
+<div class="quiz-card">
+<div class="eyebrow" id="quizKind">Predice la salida</div><div class="question" id="questionTitle"></div><div class="code quiz-code" id="questionCode"></div><p class="mini" id="questionInfo"></p>
+<form id="answerForm" class="answer-row" autocomplete="off"><input id="answer" aria-label="Tu respuesta" placeholder="Escribe tu respuesta..." spellcheck="false"><button type="submit" class="btn primary">Comprobar ✓</button></form>
+<div id="feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+<div class="quiz-actions"><button class="btn" id="hintBtn">💡 Pista</button><button class="btn" id="solutionBtn">👁 Mostrar solución</button><button class="btn" id="repeatBtn">↺ Reintentar</button><button class="btn primary" id="nextBtn">Siguiente →</button></div>
+<div class="mini" style="margin-top:14px">+10 puntos por reto perfecto, +7 o +4 si usas pistas. Las soluciones reveladas no suman puntos.</div>
+</div>
+<div class="quiz-actions" style="justify-content:space-between;margin-top:20px"><button class="btn" id="firstBtn">⟵ Primer reto</button><button class="btn danger" id="resetProgressBtn">🗑 Reiniciar todo el progreso</button></div>
+</section>
+<section id="guia" class="view">
+<div class="sectionhead"><div><h2>📖 Guía rápida y trampas comunes</h2><p>Las reglas precisas que conviene recordar antes de un examen.</p></div></div>
+<details open><summary>1. Los índices comienzan en cero</summary><p>Si texto = "Hola", texto[0] vale "H" y texto[-1] vale "a". Los espacios y símbolos también cuentan. Un índice fuera del rango en acceso individual lanza IndexError.</p></details>
+<details><summary>2. El límite derecho del slicing no se incluye</summary><p>texto[1:4] devuelve posiciones 1, 2 y 3. Los slices fuera de rango se recortan sin error. texto[:3] empieza en 0 y texto[3:] continúa hasta el final.</p></details>
+<details><summary>3. Los pasos negativos invierten el recorrido</summary><p>texto[::-1] devuelve el texto invertido. El paso no puede ser 0 (ValueError). Con paso negativo, el índice inicial suele ser mayor que el final.</p></details>
+<details><summary>4. replace() distingue mayúsculas y no cambia el original</summary><p>texto.replace("a","o") devuelve otra cadena. Con replace("a","o",1) sustituyes como máximo una coincidencia. Los strings son inmutables.</p></details>
+<details><summary>5. split() no es igual que split(" ")</summary><p>" a   b ".split() produce ['a','b'] porque ignora espacios iniciales y agrupa separadores en blanco. En cambio, split(" ") conserva elementos vacíos cuando hay espacios consecutivos.</p></details>
+<details><summary>6. lower() antes de buscar</summary><p>Python diferencia "Python" de "python". Para una búsqueda insensible a mayúsculas común: buscado.lower() in texto.lower(). lower() devuelve un nuevo string, no modifica texto.</p></details>
+<details><summary>7. ¿Esta página ejecuta Python de verdad?</summary><p>No. El laboratorio simula estos métodos con JavaScript, reproduciendo sus reglas para los casos de la lección. Los retos de expresión aceptan una sintaxis limitada y segura, no código Python arbitrario. No se requiere instalar librerías.</p></details>
+<div class="hintbar"><strong>Mini técnica Feynman:</strong> explícale a alguien por qué "abc"[0:2] vale "ab" y no "abc". Si puedes explicarlo sin mirar, ya aprendiste lo esencial.</div>
+</section>
+<footer>Python Strings Lab · Recurso educativo independiente, basado en los temas de la clase 12 de Fundamentos de Python de Platzi. <a href="https://platzi.com/cursos/fundamentos-python/slicing-replace-y-split-para-manipular-s/" target="_blank" rel="noopener noreferrer">Ver clase original</a>.</footer>
+</main>
+</div>
+<script>
+"use strict";
+(function(){
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const chars = s => Array.from(s);
+const pyQuote = s => "'" + String(s).replace(/\\/g,"\\\\").replace(/'/g,"\\'").replace(/\n/g,"\\n").replace(/\t/g,"\\t") + "'";
+const repr = x => Array.isArray(x)?"["+x.map(repr).join(", ")+"]":typeof x==="string"?pyQuote(x):typeof x==="boolean"?(x?"True":"False"):String(x);
+function sliceIndices(n,start,stop,step){
+if(step===0)throw Error("ValueError: el paso no puede ser 0.");
+const forward=step>0;
+let a=start===null?(forward?0:n-1):start;
+let b=stop===null?(forward?n:-1):stop;
+if(start!==null){if(a<0)a+=n;a=Math.max(forward?0:-1,Math.min(a,forward?n:n-1));}
+if(stop!==null){if(b<0)b+=n;b=Math.max(forward?0:-1,Math.min(b,forward?n:n-1));}
+const out=[];
+if(forward){for(let i=a;i<b;i+=step)out.push(i)}
+else{for(let i=a;i>b;i+=step)out.push(i)}
+return out;
+}
+function pySlice(text,a,b,step){const cs=chars(text);return sliceIndices(cs.length,a,b,step).map(i=>cs[i]).join("")}
+function pyIndex(text,n){const cs=chars(text);const i=n<0?n+cs.length:n;if(i<0||i>=cs.length)throw Error("IndexError: índice fuera de rango");return cs[i]}
+function pyReplace(text,oldValue,newValue,max=-1){
+if(max===0)return text;
+if(oldValue===""){const a=chars(text);let out="",used=0;for(let i=0;i<=a.length;i++){if(max<0||used<max){out+=newValue;used++}if(i<a.length)out+=a[i]}return out}
+let out="",pos=0,used=0;while(max<0||used<max){const at=text.indexOf(oldValue,pos);if(at<0)break;out+=text.slice(pos,at)+newValue;pos=at+oldValue.length;used++}return out+text.slice(pos)
+}
+function pySplit(text,sep=null,max=-1){
+if(sep===null){const t=text.trim();if(!t)return [];const words=t.split(/\s+/u);if(max<0)return words;if(max===0)return [text.trimStart().replace(/\s+$/u,"")];if(words.length<=max+1)return words;return words.slice(0,max).concat([words.slice(max).join(" ")])}
+if(sep==="")throw Error("ValueError: separador vacío");
+if(max===0)return [text];
+const out=[];let pos=0;while(max<0||out.length<max){const i=text.indexOf(sep,pos);if(i<0)break;out.push(text.slice(pos,i));pos=i+sep.length}out.push(text.slice(pos));return out;
+}
+const navs=Array.from(document.querySelectorAll(".navbtn"));
+function go(view){document.querySelectorAll(".view").forEach(n=>n.classList.toggle("active",n.id===view));navs.forEach(b=>b.classList.toggle("active",b.dataset.view===view));window.scrollTo({top:0,behavior:"smooth"})}
+navs.forEach(b=>b.addEventListener("click",()=>go(b.dataset.view)));
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+let soundOn=false,audioCtx=null;
+$("soundBtn").addEventListener("click",()=>{soundOn=!soundOn;$("soundBtn").textContent=soundOn?"🔊 Sonido activado":"🔇 Sonido apagado";$("soundBtn").setAttribute("aria-pressed",String(soundOn))});
+function sound(ok){if(!soundOn)return;try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;audioCtx=audioCtx||new C();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type="sine";o.frequency.value=ok?660:220;g.gain.setValueAtTime(.05,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.16);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.18)}catch(e){}}
+const modes=["slice","replace","split","search"];let mode="slice",sample=0;
+const sampleData={slice:[["Aprende Python","0","7","1"],["abcdefg","","","2"],["Python","","","-1"],["Hola mundo","-5","","1"]],replace:[["Python es genial. Python es útil.","Python","JavaScript",""],["banana","a","@", "2"],["Rojo rojo ROJO","rojo","azul",""]],split:[["manzana,pera,mango",",",""],["  hola   mundo  ","",""],["a::b::c","::","1"]],search:[["Aprende PYTHON hoy","python"],["JavaScript y Python","java"],["Escuela de datos","DATOS"]]};
+function resetLab(){sample=0;applySample(0)}
+function applySample(i){const a=sampleData[mode][i%sampleData[mode].length];$("sourceText").value=a[0];if(mode==="slice"){$("sliceStart").value=a[1];$("sliceEnd").value=a[2];$("sliceStep").value=a[3]}if(mode==="replace"){$("oldText").value=a[1];$("newText").value=a[2];$("replaceCount").value=a[3]}if(mode==="split"){$("splitSep").value=a[1];$("splitMax").value=a[2]}if(mode==="search")$("searchText").value=a[1];renderLab()}
+function switchMode(m){mode=m;document.querySelectorAll("[data-lab]").forEach(b=>b.classList.toggle("active",b.dataset.lab===m));modes.forEach(x=>$("opt"+x[0].toUpperCase()+x.slice(1)).hidden=x!==m);const labels={slice:["Selecciona caracteres","Experimenta con inicio, fin exclusivo y paso."],replace:["Cambia palabras al instante","Observa cuántas coincidencias se reemplazan."],split:["Convierte texto en listas","Descubre qué hace split() con los espacios."],search:["Encuentra texto sin importar mayúsculas","Usa lower() + in para comparar sin distinguir el caso."]};$("labTitle").textContent=labels[m][0];$("labSub").textContent=labels[m][1];resetLab()}
+document.querySelectorAll("[data-lab]").forEach(b=>b.addEventListener("click",()=>switchMode(b.dataset.lab)));
+$("sampleBtn").addEventListener("click",()=>{sample++;applySample(sample)});$("resetLabBtn").addEventListener("click",resetLab);
+["sourceText","sliceStart","sliceEnd","sliceStep","oldText","newText","replaceCount","splitSep","splitMax","searchText"].forEach(id=>$(id).addEventListener("input",renderLab));
+function intField(id,def){const v=$(id).value.trim();if(v==="")return def;const n=Number(v);if(!Number.isSafeInteger(n))throw Error("Escribe un número entero válido.");return n}
+function renderLab(){
+const text=$("sourceText").value;let code="",value="",desc="",error="",selected=[],showGrid=mode==="slice";
+try{
+if(mode==="slice"){const a=intField("sliceStart",null),b=intField("sliceEnd",null),s=intField("sliceStep",1);selected=sliceIndices(chars(text).length,a,b,s);value=pySlice(text,a,b,s);code="texto = "+repr(text)+"\ntexto["+(a===null?"":a)+":"+(b===null?"":b)+(s===1?"":":"+s)+"]";desc="Se seleccionaron "+selected.length+" caracteres. El límite final no se incluye, y los índices negativos se cuentan desde el final."}
+if(mode==="replace"){const old=$("oldText").value,nw=$("newText").value,count=intField("replaceCount",-1);if(count<0&&$("replaceCount").value.trim()!=="")throw Error("El límite debe ser 0 o mayor.");value=pyReplace(text,old,nw,count);code="texto = "+repr(text)+"\ntexto.replace("+repr(old)+", "+repr(nw)+(count<0?"":", "+count)+")";desc="replace() devuelve un string nuevo. Distingue mayúsculas y minúsculas; el texto original no se modifica."}
+if(mode==="split"){const sep=$("splitSep").value||null,count=intField("splitMax",-1);if(count<0&&$("splitMax").value.trim()!=="")throw Error("El número de cortes debe ser 0 o mayor.");value=pySplit(text,sep,count);code="texto = "+repr(text)+"\ntexto.split("+(sep===null?"":repr(sep)+(count<0?"":", "+count))+")";desc=sep===null?"Sin separador explícito, Python agrupa espacios y omite los extremos.":"Con separador explícito, los espacios y elementos vacíos se conservan."}
+if(mode==="search"){const word=$("searchText").value;value=text.toLowerCase().includes(word.toLowerCase());code="texto = "+repr(text)+"\nbuscado = "+repr(word)+"\nbuscado.lower() in texto.lower()";desc="Se normalizan ambas cadenas a minúsculas antes de buscar. Los métodos no alteran el texto original."}
+}catch(e){error=e.message||String(e)}
+$("pythonCode").textContent=code||"Corrige los parámetros para obtener un resultado.";$("labOutput").textContent=error?"⚠ "+error:repr(value);$("labExplain").textContent=error?"Revisa los valores introducidos.":desc;$("labStatus").textContent=error?"Parámetros no válidos.":"✓ Resultado actualizado al escribir.";$("labStatus").className="status "+(error?"bad":"good");
+$("charGrid").innerHTML="";
+if(showGrid){chars(text).forEach((c,i)=>{const el=document.createElement("div");el.className="char"+(selected.includes(i)?" selected":"");el.innerHTML='<span class="idx">'+i+'</span><span class="symbol">'+(c===" "?"␣":c==="\n"?"↵":esc(c))+'</span><span class="neg">'+(i-chars(text).length)+'</span>';$("charGrid").appendChild(el)})}
+else{$("charGrid").innerHTML='<div class="mini">Los índices se destacan cuando eliges la pestaña Slicing.</div>'}
+}
+const questions=[
+{id:"b1",level:"basico",kind:"pred",title:"¿Cuál es la primera letra?",code:'texto = "Python"\nprint(texto[0])',expected:"P",explain:"En Python el primer índice es 0.",hints:["Cuenta desde cero, no desde uno.","La posición 0 contiene la P."]},
+{id:"b2",level:"basico",kind:"pred",title:"¿Qué contiene este slice?",code:'texto = "Python"\nprint(texto[1:4])',expected:"yth",explain:"Se incluyen las posiciones 1, 2 y 3. La 4 queda fuera.",hints:["El índice de inicio sí está incluido.","Mira las letras de las posiciones 1 a 3."]},
+{id:"b3",level:"basico",kind:"pred",title:"Viaja al final del string",code:'texto = "Python"\nprint(texto[-1])',expected:"n",explain:"El índice -1 representa el último carácter.",hints:["Los negativos empiezan a contar por la derecha.","-1 es el carácter final."]},
+{id:"b4",level:"basico",kind:"pred",title:"Inicio omitido",code:'texto = "Python"\nprint(texto[:3])',expected:"Pyt",explain:"Sin inicio se parte de 0. El fin 3 se excluye.",hints:["El inicio vacío equivale al comienzo.","Toma las posiciones 0, 1 y 2."]},
+{id:"b5",level:"basico",kind:"pred",title:"Reemplazo en un texto",code:'texto = "hola"\nprint(texto.replace("o", "0"))',expected:"h0la",explain:"replace devuelve una cadena nueva con las coincidencias modificadas.",hints:["La o minúscula se sustituye por el dígito 0.","Solo hay una o."]},
+{id:"b6",level:"basico",kind:"pred",title:"De oración a lista",code:'texto = "hola mundo"\nprint(texto.split(" "))',expected:["hola","mundo"],explain:'split(" ") corta en cada espacio y genera una lista con dos elementos.',hints:["La salida es una lista, no un string.","Escribe ['hola', 'mundo'] o [\"hola\", \"mundo\"]."]},
+{id:"i1",level:"intermedio",kind:"pred",title:"Un corte en medio",code:'texto = "Aprende Python"\nprint(texto[3:7])',expected:"ende",explain:"Las posiciones 3, 4, 5 y 6 forman 'ende'.",hints:["Recuerda contar la A como posición 0.","El 7 no se incluye."]},
+{id:"i2",level:"intermedio",kind:"pred",title:"Los cuatro últimos caracteres",code:'texto = "programacion"\nprint(texto[-4:])',expected:"cion",explain:"-4 marca el cuarto carácter desde el final; sin fin, llega hasta el último.",hints:["Cuenta cuatro posiciones hacia la izquierda desde el final.","Toma el sufijo de cuatro letras."]},
+{id:"i3",level:"intermedio",kind:"pred",title:"Saltando de dos en dos",code:'texto = "abcdefg"\nprint(texto[::2])',expected:"aceg",explain:"El paso 2 selecciona índices 0, 2, 4 y 6.",hints:["El tercer valor entre corchetes es el paso.","Empieza por a, luego c, luego e."]},
+{id:"i4",level:"intermedio",kind:"pred",title:"Un solo reemplazo",code:'texto = "banana"\nprint(texto.replace("a", "@", 1))',expected:"b@nana",explain:"El argumento 1 reemplaza únicamente la primera aparición.",hints:["El tercer argumento limita las sustituciones.","Solo cambia la primera a."]},
+{id:"i5",level:"intermedio",kind:"pred",title:"Espacios consecutivos",code:'texto = "  hola   mundo  "\nprint(texto.split())',expected:["hola","mundo"],explain:"split() sin parámetros agrupa espacios consecutivos y descarta los bordes.",hints:["No es lo mismo split() que split(' ').","No aparecen elementos vacíos."]},
+{id:"i6",level:"intermedio",kind:"code",title:"Construye la separación",code:'texto = "desarrollo-web"\n# Objetivo: ["desarrollo", "web"]',expected:["desarrollo","web"],input:"texto.split('-')",explain:"Hay que cortar en el guion usando texto.split('-').",hints:["Usa el método split.","El separador es '-'."]},
+{id:"a1",level:"avanzado",kind:"pred",title:"Invierte la cadena",code:'texto = "Python"\nprint(texto[::-1])',expected:"nohtyP",explain:"El paso -1 recorre de derecha a izquierda.",hints:["Un paso de -1 invierte el recorrido.","Empieza por la n y termina por la P."]},
+{id:"a2",level:"avanzado",kind:"code",title:"Limpia espacios al separar",code:'texto = "  ANA   María  "\n# Objetivo: ["ANA", "María"]',expected:["ANA","María"],input:"texto.split()",explain:"split() sin argumentos ignora los espacios repetidos y extremos.",hints:["Si escribes split(' '), aparecerán elementos vacíos.","No pases ningún separador."]},
+{id:"a3",level:"avanzado",kind:"pred",title:"Limita cuántas veces separas",code:'texto = "a,b,c,d"\nprint(texto.split(",", 2))',expected:["a","b","c,d"],explain:"maxsplit=2 hace dos cortes: el resto queda unido.",hints:["El argumento 2 no es número de elementos, sino de cortes.","Obtendrás tres elementos."]},
+{id:"a4",level:"avanzado",kind:"pred",title:"Encadena dos operaciones",code:'texto = "BANANA"\nprint(texto.replace("A", "a").lower())',expected:"banana",explain:"Primero cambia las A mayúsculas y luego reduce todas las letras a minúsculas.",hints:["replace distingue el caso de las letras.","lower() deja la palabra completamente en minúsculas."]},
+{id:"a5",level:"avanzado",kind:"code",title:"Normaliza un texto para guardarlo",code:'texto = "BIENVENIDO"\n# Objetivo: "bienvenido"',expected:"bienvenido",input:"texto.lower()",explain:"lower() devuelve la copia en minúsculas.",hints:["No necesitas recorrer letra por letra.","Usa el método lower()."]},
+{id:"a6",level:"avanzado",kind:"pred",title:"Búsqueda sin distinguir mayúsculas",code:'texto = "Aprende PYTHON hoy"\nbuscado = "python"\nprint(buscado.lower() in texto.lower())',expected:true,explain:"Al usar lower() a ambos lados, python está contenido en el texto. Devuelve True.",hints:["Sin normalizar, 'python' y 'PYTHON' son diferentes.","Las dos cadenas terminan en minúsculas."]}
+];
+const STORAGE="strings-lab-clase12-v1";let progress={};
+try{const s=JSON.parse(localStorage.getItem(STORAGE)||"{}");if(s&&typeof s==="object"&&!Array.isArray(s))progress=s}catch(e){}
+function persist(){try{localStorage.setItem(STORAGE,JSON.stringify(progress))}catch(e){}}
+function updateStats(){const good=questions.filter(q=>progress[q.id]&&progress[q.id].points>0);const score=good.reduce((n,q)=>n+progress[q.id].points,0);$("statDone").textContent=good.length+"/18";$("statScore").textContent=score;$("statRate").textContent=Math.round(good.length/18*100)+"%"}
+let level="basico",idx=0,hints=0,attempts=0,solved=false;
+const levelQs=()=>questions.filter(q=>q.level===level);
+const current=()=>levelQs()[idx];
+function renderQ(){const q=current();hints=0;attempts=0;solved=false;$("questionCounter").textContent="Reto "+(idx+1)+" de 6";$("quizKind").textContent=q.kind==="code"?"Escribe la expresión Python":"Predice la salida de Python";$("questionTitle").textContent=q.title;$("questionCode").textContent=q.code;$("questionInfo").textContent=q.kind==="code"?"Escribe una expresión que utilice la variable texto y produzca exactamente el objetivo.":"Escribe la salida, sin comillas externas si es texto. Para listas, usa [..]; para booleanos, True o False.";$("answer").value="";$("answer").placeholder=q.kind==="code"?"Ejemplo: texto.split(',')":"Escribe tu respuesta...";$("feedback").hidden=true;$("feedback").textContent="";$("hintBtn").disabled=false;$("hintBtn").textContent="💡 Pista";$("solutionBtn").disabled=false;$("nextBtn").textContent=idx===5?"Volver al primer reto ↻":"Siguiente →";refreshLevel()}
+function refreshLevel(){const n=levelQs().filter(q=>progress[q.id]&&progress[q.id].points>0).length;$("levelProgress").textContent=n+"/6 superados en este nivel";$("progressFill").style.width=(n/6*100)+"%";updateStats()}
+function setLevel(l){level=l;idx=0;document.querySelectorAll("[data-level]").forEach(b=>b.classList.toggle("active",b.dataset.level===l));renderQ()}
+document.querySelectorAll("[data-level]").forEach(b=>b.addEventListener("click",()=>setLevel(b.dataset.level)));
+function compare(a,b){return JSON.stringify(a)===JSON.stringify(b)}
+function normalizeAnswer(raw,q){const s=raw.trim();if(q.kind==="code")return evalAllowed(q,s);if(Array.isArray(q.expected)){if(!s.startsWith("[")||!s.endsWith("]"))throw Error("Escribe una lista entre corchetes, por ejemplo ['a', 'b'].");const center=s.slice(1,-1).trim();if(center==="")return [];const re=/\s*(['"])((?:\\.|(?!\1)[^\\])*)\1\s*(?:,|$)/gy;const out=[];let pos=0;while(pos<center.length){re.lastIndex=pos;const m=re.exec(center);if(!m)throw Error("Usa comillas para cada elemento y separa con comas.");out.push(m[2].replace(/\\(['"\\])/g,"$1"));pos=re.lastIndex}return out}
+if(typeof q.expected==="boolean"){if(!/^(true|false)$/i.test(s))throw Error("Responde True o False.");return s.toLowerCase()==="true"}
+return s.replace(/^(['"])(.*)\1$/s,"$2");
+}
+function evalAllowed(q,expr){
+const source=q.code.match(/texto = "([^"]*)"/);if(!source)throw Error("No pude leer el texto del ejercicio.");const t=source[1];let m;
+if((m=/^texto\s*\[\s*(-?\d*)\s*:\s*(-?\d*)\s*(?::\s*(-?\d*)\s*)?\]$/.exec(expr)))return pySlice(t,m[1]===""?null:Number(m[1]),m[2]===""?null:Number(m[2]),m[3]===undefined||m[3]===""?1:Number(m[3]));
+if((m=/^texto\s*\[\s*(-?\d+)\s*\]$/.exec(expr)))return pyIndex(t,Number(m[1]));
+if((m=/^texto\.split\(\s*(?:(['"])(.*?)\1\s*(?:,\s*(\d+)\s*)?)?\)$/.exec(expr)))return pySplit(t,m[1]===undefined?null:m[2],m[3]===undefined?-1:Number(m[3]));
+if((m=/^texto\.replace\(\s*(['"])(.*?)\1\s*,\s*(['"])(.*?)\3\s*(?:,\s*(\d+)\s*)?\)$/.exec(expr)))return pyReplace(t,m[2],m[4],m[5]===undefined?-1:Number(m[5]));
+if(/^texto\.lower\(\s*\)$/.test(expr))return t.toLowerCase();
+throw Error("Usa una expresión permitida: texto[...], texto.split(...), texto.replace(...) o texto.lower(). No se ejecuta Python arbitrario.");
+}
+function showFeedback(kind,msg){const f=$("feedback");f.hidden=false;f.className="feedback "+kind;f.textContent=msg}
+$("answerForm").addEventListener("submit",e=>{e.preventDefault();const q=current();const raw=$("answer").value;if(!raw.trim()){showFeedback("bad","Escribe una respuesta antes de comprobar.");return}attempts++;try{const answer=normalizeAnswer(raw,q);if(compare(answer,q.expected)){solved=true;const previous=progress[q.id]?.points||0;const points=previous||Math.max(4,10-hints*3);if(!previous){progress[q.id]={points};persist()}refreshLevel();showFeedback("good","✅ ¡Correcto! "+q.explain+(previous?" Ya habías completado este reto.":" +"+points+" puntos."));sound(true)}else{showFeedback("bad","❌ Aún no. Revisa los índices, el separador o el tipo de salida. Usa una pista si la necesitas.");sound(false)}}catch(err){showFeedback("bad","⚠ "+err.message)}});
+$("hintBtn").addEventListener("click",()=>{const q=current();hints=Math.min(2,hints+1);$("hintBtn").disabled=hints>=2;$("hintBtn").textContent=hints>=2?"Pistas agotadas":"💡 Otra pista";showFeedback("", "💡 Pista "+hints+"/2: "+q.hints[hints-1])});
+$("solutionBtn").addEventListener("click",()=>{const q=current();const value=q.kind==="code"?q.input:repr(q.expected);showFeedback("","👁 Solución: "+value+". "+q.explain+" (Revelar la respuesta no suma puntos).");$("solutionBtn").disabled=true});
+$("repeatBtn").addEventListener("click",renderQ);
+$("nextBtn").addEventListener("click",()=>{idx=(idx+1)%6;renderQ()});
+$("firstBtn").addEventListener("click",()=>{idx=0;renderQ()});
+$("resetProgressBtn").addEventListener("click",()=>{if(!window.confirm("¿Eliminar todos los puntos y retos completados de esta página?"))return;progress={};persist();renderQ();showFeedback("","Progreso reiniciado. Puedes comenzar otra vez.")});
+switchMode("slice");renderQ();updateStats();
+})();
+</script>
+</body>
+</html>
