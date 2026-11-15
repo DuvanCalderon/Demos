@@ -30,7 +30,12 @@ let renderer, scene, camera, controls, figure, markers, raycaster, pointer;
 let pickedTargets = [], markerNodes = new Map(), materialSkin, modelType = null;
 let lastState, showAllNames = false, renderRequested = false, destroyed = false;
 let activeReal = null, loadingToken=0;
+// Keep the original GLTF asset and its normalized, render-ready scene separate.
+// A prepared scene must never be resized a second time on model switching.
 const modelCache=new Map();
+const preparedModels=new Map();
+const pendingDownloads=new Map();
+let detailLoadState='idle';
 const MODEL_URLS={
  male:"https://cdn.jsdelivr.net/npm/open-anatomy-3d@0.1.0/models/anatomy-male.glb",
  female:"https://cdn.jsdelivr.net/npm/open-anatomy-3d@0.1.0/models/anatomy-female.glb"
@@ -165,68 +170,138 @@ function buildFigure(kind){
   ellipsoid(figure,[side*.43,-3.40,.31],[.225,.15,.53],skinMat);
  }
 }
-async function loadRealModel(kind){
- const token=++loadingToken;
- if(message){message.hidden=false;message.classList.remove('error');message.textContent='Loading anatomically detailed human model… The original mannequin is available as a fallback.';}
- try{
-  let glb=modelCache.get(kind);
-  if(!glb){
-   // Import on demand: the basic mannequin and the offline SVG still work if this fails.
+async function getModelAsset(kind){
+ const saved=modelCache.get(kind);
+ if(saved)return saved;
+ let pending=pendingDownloads.get(kind);
+ if(!pending){
+  pending=(async()=>{
    const [{GLTFLoader},{MeshoptDecoder}]=await Promise.all([
     import('three/addons/loaders/GLTFLoader.js'),
     import('three/addons/libs/meshopt_decoder.module.js')
    ]);
-   const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
-   glb=await loader.loadAsync(MODEL_URLS[kind]);
-   modelCache.set(kind,glb);
+   const loader=new GLTFLoader();
+   loader.setMeshoptDecoder(MeshoptDecoder);
+   return loader.loadAsync(MODEL_URLS[kind]);
+  })();
+  pendingDownloads.set(kind,pending);
+ }
+ try{
+  const glb=await pending;
+  modelCache.set(kind,glb);
+  return glb;
+ }finally{
+  // A failed request can be retried; successful requests remain in modelCache.
+  if(pendingDownloads.get(kind)===pending)pendingDownloads.delete(kind);
+ }
+}
+function resetMarkerLocations(){
+ // Marker projection is model-specific. Reset the prior model's positions first.
+ for(const [id,record] of markerNodes){
+  if(points[id])record.node.position.set(...points[id]);
+ }
+}
+function projectMarkersToSkin(skinMeshes){
+ const surfaceRay=new THREE.Raycaster();
+ for(const [id,record] of markerNodes){
+  const p=record.node.position;
+  const rear=bridge.parts.find(v=>v.id===id)?.view==='back';
+  const dir=rear?1:-1;
+  surfaceRay.set(new THREE.Vector3(p.x,p.y,rear?-8:8),new THREE.Vector3(0,0,dir));
+  const hits=surfaceRay.intersectObjects(skinMeshes,false);
+  if(hits.length)p.z=hits[0].point.z+(rear?-.08:.08);
+ }
+}
+function prepareModel(kind,glb){
+ const body=glb.scene;
+ const skin=body.getObjectByName('skin');
+ if(!skin)throw new Error('The anatomical model has no named external skin mesh');
+ // Important: prepare each sex ONCE. The old code reused this already-scaled
+ // GLTF scene and then rejected its 6.9-unit height as an invalid source model.
+ const bounds=new THREE.Box3().setFromObject(skin);
+ const size=bounds.getSize(new THREE.Vector3());
+ if(!Number.isFinite(size.y)||size.y<.6||size.y>3){
+  throw new Error('Unexpected unscaled anatomy-model height: '+size.y);
+ }
+ const center=bounds.getCenter(new THREE.Vector3());
+ const ratio=6.9/size.y;
+ body.traverse(obj=>{
+  if(obj!==skin&&['skeleton','muscles','organs','vessels','nerves','joints'].includes(obj.name.toLowerCase()))obj.visible=false;
+ });
+ const realisticSkin=new THREE.MeshStandardMaterial({
+  color:kind==='female'?0xebc9b7:0xd5ab94,
+  roughness:.85,metalness:0,side:THREE.DoubleSide
+ });
+ skin.traverse(obj=>{if(obj.isMesh)obj.material=realisticSkin;});
+ body.scale.setScalar(ratio);
+ body.position.set(-center.x*ratio,-3.46-bounds.min.y*ratio,-center.z*ratio);
+ const skinMeshes=[];
+ skin.traverse(obj=>{if(obj.isMesh)skinMeshes.push(obj);});
+ const prepared={body,skinMeshes};
+ preparedModels.set(kind,prepared);
+ return prepared;
+}
+function setModelBadge(label,detailed){
+ const badge=document.getElementById('modelDetailBadge');
+ if(!badge)return;
+ badge.textContent=label;
+ badge.classList.toggle('real',detailed);
+}
+function setRetryAvailable(visible){
+ const button=document.getElementById('retry3dBtn');
+ if(button)button.hidden=!visible;
+}
+async function loadRealModel(kind){
+ const token=++loadingToken;
+ detailLoadState='loading';
+ setModelBadge('LOADING DETAIL',false);
+ setRetryAvailable(false);
+ if(message){
+  message.hidden=false;
+  message.classList.remove('error');
+  message.textContent='Loading anatomically detailed human model… The simpler mannequin is available while it loads.';
+ }
+ try{
+  // Never transform the cached GLTF scene a second time.
+  let prepared=preparedModels.get(kind);
+  if(!prepared){
+   const glb=await getModelAsset(kind);
+   if(token!==loadingToken||modelType!==kind)return;
+   prepared=prepareModel(kind,glb);
   }
   if(token!==loadingToken||modelType!==kind)return;
-  if(activeReal){activeReal.removeFromParent();activeReal=null;}
-  const body=glb.scene;
-  const skin=body.getObjectByName('skin');
-  if(!skin)throw new Error('The anatomical model has no named external skin mesh');
-  body.traverse(obj=>{
-   if(obj!==skin&&['skeleton','muscles','organs','vessels','nerves','joints'].includes(obj.name.toLowerCase()))obj.visible=false;
-  });
-  skin.traverse(obj=>{
-   if(obj.isMesh){
-    obj.material=new THREE.MeshStandardMaterial({color:kind==='female'?0xebc9b7:0xd5ab94,roughness:.85,metalness:0,side:THREE.DoubleSide});
-   }
-  });
-  const bounds=new THREE.Box3().setFromObject(skin);
-  const size=bounds.getSize(new THREE.Vector3());
-  if(size.y<.6||size.y>3)throw new Error('Unexpected human-model scale');
-  const center=bounds.getCenter(new THREE.Vector3());
-  const ratio=6.9/size.y;
-  body.scale.setScalar(ratio);
-  body.position.set(-center.x*ratio,-3.46-bounds.min.y*ratio,-center.z*ratio);
-  scene.add(body);scene.updateMatrixWorld(true);
+  const {body,skinMeshes}=prepared;
+  if(activeReal&&activeReal!==body)activeReal.removeFromParent();
+  scene.add(body);
+  scene.updateMatrixWorld(true);
   activeReal=body;
-  clearFigure();figure=null;
-  // Place each labeled point on the visible skin surface whenever the coordinate ray meets it.
-  const skinMeshes=[];skin.traverse(obj=>{if(obj.isMesh)skinMeshes.push(obj);});
-  const surfaceRay=new THREE.Raycaster();
-  for(const [id,rec] of markerNodes){
-   const p=rec.node.position;
-   const rear=bridge.parts.find(v=>v.id===id)?.view==='back';
-   const dir=rear?1:-1;
-   surfaceRay.set(new THREE.Vector3(p.x,p.y,rear?-8:8),new THREE.Vector3(0,0,dir));
-   const hits=surfaceRay.intersectObjects(skinMeshes,false);
-   if(hits.length)p.z=hits[0].point.z+(rear?-.08:.08);
-  }
+  clearFigure();
+  figure=null;
+  resetMarkerLocations();
+  projectMarkersToSkin(skinMeshes);
+  detailLoadState='ready';
   if(message)message.hidden=true;
-  const detailBadge=document.getElementById('modelDetailBadge');
-  if(detailBadge){detailBadge.textContent='DETAILED BODY MESH';detailBadge.classList.add('real');}
-  if(status)status.textContent='Detailed 3D human mesh • orbit to explore front and back';
+  setRetryAvailable(false);
+  setModelBadge('DETAILED BODY MESH',true);
+  if(status)status.textContent='Detailed 3D model • orbit to explore the front and back';
   requestRender();
  }catch(err){
   if(token!==loadingToken)return;
-  console.warn('Anatomical GLB unavailable, using procedural backup:',err);
-  const detailBadge=document.getElementById('modelDetailBadge');
-  if(detailBadge){detailBadge.textContent='SCHEMATIC BACKUP';detailBadge.classList.remove('real');}
-  if(message){message.hidden=false;message.classList.add('error');message.textContent='Detailed model could not load. Showing the simpler 3D fallback; the 2D diagrams and all exercises remain usable.';}
+  detailLoadState='failed';
+  console.warn('Detailed anatomy mesh unavailable:',err);
+  setModelBadge('SCHEMATIC BACKUP',false);
+  setRetryAvailable(true);
+  if(message){
+   message.hidden=false;
+   message.classList.add('error');
+   message.textContent='The detailed model could not load. You can retry without refreshing, or keep studying with the simpler 3D model and the 2D diagrams.';
+  }
   requestRender();
  }
+}
+function retryRealModel(){
+ if(!modelType||detailLoadState==='loading')return;
+ loadRealModel(modelType);
 }
 function createNameSprite(label){
  const canvas=document.createElement('canvas');canvas.width=300;canvas.height=80;
@@ -393,12 +468,14 @@ function setup(){
  bind('rotateRight3dBtn',()=>rotateCamera(-Math.PI/4));
  bind('zoomIn3dBtn',()=>zoomCamera(.77));
  bind('zoomOut3dBtn',()=>zoomCamera(1.30));
+ bind('retry3dBtn',retryRealModel);
  document.querySelectorAll('.three-toolbar button').forEach(button=>{button.disabled=false;});
  const observer=typeof ResizeObserver==='function'?new ResizeObserver(resize):null;
  if(observer)observer.observe(mount);
  else window.addEventListener('resize',resize);
  if(message)message.hidden=true;
- window.BodyAtlas3D={update,hitTest,resetCamera,rotateCamera,zoomCamera,goToSide,ready:true};
+ window.BodyAtlas3D={update,hitTest,resetCamera,rotateCamera,zoomCamera,goToSide,retryRealModel,
+  getDetailStatus:()=>detailLoadState,getPreparedModelCount:()=>preparedModels.size,ready:true};
  update(bridge.getState());
  if(bridge.getState().orientation==='back')goToSide('back');
  requestAnimationFrame(resize);
