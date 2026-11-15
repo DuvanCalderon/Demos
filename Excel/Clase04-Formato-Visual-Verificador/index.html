@@ -119,7 +119,7 @@ function exactColor(n,hex){return rgbEq(colorRGB(n),hex)}
 function dxfFill(ctx,rule,hex){var d=ctx.dxfs&&ctx.dxfs[Number(rule.dxfId)];if(!d)return false;var fill=selector(d,"fill");if(!fill)return false;var pattern=selector(fill,"patternFill");if(!pattern)return false;return exactColor(selector(pattern,"fgColor"),hex)||exactColor(selector(pattern,"bgColor"),hex)}
 function ruleColor(rule,nodeName,hex){var n=selector(rule.node,nodeName);return !!n&&exactColor(selector(n,"color"),hex)}
 function scaleColors(rule,firstHex,lastHex){var scale=selector(rule.node,"colorScale");if(!scale)return false;var colors=getNodes(scale,"color");return colors.length===2&&exactColor(colors[0],firstHex)&&exactColor(colors[1],lastHex)}
-function exactIconSet(rule){var icon=selector(rule.node,"iconSet");return !!icon&&attr(icon,"iconSet")==="3TrafficLights1"}
+function exactIconSet(rule){var icon=selector(rule.node,"iconSet");return !!icon&&(attr(icon,"iconSet")||"3TrafficLights1")==="3TrafficLights1"}
 
 function hasBorder(st){return ["left","right","top","bottom"].every(function(p){var n=selector(st.border,p);return n&&attr(n,"style")&&attr(n,"style")!=="none"})}
 function normalizeSqref(s){return s.replace(/\$/g,"").split(/\s+/).filter(Boolean)}
