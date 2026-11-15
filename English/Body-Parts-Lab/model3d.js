@@ -71,7 +71,7 @@ function loft(group,rings,mat){
   for(let k=0;k<radial;k++){
    const a=r*radial+k,b=r*radial+(k+1)%radial;
    const c=(r+1)*radial+k,d=(r+1)*radial+(k+1)%radial;
-   indices.push(a,b,c,b,d,c);
+   indices.push(a,c,b,b,c,d);
   }
  }
  const geometry=new THREE.BufferGeometry();
