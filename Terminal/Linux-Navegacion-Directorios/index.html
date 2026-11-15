@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1020">
+<title>Linux Navigator — Laboratorio de terminal</title>
+<style>
+:root{color-scheme:dark;--bg:#090f1d;--surface:#111b2e;--surface2:#17243a;--line:#293750;--ink:#edf5ff;--muted:#9baec9;--green:#49e4b1;--blue:#77a6ff;--orange:#ffcf8b;--red:#ff808b;--shadow:0 20px 60px #0005}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse 800px 480px at 80% -100px,#26467b66,transparent),radial-gradient(ellipse 650px 520px at -10% 50%,#124f4c30,transparent),var(--bg);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);min-height:100vh}
+button,input{font:inherit}button{cursor:pointer;color:inherit}button:focus-visible,input:focus-visible{outline:2px solid var(--green);outline-offset:3px}a{color:var(--blue)}.shell{width:min(1280px,calc(100% - 40px));margin:auto}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:23px 0}.brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:18px;letter-spacing:-.5px}.brand-icon{width:43px;height:43px;border-radius:14px;background:linear-gradient(135deg,#52ebc3,#4c79ed);display:grid;place-items:center;color:#061b25;font:800 22px ui-monospace,monospace;box-shadow:0 8px 32px #42e6bb44}.top-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.btn{background:#1d2c45;border:1px solid #36506c;border-radius:11px;padding:9px 13px;font-weight:700;transition:transform .15s,background .15s,border-color .15s}.btn:hover{transform:translateY(-1px);background:#29405d;border-color:#5c7c9d}.btn.primary{background:linear-gradient(120deg,#4ae5b4,#70b3e9);border:0;color:#08192a}.btn.primary:hover{filter:brightness(1.1)}.btn.danger{color:#ffb9c0}.btn.small{padding:6px 10px;font-size:12px}.subtle{color:var(--muted)}.hero{display:flex;gap:28px;justify-content:space-between;align-items:flex-end;margin:15px 0 22px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:2px;color:var(--green);font-weight:800}h1{font-size:clamp(28px,4vw,44px);line-height:1.12;letter-spacing:-1.7px;margin:8px 0 10px}h1 span{color:var(--green)}.hero p{margin:0;max-width:660px;color:var(--muted);font-size:16px}.mode-tabs{display:flex;align-items:center;background:#132039;border:1px solid var(--line);padding:5px;border-radius:13px;gap:4px;flex-shrink:0}.mode-tabs button{background:transparent;border:0;border-radius:9px;padding:10px 15px;font-size:13px;font-weight:700;color:var(--muted)}.mode-tabs button.active{background:#2d4362;color:white;box-shadow:0 3px 12px #0004}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}.metric{border:1px solid var(--line);border-radius:15px;background:#101d31bb;padding:14px 19px}.metric strong{font-size:23px;display:block;font-variant-numeric:tabular-nums}.metric small{color:var(--muted);font-size:12px}.progress-track{height:7px;background:#26374e;border-radius:10px;overflow:hidden;margin-top:8px}.progress-track>div{height:100%;width:0;background:linear-gradient(90deg,#3ddaaf,#8ab5ff);transition:width .3s}
+.layout{display:grid;grid-template-columns:minmax(260px,.8fr) minmax(0,1.7fr);gap:17px;align-items:start}.card{border:1px solid var(--line);border-radius:17px;background:linear-gradient(160deg,#16243aee,#101a2cee);box-shadow:var(--shadow);overflow:hidden}.card-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:17px 19px;border-bottom:1px solid var(--line)}.card-head h2{font-size:15px;margin:0}.card-body{padding:18px}.tag{display:inline-flex;border-radius:99px;font-size:11px;font-weight:800;letter-spacing:.3px;background:#1d3645;color:#81f2cd;padding:4px 10px}.path-label{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere;color:#93ffcc;font-size:13px}.tree{max-height:360px;overflow:auto;padding:10px 13px 15px}.tree details{margin:1px 0}.tree summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:5px;min-width:max-content}.tree summary::-webkit-details-marker{display:none}.tree summary::before{content:'›';font-weight:800;font-size:17px;color:#9aacc8;transition:transform .2s}.tree details[open]>summary::before{transform:rotate(90deg)}.tree button{border:0;background:transparent;color:#c9dcf3;text-align:left;border-radius:6px;padding:3px 7px;font:12px ui-monospace,Consolas,monospace}.tree button:hover{background:#344663}.tree button.current{background:#1d635b;color:#80ffd0}.tree .file{padding:3px 7px 3px 23px;color:#849bb6;font:12px ui-monospace,Consolas,monospace}.tree .branch{padding-left:17px;border-left:1px dashed #334762;margin-left:8px}.hint-note{font-size:12px;color:var(--muted);margin:0}.quick{display:flex;flex-wrap:wrap;gap:7px}.code-chip{font:12px ui-monospace,Consolas,monospace;background:#192e44;color:#a6dfeb;border:1px solid #35516b;border-radius:8px;padding:7px 9px}.code-chip:hover{border-color:var(--green);color:white}.section-line{border-top:1px solid var(--line);margin:14px -18px 15px}.terminal{background:#060c17;border-radius:14px;border:1px solid #30415e;overflow:hidden}.terminal-head{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#1d2d44;border-bottom:1px solid #34455a;font-size:12px;color:#ccd8e9}.dots{display:flex;gap:5px}.dots i{width:9px;height:9px;border-radius:50%;display:block;background:#ff7788}.dots i:nth-child(2){background:#f4c36c}.dots i:nth-child(3){background:#54dca5}.terminal-logs{height:330px;overflow:auto;padding:16px 18px;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere}.log{margin-bottom:7px}.log.cmd{color:#e4f0fb}.log.cmd b{color:var(--green)}.log.ok{color:#77eab8}.log.warn{color:var(--orange)}.log.error{color:var(--red)}.log.info{color:#97b1cd}.command-form{display:flex;gap:9px;align-items:center;padding:12px;border-top:1px solid #29384e;background:#101b2a}.prompt{color:var(--green);font:700 13px ui-monospace,monospace;white-space:nowrap}.command-form input{flex:1;min-width:0;border:0;background:transparent;color:white;outline:0;font:14px ui-monospace,Consolas,monospace}.command-form input:focus{outline:0}.terminal-controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:12px;color:var(--muted);font-size:12px}
+.challenge{margin-top:15px}.hidden{display:none!important}.challenge h3{margin:7px 0;font-size:20px;letter-spacing:-.4px}.challenge p{color:#c5d3e5;margin:10px 0}.challenge-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.challenge-actions{display:flex;flex-wrap:wrap;gap:7px;margin:15px 0}.feedback{margin-top:12px;border-left:3px solid #6081a0;padding:10px 13px;background:#122b3c;border-radius:4px;font-size:13px;white-space:pre-wrap}.feedback.success{border-color:var(--green);background:#103d37}.feedback.error{border-color:var(--red);background:#412733}.feedback.warn{border-color:var(--orange);background:#3e3527}.list-controls{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:13px}.list-controls button{padding:7px 11px;border-radius:9px;border:1px solid #3b4d69;background:#18283f;font-size:12px}.list-controls button.active{background:#29594e;border-color:#3bbd93}.mission-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px}.mission{border:1px solid #334560;background:#16243a;border-radius:11px;padding:11px;text-align:left}.mission:hover,.mission.selected{border-color:var(--green);background:#1c3643}.mission .num{color:var(--green);font:800 12px ui-monospace,monospace}.mission small{display:block;color:var(--muted);margin-top:5px}.mission .done{color:#7be4b6}.mission strong{display:block;font-size:13px;margin-top:4px}.guide-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}.guide-box{border:1px solid #34465d;border-radius:12px;padding:13px;background:#14253c}.guide-box code{display:inline-block;font:700 16px ui-monospace,monospace;color:#65e7bc;margin-bottom:5px}.guide-box p{margin:0;color:#afc3d9;font-size:12px}.guide-box b{display:block;font-size:12px;margin-bottom:6px}.footer{padding:25px 0 35px;text-align:center;color:#7187a6;font-size:12px}.toast{position:fixed;bottom:18px;right:18px;background:#1e3c4a;border:1px solid #4f987f;color:#d6fff0;border-radius:12px;padding:12px 17px;box-shadow:var(--shadow);z-index:2;max-width:min(400px,90vw);animation:appear .2s}.toast.hidden{display:none}@keyframes appear{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
+@media(max-width:950px){.hero{align-items:flex-start;flex-direction:column}.layout{grid-template-columns:1fr}.tree{max-height:250px}}@media(max-width:620px){.shell{width:calc(100% - 22px)}.top{align-items:flex-start}.brand{font-size:15px}.top-actions{justify-content:flex-end}.top-actions .btn{padding:7px 8px;font-size:11px}h1{font-size:30px}.metrics{gap:7px}.metric{padding:11px}.metric strong{font-size:20px}.metric small{font-size:10px}.mode-tabs{width:100%}.mode-tabs button{flex:1;padding:9px 5px}.card-head,.card-body{padding:13px}.terminal-logs{height:270px;padding:12px}.terminal-controls{align-items:flex-start}.challenge h3{font-size:18px}.mission-list{grid-template-columns:repeat(2,minmax(0,1fr))}.mission{padding:9px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="top">
+<div class="brand"><div class="brand-icon">$_</div><div>Linux Navigator<div class="subtle" style="font-size:11px;font-weight:500">LAB · Aprende haciendo</div></div></div>
+<div class="top-actions"><button id="sound" class="btn small" aria-pressed="false">🔇 Audio: no</button><button id="resetProgress" class="btn danger small">↺ Reiniciar progreso</button></div>
+</header>
+<section class="hero">
+<div><div class="eyebrow">CURSO · TERMINAL DE LINUX · CLASE 05</div><h1>Domina el arte de <span>moverte por Linux.</span></h1><p>Un sistema de archivos para explorar, una terminal que responde de verdad y misiones que se resuelven escribiendo comandos. Sin tocar los archivos reales de tu equipo.</p></div>
+<nav class="mode-tabs" aria-label="Modo de aprendizaje"><button data-mode="lab" class="active">⌘ Laboratorio</button><button data-mode="missions">🎯 Misiones</button><button data-mode="guide">📚 Guía rápida</button></nav>
+</section>
+<div class="metrics" aria-live="polite">
+<div class="metric"><small>Misiones completadas</small><strong id="doneCount">0 / 15</strong><div class="progress-track"><div id="progressFill"></div></div></div>
+<div class="metric"><small>Puntuación acumulada</small><strong id="points">0 XP</strong></div>
+<div class="metric"><small>Directorio actual</small><strong id="currentDir" style="font-size:14px;overflow-wrap:anywhere;color:#80ecc9">~</strong></div>
+</div>
+<div class="layout">
+<aside>
+<div class="card">
+<div class="card-head"><h2>🗂️ Explorador visual</h2><span class="tag">Linux virtual</span></div>
+<div class="card-body" style="padding-bottom:3px"><div class="subtle" style="font-size:11px;margin-bottom:4px">ESTÁS EN</div><div id="visualPath" class="path-label">/home/duvan</div><p class="hint-note" style="margin-top:8px">Pulsa una carpeta para preparar un comando <code>cd</code>. Ejecútalo en la terminal para desplazarte.</p></div>
+<div class="tree" id="fileTree" aria-label="Árbol de directorios"></div>
+</div>
+<div class="card" style="margin-top:15px">
+<div class="card-head"><h2>⚡ Comandos para probar</h2></div>
+<div class="card-body"><div class="quick" id="quickCommands">
+<button class="code-chip" data-command="pwd">pwd</button><button class="code-chip" data-command="ls">ls</button><button class="code-chip" data-command="cd ..">cd ..</button><button class="code-chip" data-command="cd ~">cd ~</button><button class="code-chip" data-command="cd /">cd /</button><button class="code-chip" data-command="dirs">dirs</button><button class="code-chip" data-command="pushd /var/log">pushd /var/log</button><button class="code-chip" data-command="popd">popd</button>
+</div><div class="section-line"></div><p class="hint-note"><b>Tip:</b> escribe <code>help</code> para ver los comandos, usa <b>↑</b> para recuperar el anterior y <b>Tab</b> para autocompletar carpetas.</p></div>
+</div>
+</aside>
+<main>
+<div class="card">
+<div class="card-head"><h2>⌨️ Terminal interactiva</h2><span class="tag" id="modeTag">MODO LIBRE</span></div>
+<div class="card-body">
+<div class="terminal" role="region" aria-label="Terminal simulada">
+<div class="terminal-head"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>duvan@linux: bash (simulada)</span><span>● local</span></div>
+<div class="terminal-logs" id="logs" aria-live="polite"></div>
+<form class="command-form" id="commandForm" autocomplete="off"><label class="prompt" for="commandInput">$</label><input id="commandInput" spellcheck="false" aria-label="Escribe un comando Linux" placeholder="Escribe un comando y presiona Enter…" autocomplete="off"><button class="btn primary small" type="submit">Ejecutar ↵</button></form>
+</div>
+<div class="terminal-controls"><span>Comandos permitidos: <b>pwd · ls · cd · pushd · popd · dirs · tree · help · clear</b></span><button id="resetShell" class="btn small" type="button">↻ Reiniciar terminal</button></div>
+</div></div>
+<section class="card challenge" id="labSection">
+<div class="card-head"><h2>🧭 ¿Por dónde empezar?</h2><span class="tag">PRÁCTICA LIBRE</span></div>
+<div class="card-body"><p>Piensa en el sistema de archivos como un edificio: <b>/</b> es la entrada principal, <b>~</b> es tu apartamento y <b>..</b> es subir a la carpeta que contiene la actual. Escribe <code>pwd</code> para conocer tu ubicación; <code>ls</code> para ver qué hay alrededor; y <code>cd proyectos</code> para entrar en una carpeta.</p><button id="startMissions" class="btn primary">Empezar los retos →</button></div>
+</section>
+<section class="card challenge hidden" id="missionsSection">
+<div class="card-head"><h2>🎯 Entrenamiento por retos</h2><span id="missionCounter" class="tag">01 / 15</span></div>
+<div class="card-body">
+<div class="list-controls" id="levelTabs"><button data-level="all" class="active">Todos</button><button data-level="basico">Básico</button><button data-level="intermedio">Intermedio</button><button data-level="avanzado">Avanzado</button></div>
+<div class="mission-list" id="missionList"></div><div class="section-line"></div>
+<div class="challenge-meta"><span class="tag" id="missionLevel">BÁSICO</span><span class="subtle" id="missionReward" style="font-size:12px">+10 XP</span></div>
+<h3 id="missionTitle"></h3><p id="missionDescription"></p>
+<div class="hint-note">Punto de partida: <code id="missionStart"></code>. Resuelve el reto escribiendo comandos en la terminal de arriba.</div>
+<div class="challenge-actions"><button id="hintButton" class="btn small">💡 Pista 1</button><button id="solutionButton" class="btn small">👁 Mostrar solución</button><button id="retryButton" class="btn small">↺ Repetir reto</button><button id="nextButton" class="btn primary small">Siguiente reto →</button></div>
+<div class="feedback hidden" id="missionFeedback" aria-live="polite"></div>
+</div>
+</section>
+<section class="card challenge hidden" id="guideSection">
+<div class="card-head"><h2>📚 Tu mapa mental</h2><span class="tag">FEYNMAN</span></div>
+<div class="card-body"><p>Imagina que cada carpeta es una habitación. Una <b>ruta absoluta</b> da la dirección completa desde la entrada del edificio (<code>/</code>); una <b>ruta relativa</b> te indica cómo llegar desde la habitación donde estás.</p>
+<div class="guide-grid">
+<div class="guide-box"><code>pwd</code><b>¿Dónde estoy?</b><p>Imprime la ruta del directorio actual. No te mueve.</p></div>
+<div class="guide-box"><code>ls</code><b>¿Qué hay aquí?</b><p>Enumera contenido. Con <code>-a</code> incluye entradas ocultas.</p></div>
+<div class="guide-box"><code>cd /</code><b>Ir a la raíz</b><p>La barra inicial es el origen de todo el sistema.</p></div>
+<div class="guide-box"><code>cd ..</code><b>Subir una carpeta</b><p><code>..</code> señala el directorio padre, no el anterior visitado.</p></div>
+<div class="guide-box"><code>cd .</code><b>Seguir aquí</b><p><code>.</code> representa el directorio actual.</p></div>
+<div class="guide-box"><code>cd ~</code><b>Volver a casa</b><p><code>~</code> apunta al home. <code>cd</code> solo también te lleva allí.</p></div>
+<div class="guide-box"><code>cd -</code><b>Alternar ubicación</b><p>Va al directorio visitado justo antes del actual.</p></div>
+<div class="guide-box"><code>pushd /var</code><b>Guardar y entrar</b><p>Apila tu ubicación actual y se mueve a otra carpeta.</p></div>
+<div class="guide-box"><code>popd</code><b>Recuperar ubicación</b><p>Desapila la ubicación superior y entra en ella.</p></div>
+<div class="guide-box"><code>dirs</code><b>Ver la pila</b><p>Muestra la ubicación actual y las direcciones guardadas.</p></div>
+<div class="guide-box"><code>cd ../../</code><b>Subir dos niveles</b><p>Combina segmentos para construir una ruta relativa.</p></div>
+<div class="guide-box"><code>cd /mnt/c</code><b>WSL y Windows</b><p>En WSL, la unidad C: normalmente se monta bajo <code>/mnt/c</code>.</p></div>
+</div><div class="feedback warn"><b>Trampas comunes:</b> <code>/</code> no es <code>~</code>; <code>cd ..</code> no es <code>cd -</code>; las rutas Linux distinguen mayúsculas y minúsculas; <code>popd</code> necesita una ubicación previamente apilada. Este laboratorio simula una parte de Bash, no ejecuta comandos en tu equipo.</div>
+</div></section>
+</main></div>
+<footer class="footer">Linux Navigator · Laboratorio educativo independiente · HTML + CSS + JavaScript · Sin dependencias</footer>
+</div><div id="toast" class="toast hidden" role="status"></div>
+<script>
+(function(){
+'use strict';
+const HOME='/home/duvan', STORAGE='linux-navigator-progress-v1';
+const FS={
+'/':['bin/','dev/','etc/','home/','mnt/','root/','var/'],
+'/bin':['bash','ls','pwd'],
+'/dev':['null','tty'],
+'/etc':['hosts','passwd','ssh/'],
+'/etc/ssh':['sshd_config'],
+'/home':['duvan/'],
+'/home/duvan':['proyectos/','documentos/','descargas/','.config/','notas.txt'],
+'/home/duvan/proyectos':['web/','api/'],
+'/home/duvan/proyectos/web':['src/','public/','package.json','README.md'],
+'/home/duvan/proyectos/web/src':['components/','app.js','styles.css'],
+'/home/duvan/proyectos/web/src/components':['Navbar.jsx','Footer.jsx'],
+'/home/duvan/proyectos/web/public':['index.html'],
+'/home/duvan/proyectos/api':['routes/','server.js'],
+'/home/duvan/proyectos/api/routes':['users.js'],
+'/home/duvan/documentos':['universidad/','tareas.txt'],
+'/home/duvan/documentos/universidad':['apuntes.md'],
+'/home/duvan/descargas':['datos.csv'],
+'/home/duvan/.config':['settings.json'],
+'/mnt':['c/'],
+'/mnt/c':['Users/'],
+'/mnt/c/Users':['Duvan/'],
+'/mnt/c/Users/Duvan':['Desktop/','Documents/'],
+'/mnt/c/Users/Duvan/Desktop':['ejemplo.txt'],
+'/mnt/c/Users/Duvan/Documents':['resumen.docx'],
+'/root':['secreto.txt'],
+'/var':['log/','tmp/'],
+'/var/log':['syslog','auth.log'],
+'/var/tmp':[]
+};
+const missions=[
+{id:1,level:'basico',title:'Descubre dónde estás',start:HOME,description:'Necesitas saber tu ubicación antes de moverte. Muestra la ruta actual.',hints:['Busca el comando de tres letras que imprime la ubicación.','Su nombre significa print working directory.'],solution:'pwd',why:'pwd muestra la ruta absoluta de la carpeta actual.',test:(x,s)=>x==='pwd'},
+{id:2,level:'basico',title:'Mira dentro de la carpeta',start:HOME,description:'Lista el contenido de la carpeta actual. Puedes usar opciones para ver más detalles.',hints:['Es el comando que significa list.','Prueba ls o ls -a.'],solution:'ls',why:'ls enumera los archivos y directorios de la ubicación actual.',test:(x)=>/^ls(?:\s+-(?:a|l|la|al))?$/.test(x)},
+{id:3,level:'basico',title:'Entra al proyecto',start:HOME,description:'Ve a la carpeta proyectos usando una ruta RELATIVA.',hints:['Las rutas relativas no comienzan con /.','Escribe cd seguido del nombre de una carpeta que ves en el árbol.'],solution:'cd proyectos',why:'Desde tu home, proyectos es una carpeta hija; no necesitas escribir toda la ruta.',test:(x,s)=>/^cd\s+(?!\/)(?!~)(?!-)(?:\.\/)?proyectos\/?$/.test(x)&&s.cwd===HOME+'/proyectos'},
+{id:4,level:'basico',title:'Encuentra el hogar',start:HOME+'/proyectos/web',description:'Vuelve a tu home usando un atajo, sin escribir su ruta completa.',hints:['Hay un símbolo que representa tu carpeta personal.','cd sin argumentos también vuelve al home.'],solution:'cd ~',why:'~ apunta a tu carpeta personal; cd sin argumentos produce el mismo resultado.',test:(x,s)=>/^cd(?:\s+~\/?)?$/.test(x)&&s.cwd===HOME},
+{id:5,level:'basico',title:'Ve a la raíz',start:HOME,description:'Ve al inicio del sistema de archivos Linux: la raíz.',hints:['La raíz se representa con una barra.','No confundas / (raíz) con ~ (home).'],solution:'cd /',why:'La ruta / es la raíz del árbol de directorios.',test:(x,s)=>/^cd\s+\/+$/.test(x)&&s.cwd==='/'},
+{id:6,level:'intermedio',title:'Sube un nivel',start:HOME+'/proyectos/web',description:'Llega a la carpeta proyectos utilizando el símbolo de directorio padre.',hints:['.. representa la carpeta contenedora.','El comando tiene el formato cd ..'],solution:'cd ..',why:'.. significa directorio padre; no es necesariamente el directorio previamente visitado.',test:(x,s)=>/^cd\s+\.{2}(?:\/\.?)*\/?$/.test(x)&&s.cwd===HOME+'/proyectos'},
+{id:7,level:'intermedio',title:'Sube dos niveles',start:HOME+'/proyectos/web',description:'Regresa al home encadenando dos referencias al directorio padre.',hints:['Cada .. sube un nivel.','Une las dos referencias con una barra.'],solution:'cd ../..',why:'../.. significa subir dos directorios desde tu ubicación actual.',test:(x,s)=>/^cd\s+\.\.\/\.\.\/?$/.test(x)&&s.cwd===HOME},
+{id:8,level:'intermedio',title:'Dirección absoluta',start:HOME,description:'Accede a /var/log usando una ruta ABSOLUTA.',hints:['Las rutas absolutas comienzan por /.','Escribe cd /var/log.'],solution:'cd /var/log',why:'Una ruta absoluta funciona igual sin importar desde dónde comiences.',test:(x,s)=>/^cd\s+\/var\/log\/?$/.test(x)&&s.cwd==='/var/log'},
+{id:9,level:'intermedio',title:'Cruza entre carpetas',start:HOME+'/proyectos/web',description:'Entra a descargas mediante una ruta relativa que atraviese las carpetas padre.',hints:['Desde web necesitas volver a proyectos y luego a tu home.','Después de ../../, añade descargas.'],solution:'cd ../../descargas',why:'../../ sube hasta el home y descargas entra en la carpeta deseada.',test:(x,s)=>/^cd\s+(?!\/)(?!~).*\.\..*descargas\/?$/.test(x)&&s.cwd===HOME+'/descargas'},
+{id:10,level:'intermedio',title:'Vuelve al lugar anterior',start:HOME,previous:'/etc',description:'Antes estabas en /etc. Alterna al directorio anterior sin escribir su nombre.',hints:['No uses ..: ese es el directorio padre.','Bash recuerda la ruta anterior con un guion.'],solution:'cd -',why:'cd - cambia al directorio anterior registrado por la sesión.',test:(x,s)=>x==='cd -'&&s.cwd==='/etc'},
+{id:11,level:'avanzado',title:'Navega con memoria',start:HOME,description:'Guarda la ubicación actual en la pila mientras entras a /var/log.',hints:['pushd cambia de carpeta y guarda la anterior.','Usa pushd con una ruta absoluta.'],solution:'pushd /var/log',why:'pushd /var/log coloca la ruta antigua en la pila y entra en /var/log.',test:(x,s)=>x==='pushd /var/log'&&s.cwd==='/var/log'&&s.stack[0]===HOME},
+{id:12,level:'avanzado',title:'Recupera la pila',start:'/var/log',stack:[HOME],description:'Hay una ruta guardada en la pila. Regresa a ella con el comando adecuado.',hints:['La operación inversa de pushd quita una entrada de la pila.','Ese comando no necesita argumentos.'],solution:'popd',why:'popd extrae la primera ruta guardada y navega hacia ella.',test:(x,s)=>x==='popd'&&s.cwd===HOME&&s.stack.length===0},
+{id:13,level:'avanzado',title:'Inspecciona tu pila',start:'/var/log',stack:[HOME,'/etc'],description:'Muestra todas las rutas de la pila, incluida tu ubicación actual.',hints:['No es pwd: pwd solo muestra una ruta.','El comando es el plural abreviado de directories.'],solution:'dirs',why:'dirs muestra el directorio actual seguido de las rutas almacenadas.',test:(x)=>x==='dirs'},
+{id:14,level:'avanzado',title:'El punto importa',start:HOME+'/proyectos/web',description:'Entra a src usando explícitamente el símbolo que representa el directorio actual.',hints:['. significa aquí mismo.','Usa cd ./ seguido del nombre de la carpeta.'],solution:'cd ./src',why:'./src es relativo a donde estás. cd src funciona, pero el reto exige mostrar el punto.',test:(x,s)=>/^cd\s+\.\/src\/?$/.test(x)&&s.cwd===HOME+'/proyectos/web/src'},
+{id:15,level:'avanzado',title:'Visita Windows desde WSL',start:HOME,description:'Entra a la carpeta Users de la unidad C: usando la ruta Linux del ejemplo WSL.',hints:['Las unidades de Windows se montan habitualmente bajo /mnt.','La unidad C: corresponde a /mnt/c.'],solution:'cd /mnt/c/Users',why:'En WSL, /mnt/c/Users permite navegar por usuarios de Windows; este entorno es simulado.',test:(x,s)=>/^cd\s+\/mnt\/c\/Users\/?$/.test(x)&&s.cwd==='/mnt/c/Users'}
+];
+const byId=id=>document.getElementById(id);
+let state={cwd:HOME,previous:null,stack:[]},mode='lab',level='all',selected=1,attempts=0,hintIndex=0,revealed=false,done={},sound=false,history=[],historyIndex=0;
+try{const saved=JSON.parse(localStorage.getItem(STORAGE)||'{}');done=saved.done&&typeof saved.done==='object'?saved.done:{};sound=!!saved.sound}catch(e){}
+function save(){try{localStorage.setItem(STORAGE,JSON.stringify({done,sound}))}catch(e){}}
+function displayPath(p){return p===HOME?'~':p.startsWith(HOME+'/')?'~'+p.slice(HOME.length):p}
+function normPath(path,from){if(path===undefined||path===''||path==='~')return HOME;let p=path;if(p.startsWith('~/'))p=HOME+p.slice(1);let parts=(p.startsWith('/')?[]:from.split('/').filter(Boolean));for(const part of p.split('/')){if(!part||part==='.')continue;if(part==='..'){parts.pop();continue}parts.push(part)}return '/'+parts.join('/')}
+function parse(raw){const m=raw.match(/(?:[^\s"']+|"[^"]*"|'[^']*')+/g)||[];return m.map(x=>/^["']/.test(x)?x.slice(1,-1):x)}
+function isDir(p){return Object.prototype.hasOwnProperty.call(FS,p)}
+function isFile(p){const i=p.lastIndexOf('/');let parent=p.slice(0,i)||'/';return !!FS[parent]&&FS[parent].includes(p.slice(i+1))}
+function updatePath(){byId('currentDir').textContent=displayPath(state.cwd);byId('visualPath').textContent=state.cwd;renderTree();byId('logs').scrollTop=byId('logs').scrollHeight}
+function append(message,type){const line=document.createElement('div');line.className='log '+(type||'info');line.textContent=message;byId('logs').appendChild(line);byId('logs').scrollTop=byId('logs').scrollHeight}
+function appendCommand(cmd){const line=document.createElement('div');line.className='log cmd';const p=document.createElement('b');p.textContent='duvan@linux '+displayPath(state.cwd)+' $ ';line.appendChild(p);line.appendChild(document.createTextNode(cmd));byId('logs').appendChild(line)}
+function move(path){state.previous=state.cwd;state.cwd=path}
+function list(path,flags){if(!isDir(path)&&!isFile(path))return {error:'ls: no se puede acceder a '+path+': No existe el archivo o directorio'};if(isFile(path))return {out:path.split('/').pop()};let entries=FS[path].filter(e=>flags.includes('a')||!e.startsWith('.'));if(flags.includes('a'))entries=['./','../'].concat(entries);return {out:flags.includes('l')?entries.map(e=>(e.endsWith('/')?'drwxr-xr-x':'-rw-r--r--')+'  duvan  '+e).join('\n'):entries.join('    ')||'(directorio vacío)'}}
+function run(raw){const args=parse(raw),command=args[0],arg=args[1],valid=raw.trim().replace(/\s+/g,' ');let out='',error=false,success=false;
+if(!command)return {valid:false};
+if(command==='pwd'){if(args.length>1){out='pwd: demasiados argumentos';error=true}else out=state.cwd}
+else if(command==='ls'){let flags='',target='.';for(const a of args.slice(1)){if(a.startsWith('-')){if(!/^-[al]+$/.test(a)){out='ls: opción no admitida '+a;error=true;break}flags+=a.slice(1)}else if(target==='.')target=a;else{out='ls: en este laboratorio solo puedes listar una ruta a la vez';error=true;break}}if(!error){const r=list(normPath(target,state.cwd),flags);out=r.out||r.error;error=!!r.error}}
+else if(command==='cd'||command==='pushd'){
+if(args.length>2){out=command+': demasiados argumentos';error=true}
+else if(command==='cd'&&arg==='-'){if(!state.previous){out='cd: OLDPWD no está definido';error=true}else{const old=state.previous;move(old);out=state.cwd;success=true}}
+else if(command==='pushd'&&!arg){if(!state.stack.length){out='pushd: pila vacía';error=true}else{const old=state.cwd,target=state.stack.shift();move(target);state.stack.unshift(old);out=[state.cwd].concat(state.stack).join(' ');success=true}}
+else{let target=normPath(arg===undefined?'':arg,state.cwd);if(!isDir(target)){out=command+': '+(arg||'')+': '+(isFile(target)?'No es un directorio':'No existe el directorio');error=true}else{if(command==='pushd')state.stack.unshift(state.cwd);move(target);out=command==='pushd'?[state.cwd].concat(state.stack).join(' '):'';success=true}}
+}
+else if(command==='popd'){if(args.length>1){out='popd: argumentos no admitidos en este laboratorio';error=true}else if(!state.stack.length){out='popd: pila de directorios vacía';error=true}else{const target=state.stack.shift();move(target);out=[state.cwd].concat(state.stack).join(' ');success=true}}
+else if(command==='dirs'){out=[state.cwd].concat(state.stack).map(displayPath).join(' ')}
+else if(command==='tree'){const start=normPath(arg||'.',state.cwd);if(!isDir(start)){out='tree: directorio no encontrado';error=true}else{const lines=[start];function rec(p,prefix,depth){if(depth>4)return;const contents=FS[p];contents.forEach((n,i)=>{const last=i===contents.length-1;lines.push(prefix+(last?'└── ':'├── ')+n);if(n.endsWith('/'))rec(normPath(n,p),prefix+(last?'    ':'│   '),depth+1)})}rec(start,'',0);out=lines.join('\n')}}
+else if(command==='help'){out='pwd                 Mostrar la ruta actual\nls [-a|-l|-la] [ruta]  Listar contenido\ncd [ruta|..|.|~|-]    Cambiar de directorio\npushd [ruta]         Guardar ruta y entrar\npopd                 Recuperar ruta guardada\ndirs                 Mostrar la pila\ntree [ruta]          Ver árbol de carpetas\nclear                Limpiar pantalla\nTip: Tab autocompleta, ↑ recupera comandos.'}
+else if(command==='clear'){byId('logs').textContent='';success=true}
+else{out=command+': comando no admitido en este laboratorio. Escribe help.';error=true}
+if(out)append(out,error?'error':success?'ok':'info');updatePath();return {valid:!error,cmd:valid,success,error};}
+function renderTree(){const host=byId('fileTree');host.textContent='';function walk(p,depth){const d=document.createElement('details');d.open=(p==='/'||state.cwd===p||state.cwd.startsWith(p==='/':'/':p+'/'));const sum=document.createElement('summary'),b=document.createElement('button');b.type='button';b.textContent=(p==='/'?'/':p.split('/').pop())+'/';b.title='Preparar cd '+p;if(p===state.cwd)b.className='current';b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();d.open=!d.open;byId('commandInput').value='cd '+p;byId('commandInput').focus()});sum.appendChild(b);d.appendChild(sum);const branch=document.createElement('div');branch.className='branch';for(const entry of FS[p]){if(entry.endsWith('/')){const child=normPath(entry,p);if(depth<6)branch.appendChild(walk(child,depth+1))}else{const f=document.createElement('div');f.className='file';f.textContent='📄 '+entry;branch.appendChild(f)}}d.appendChild(branch);return d}host.appendChild(walk('/',0))}
+function stats(){const count=missions.filter(m=>!!done[m.id]).length;const points=missions.reduce((sum,m)=>sum+(done[m.id]&&done[m.id].earned?reward(m):0),0);byId('doneCount').textContent=count+' / '+missions.length;byId('points').textContent=points+' XP';byId('progressFill').style.width=(100*count/missions.length)+'%'}
+function reward(m){return m.level==='basico'?10:m.level==='intermedio'?15:20}
+function setMode(next){mode=next;document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));byId('modeTag').textContent=next==='missions'?'RETO ACTIVO':next==='guide'?'CONSULTA':'MODO LIBRE';byId('labSection').classList.toggle('hidden',next!=='lab');byId('missionsSection').classList.toggle('hidden',next!=='missions');byId('guideSection').classList.toggle('hidden',next!=='guide');if(next==='missions')selectMission(selected)}
+function feedback(message,type){const el=byId('missionFeedback');el.className='feedback '+(type||'');el.textContent=message}
+function showFeedback(message,type){feedback(message,type);byId('missionFeedback').classList.remove('hidden')}
+function selectMission(id){selected=id;const m=missions.find(m=>m.id===id)||missions[0];state={cwd:m.start,previous:m.previous||null,stack:(m.stack||[]).slice()};attempts=0;hintIndex=0;revealed=false;byId('logs').textContent='';append('Reto '+m.id+' preparado. Ubicación: '+state.cwd,'info');if(m.stack&&m.stack.length)append('Pila precargada: '+[state.cwd].concat(state.stack).join(' '),'info');byId('missionCounter').textContent=String(m.id).padStart(2,'0')+' / '+missions.length;byId('missionLevel').textContent=m.level.toUpperCase();byId('missionReward').textContent='+'+reward(m)+' XP (sin solución revelada)';byId('missionTitle').textContent=m.title;byId('missionDescription').textContent=m.description;byId('missionStart').textContent=m.start;byId('hintButton').textContent='💡 Pista 1';byId('solutionButton').textContent='👁 Mostrar solución';byId('missionFeedback').classList.add('hidden');updatePath();renderMissions();byId('commandInput').value='';byId('commandInput').focus()}
+function renderMissions(){const host=byId('missionList');host.textContent='';missions.filter(m=>level==='all'||m.level===level).forEach(m=>{const b=document.createElement('button');b.className='mission'+(selected===m.id?' selected':'');b.type='button';const num=document.createElement('span');num.className='num';num.textContent='#'+String(m.id).padStart(2,'0');const title=document.createElement('strong');title.textContent=m.title;const status=document.createElement('small');status.className=done[m.id]?'done':'';status.textContent=done[m.id]?(done[m.id].earned?'✓ Superado':'✓ Con ayuda'):m.level+' · '+reward(m)+' XP';b.append(num,title,status);b.addEventListener('click',()=>selectMission(m.id));host.appendChild(b)})}
+function soundEffect(ok){if(!sound)return;try{const A=window.AudioContext||window.webkitAudioContext;if(!A)return;const ac=new A(),osc=ac.createOscillator(),gain=ac.createGain();osc.type='sine';osc.frequency.value=ok?740:220;gain.gain.setValueAtTime(.06,ac.currentTime);gain.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.13);osc.connect(gain);gain.connect(ac.destination);osc.start();osc.stop(ac.currentTime+.14);osc.onended=()=>ac.close()}catch(e){}}
+function checkMission(result){if(mode!=='missions'||!result.valid)return;const m=missions.find(m=>m.id===selected);attempts++;if(m.test(result.cmd,state)){if(!done[m.id]||(done[m.id].earned===false&&!revealed)){done[m.id]={earned:!revealed}}save();stats();renderMissions();showFeedback('✓ ¡Objetivo alcanzado! '+m.why+(revealed?' Completado con solución consultada; sin XP en este intento.':' +'+reward(m)+' XP (si no lo habías superado).'),'success');soundEffect(true)}else{showFeedback('Todavía no se cumple el objetivo. Revisa la ruta, el comando solicitado y el explorador visual. Puedes pedir una pista sin revelar la solución.','warn');soundEffect(false)}}
+byId('commandForm').addEventListener('submit',e=>{e.preventDefault();const input=byId('commandInput'),raw=input.value.trim();if(!raw)return;appendCommand(raw);history.push(raw);historyIndex=history.length;input.value='';const result=run(raw);if(result.error)soundEffect(false);checkMission(result)});
+byId('commandInput').addEventListener('keydown',e=>{if(e.key==='ArrowUp'){e.preventDefault();historyIndex=Math.max(0,historyIndex-1);e.target.value=history[historyIndex]||''}else if(e.key==='ArrowDown'){e.preventDefault();historyIndex=Math.min(history.length,historyIndex+1);e.target.value=history[historyIndex]||''}else if(e.key==='Tab'){const v=e.target.value,match=v.match(/^(cd|ls|pushd)\s+([^\s]*)$/);if(!match)return;e.preventDefault();const path=match[2],slash=path.lastIndexOf('/'),base=slash<0?'':path.slice(0,slash+1),partial=slash<0?path:path.slice(slash+1),folder=normPath(base||'.',state.cwd);const options=(FS[folder]||[]).filter(n=>n.endsWith('/')&&n.slice(0,-1).startsWith(partial));if(options.length===1)e.target.value=match[1]+' '+base+options[0];else if(options.length>1)append('Opciones: '+options.join('    '),'info')}})
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
+document.querySelectorAll('[data-command]').forEach(b=>b.addEventListener('click',()=>{byId('commandInput').value=b.dataset.command;byId('commandInput').focus()}));
+byId('startMissions').addEventListener('click',()=>setMode('missions'));
+byId('resetShell').addEventListener('click',()=>{if(mode==='missions')selectMission(selected);else{state={cwd:HOME,previous:null,stack:[]};byId('logs').textContent='';append('Terminal reiniciada. Tu progreso en misiones permanece guardado.','ok');updatePath()}});
+byId('levelTabs').querySelectorAll('[data-level]').forEach(b=>b.addEventListener('click',()=>{level=b.dataset.level;byId('levelTabs').querySelectorAll('[data-level]').forEach(x=>x.classList.toggle('active',x===b));const shown=missions.filter(m=>level==='all'||m.level===level);if(!shown.some(m=>m.id===selected))selectMission(shown[0].id);else renderMissions()}));
+byId('hintButton').addEventListener('click',()=>{const m=missions.find(m=>m.id===selected);hintIndex=Math.min(m.hints.length,hintIndex+1);showFeedback('💡 Pista '+hintIndex+': '+m.hints[hintIndex-1],'warn');byId('hintButton').textContent=hintIndex>=m.hints.length?'💡 Última pista':'💡 Pista '+(hintIndex+1)});
+byId('solutionButton').addEventListener('click',()=>{const m=missions.find(m=>m.id===selected);revealed=true;showFeedback('Solución de ejemplo: '+m.solution+'\n\n¿Por qué? '+m.why+'\n\nPuedes escribir el comando tú mismo para practicar.','warn');byId('solutionButton').textContent='👁 Solución visible'});
+byId('retryButton').addEventListener('click',()=>selectMission(selected));
+byId('nextButton').addEventListener('click',()=>{const filtered=missions.filter(m=>level==='all'||m.level===level);const i=filtered.findIndex(m=>m.id===selected);selectMission(filtered[(i+1)%filtered.length].id)});
+byId('sound').addEventListener('click',()=>{sound=!sound;byId('sound').textContent=sound?'🔊 Audio: sí':'🔇 Audio: no';byId('sound').setAttribute('aria-pressed',String(sound));save();if(sound)soundEffect(true)});
+byId('resetProgress').addEventListener('click',()=>{if(!window.confirm('¿Reiniciar todos los retos completados y tu puntuación?'))return;done={};save();stats();if(mode==='missions')selectMission(selected);showToast('Progreso reiniciado. Puedes repetir todos los retos.')});
+let toastTimeout;function showToast(message){const el=byId('toast');el.textContent=message;el.classList.remove('hidden');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>el.classList.add('hidden'),3500)}
+byId('sound').textContent=sound?'🔊 Audio: sí':'🔇 Audio: no';byId('sound').setAttribute('aria-pressed',String(sound));stats();updatePath();append('¡Bienvenido a Linux Navigator! Escribe help para descubrir los comandos.','ok');append('Estás en '+HOME+'. Empieza con pwd o ls.','info');renderMissions();
+})();
+</script>
+</body>
+</html>
