@@ -77,6 +77,7 @@ function setMode(mode){
  state.mode=mode;armed=null;highlightId=null;errorId=null;
  if(mode==="missions"&&state.missionIndex<MISSIONS.length)state.orientation=sideFor(MISSIONS[state.missionIndex].id);
  clearFeedback();save();render();
+ if(state.view==="3d")window.BodyAtlas3D?.goToSide?.(state.orientation);
 }
 function sideFor(id){return BY_ID[id]?.view||"front";}
 function setOrientation(side){
@@ -192,6 +193,7 @@ function giveHint(reveal=false){
  armed=id;state.orientation=sideFor(id);highlightId=reveal?id:null;
  if(!state.labHinted.includes(id))state.labHinted.push(id);
  save();render();
+ if(state.view==="3d")window.BodyAtlas3D?.goToSide?.(state.orientation);
  setFeedback("info",reveal?`Location shown: ${BY_ID[id].name}`:`Hint for ${BY_ID[id].name}`,reveal?"Follow the gold halo, then place the chip yourself. A reveal does not complete the task.":BY_ID[id].clue+" (Hints reduce XP for this word.)");
 }
 function missionHint(reveal=false){
@@ -243,7 +245,7 @@ function renderActivity(){
  }else{
   const i=state.missionIndex;
   if(i>=MISSIONS.length){
-   activity.innerHTML=`<span class="overline">MODE 03 — COMPLETED</span><div class="mission-result"><h3>Mission accomplished!</h3><div class="score-big">18 / 18</div><p>You correctly identified every scenario. The best learning comes from doing it again without hints.</p><p>Incorrect attempts this round: ${state.missionMistakes}</p></div><div class="button-row"><button type="button" id="missionRestart" class="primary-button">↺ Replay missions</button><button type="button" id="goLabel" class="secondary-button">Try Label Lab</button></div>`;
+   activity.innerHTML=`<span class="overline">MODE 03 — COMPLETED</span><div class="mission-result"><h3>Mission accomplished!</h3><div class="score-big">${MISSIONS.length} / ${MISSIONS.length}</div><p>You correctly identified every scenario. The best learning comes from doing it again without hints.</p><p>Incorrect attempts this round: ${state.missionMistakes}</p></div><div class="button-row"><button type="button" id="missionRestart" class="primary-button">↺ Replay missions</button><button type="button" id="goLabel" class="secondary-button">Try Label Lab</button></div>`;
   }else{
    const task=MISSIONS[i];
    activity.innerHTML=`<span class="overline">MODE 03 — APPLY YOUR KNOWLEDGE</span>
