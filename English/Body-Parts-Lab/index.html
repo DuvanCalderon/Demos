@@ -16,7 +16,7 @@
   }
   </script>
   <script src="./app.js" defer></script>
-  <script type="module" src="./model3d.js"></script>
+  <script type="module" src="./model3d.js" onerror="window.BodyAtlas3DFailed?.()"></script>
 </head>
 <body>
   <div class="app">
@@ -108,11 +108,11 @@
             <div class="three-top-badges"><span class="view-badge">3D • INTERACTIVE</span><span class="view-badge secondary">SCHEMATIC MODEL</span></div>
             <div id="threeMessage" class="three-message" role="status">Loading the 3D model… An internet connection is required for Three.js. If it does not load, choose 2D.</div>
             <div class="three-toolbar" aria-label="3D camera controls">
-              <button type="button" id="rotateLeft3dBtn" title="Rotate camera left 45 degrees" aria-label="Rotate left">↶</button>
-              <button type="button" id="rotateRight3dBtn" title="Rotate camera right 45 degrees" aria-label="Rotate right">↷</button>
-              <button type="button" id="zoomIn3dBtn" title="Zoom in" aria-label="Zoom in">＋</button>
-              <button type="button" id="zoomOut3dBtn" title="Zoom out" aria-label="Zoom out">－</button>
-              <button type="button" id="center3dBtn" class="reset-camera" title="Reset to the front view">⌖ Reset camera</button>
+              <button type="button" id="rotateLeft3dBtn" disabled title="Rotate camera left 45 degrees" aria-label="Rotate left">↶</button>
+              <button type="button" id="rotateRight3dBtn" disabled title="Rotate camera right 45 degrees" aria-label="Rotate right">↷</button>
+              <button type="button" id="zoomIn3dBtn" disabled title="Zoom in" aria-label="Zoom in">＋</button>
+              <button type="button" id="zoomOut3dBtn" disabled title="Zoom out" aria-label="Zoom out">－</button>
+              <button type="button" id="center3dBtn" disabled class="reset-camera" title="Reset to the front view">⌖ Reset camera</button>
             </div>
             <div id="threeStatus" class="three-status" role="status">Drag to rotate • scroll to zoom • tap anatomical markers</div>
           </div>
