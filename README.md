@@ -8,7 +8,7 @@ Laboratorios y simuladores web para **aprender haciendo**: explora conceptos, pr
 
 La página principal incluye búsqueda, filtros por categoría, vistas de tarjetas y lista compacta. Diseñada para computadores y dispositivos móviles, sin instalaciones.
 
-## 📚 Catálogo (20 laboratorios en 8 categorías)
+## 📚 Catálogo (21 laboratorios en 8 categorías)
 
 ### 🇬🇧 English
 
@@ -27,6 +27,7 @@ La página principal incluye búsqueda, filtros por categoría, vistas de tarjet
 | Python Type Dojo — tipos, booleanos y colecciones (103 retos) | [Abrir ↗](https://duvancalderon.github.io/Demos/Python/Fundamentos/Type-Dojo-Tipos-Datos/) | [Ver carpeta](./Python/Fundamentos/Type-Dojo-Tipos-Datos/) |
 | CaseLab — camelCase, PascalCase y snake_case (45 retos) | [Abrir ↗](https://duvancalderon.github.io/Demos/Python/Fundamentos/CaseLab-Nombres-Variables/) | [Ver carpeta](./Python/Fundamentos/CaseLab-Nombres-Variables/) |
 | TerminalLab — comandos básicos de Python (15 retos) | [Abrir ↗](https://duvancalderon.github.io/Demos/Python/Fundamentos/TerminalLab-Comandos-Basicos/) | [Ver carpeta](./Python/Fundamentos/TerminalLab-Comandos-Basicos/) |
+| PATH LAB — variables de entorno de Windows y Python (8 misiones + examen) | [Abrir ↗](https://duvancalderon.github.io/Demos/Python/Fundamentos/PATH-Lab-Variables-Entorno/) | [Ver carpeta](./Python/Fundamentos/PATH-Lab-Variables-Entorno/) |
 | Truth Lab — booleanos y casting | [Abrir ↗](https://duvancalderon.github.io/Demos/Python/Fundamentos/Clase13-Booleanos-True-False-Casting/) | [Ver carpeta](./Python/Fundamentos/Clase13-Booleanos-True-False-Casting/) |
 | Python Loop Lab — bucles `for` y 15 retos | [Abrir ↗](https://duvancalderon.github.io/Demos/Python/Fundamentos/Bucles-For-Triangulos/) | [Ver carpeta](./Python/Fundamentos/Bucles-For-Triangulos/) |
 
