@@ -8,7 +8,7 @@ Laboratorios y simuladores web para **aprender haciendo**: explora conceptos, pr
 
 La página principal incluye búsqueda, filtros por categoría, vistas de tarjetas y lista compacta. Diseñada para computadores y dispositivos móviles, sin instalaciones.
 
-## 📚 Catálogo (25 laboratorios en 8 categorías)
+## 📚 Catálogo (26 laboratorios en 8 categorías)
 
 ### 🇬🇧 English
 
@@ -60,6 +60,7 @@ La página principal incluye búsqueda, filtros por categoría, vistas de tarjet
 | CommandLab — comandos esenciales | [Abrir ↗](https://duvancalderon.github.io/Demos/Terminal-y-Linea-de-Comandos/04-Comandos-Esenciales/) | [Ver carpeta](./Terminal-y-Linea-de-Comandos/04-Comandos-Esenciales/) |
 | Linux Navigator — navegación por directorios | [Abrir ↗](https://duvancalderon.github.io/Demos/Terminal-y-Linea-de-Comandos/05-Navegacion-Directorios/) | [Ver carpeta](./Terminal-y-Linea-de-Comandos/05-Navegacion-Directorios/) |
 | WSL Lab — Windows × Ubuntu (12 misiones, recreación) | [Abrir ↗](https://duvancalderon.github.io/Demos/Terminal-y-Linea-de-Comandos/06-WSL-Lab/) | [Ver carpeta](./Terminal-y-Linea-de-Comandos/06-WSL-Lab/) |
+| Terminal Lab — simulador (12 misiones, 8 preguntas, 9 capturas recreadas) | [Abrir ↗](https://duvancalderon.github.io/Demos/Terminal-y-Linea-de-Comandos/07-Terminal-Lab-Interactivo/) | [Ver carpeta](./Terminal-y-Linea-de-Comandos/07-Terminal-Lab-Interactivo/) |
 
 ### 📚 Vocabulario español
 
