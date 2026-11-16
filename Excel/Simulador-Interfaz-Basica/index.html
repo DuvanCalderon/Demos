@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#091824">
+<meta name="description" content="Excel Interface Lab: simulador interactivo educativo de la interfaz de Excel, con hoja editable, pestañas, cinta de opciones, barra de fórmulas y 12 retos.">
+<link rel="canonical" href="https://duvancalderon.github.io/Demos/Excel/Simulador-Interfaz-Basica/">
+<title>Excel Interface Lab — Simulador de la interfaz</title>
+<style>
+:root{color-scheme:dark;--bg:#09121c;--panel:#101e2c;--panel2:#182d3b;--line:#294352;--mint:#72ebba;--green:#239a77;--text:#edf8f6;--muted:#a0b6bd;--gold:#fbd48b;--red:#ffa6af}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;color:var(--text);background:radial-gradient(ellipse 900px 500px at 0% -8%,#17553f60,transparent 70%),var(--bg);font:15px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.42;cursor:not-allowed}button:focus-visible,input:focus-visible{outline:3px solid var(--mint);outline-offset:2px}a{color:var(--mint)}
+.wrap{max-width:1300px;margin:auto;padding:0 22px}
+.site-head{border-bottom:1px solid var(--line);background:#0d1a25e8}
+.top{display:flex;align-items:center;justify-content:space-between;gap:15px;min-height:76px;flex-wrap:wrap;padding:13px 0}
+.brand{display:flex;align-items:center;gap:11px;font-size:19px;font-weight:820;letter-spacing:-.5px}.logo{width:38px;height:38px;display:grid;place-items:center;background:linear-gradient(145deg,#22b681,#126a53);border-radius:11px;font-size:23px}
+.site-actions{display:flex;flex-wrap:wrap;gap:8px}.site-actions a{padding:8px 11px;text-decoration:none;border:1px solid #385c58;border-radius:10px;font-size:12px;font-weight:750}.site-actions a:hover{background:#173b33}
+.hero{padding:30px 0 15px}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:2px;font-weight:820;color:var(--mint)}
+h1{font-size:clamp(29px,4vw,45px);line-height:1.12;letter-spacing:-1.2px;margin:10px 0}.lead{color:#bfd1d5;max-width:800px;font-size:15px}
+.disclaimer{border-left:3px solid var(--gold);background:#17293b;padding:10px 15px;font-size:12px;border-radius:7px;color:#d0dee1;max-width:1050px;margin-top:16px}
+.navviews{display:flex;gap:8px;flex-wrap:wrap;padding:14px 0 18px}
+.navviews button{background:#142b36;border:1px solid #345767;color:#bbced3;border-radius:11px;padding:10px 16px;font-weight:760}
+.navviews button.active{background:#205443;border-color:var(--mint);color:white}
+.layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(280px,.7fr);gap:17px;padding-bottom:50px;align-items:start}
+.panel{border:1px solid var(--line);background:linear-gradient(145deg,#132332,#101d2c);border-radius:17px;padding:19px;min-width:0}
+.panel h2{margin:0 0 12px;font-size:18px}
+.worksheet-panel{padding:0;overflow:hidden}
+.office{color:#20343b;background:#e9f0f1;font-size:12px;min-width:0}
+.office-title{background:#176c50;color:white;display:flex;align-items:center;justify-content:space-between;padding:8px 12px;gap:12px}
+.quick{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.quick button{background:#197b5b;border:1px solid #7dc1aa;border-radius:6px;color:#fff;padding:3px 7px;font-size:11px}
+.file-title{font-size:12px;font-weight:780}
+.office-tabs{display:flex;flex-wrap:wrap;gap:0;border-bottom:1px solid #b4c6ca;background:#fff;padding:0 8px}
+.office-tabs button{border:none;background:transparent;color:#38535b;padding:10px 13px;font-weight:700;font-size:12px;border-bottom:3px solid transparent}
+.office-tabs button.active{color:#11684f;border-color:#1b8a63}
+.ribbon{min-height:74px;display:flex;flex-wrap:wrap;gap:7px;align-items:center;background:#f9fbfb;border-bottom:1px solid #c2d4d5;padding:10px 12px}
+.ribbon button{border:1px solid #b5c8c6;background:white;padding:8px 10px;border-radius:6px;color:#27434a;font-size:11px;font-weight:760}.ribbon button:hover{background:#e2f4ed}.ribbon-note{color:#50656a;font-size:11px}
+.formula{display:grid;grid-template-columns:72px 35px minmax(0,1fr);gap:5px;align-items:center;background:#f6f9f9;border-bottom:1px solid #bacccd;padding:7px}
+.formula input{background:#fff;color:#223c42;border:1px solid #afc6c5;border-radius:4px;padding:6px;min-width:0;font-size:12px}
+.fx{font-style:italic;color:#2a956f;font-weight:800;font-size:13px;text-align:center}
+.table-scroll{overflow:auto;max-height:470px;background:#fff}
+.sheet{border-collapse:collapse;table-layout:fixed;min-width:710px;width:100%;background:#fff}
+.sheet td,.sheet th{border:1px solid #d5dedf;height:30px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:3px 6px;color:#26363b;font-size:12px}
+.sheet th{background:#e4eced;font-weight:760;text-align:center;color:#506b70}
+.sheet .rowhead{width:42px;min-width:42px}
+.sheet td{background:#fff;cursor:cell;min-width:85px}
+.sheet td.selected{outline:2px solid #168961;outline-offset:-2px;background:#effef5}
+.sheet td.ranged{background:#e1f5eb}
+.sheet td:hover{box-shadow:inset 0 0 0 1px #36a779}
+.sheet td.boldcell{font-weight:850}
+.sheet td.bluecell{background:#dceaf7}
+.sheet td.centercell{text-align:center}
+.office-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;background:#e5eff0;border-top:1px solid #bdcfd1;padding:6px 10px}
+.sheets{display:flex;flex-wrap:wrap;gap:5px}
+.sheets button{font-size:11px;border:1px solid #a2bab7;border-radius:6px;background:#e5eeee;color:#32535b;padding:5px 9px}
+.sheets button.active{background:#fff;color:#0f805d;border-bottom:2px solid #16885c}
+.status{color:#536c70;font-size:11px}
+.hintline{padding:10px 13px;background:#f2f8f8;color:#5a7476;font-size:11px;border-top:1px solid #c5d8d7}
+.work-tools{display:flex;gap:9px;flex-wrap:wrap;padding:14px;background:#132535;border-top:1px solid #2a4952}
+.work-tools input{min-width:0;max-width:160px;background:#0c1926;color:#fff;border:1px solid #52736e;border-radius:7px;padding:7px 9px;font-size:12px}
+.btn{border:1px solid #456b69;background:#213d4a;color:#effaf5;padding:9px 12px;border-radius:9px;font-size:12px;font-weight:780}
+.btn:hover{filter:brightness(1.15)}.btn.main{background:var(--mint);border-color:transparent;color:#10332c}
+.views{display:grid;gap:14px}
+.view[hidden]{display:none}
+.counts{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px}
+.count{border:1px solid #345362;background:#182e3d;padding:10px;border-radius:11px;text-align:center}
+.count strong{display:block;color:var(--mint);font-size:22px}.count span{font-size:11px;color:var(--muted)}
+.zone-list{display:grid;gap:8px}
+.zone{border:1px solid #355567;background:#152c3d;color:#e0eeed;padding:10px;border-radius:10px;text-align:left}
+.zone:hover,.zone:focus-visible,.zone.active{border-color:var(--mint);background:#21493e}.zone b{display:block;font-size:12px}.zone small{color:#a2bcc5;font-size:11px}
+.info{background:#122f35;padding:13px;border:1px solid #2c6760;border-radius:12px;margin-top:12px;min-height:90px;font-size:13px}
+.info b{color:var(--mint)}
+.tasks{display:grid;gap:7px;max-height:300px;overflow-y:auto}
+.task{display:flex;gap:8px;align-items:center;text-align:left;border:1px solid #355567;background:#152d3d;color:#dceeed;border-radius:9px;padding:8px;font-size:12px}
+.task.active{border-color:var(--mint);background:#1e443b}
+.task.done{color:#affbd4}
+.task .num{width:23px;height:23px;display:grid;place-items:center;border-radius:8px;background:#274e4d;flex:0 0 auto}
+.meter{height:8px;background:#304958;border-radius:30px;overflow:hidden;margin:8px 0 12px}
+.meter div{height:100%;width:0;background:linear-gradient(90deg,#168b6a,#a4f7ca);transition:width .2s}
+.feedback{border-radius:10px;padding:11px;background:#204052;color:#d6eeec;font-size:12px;margin-top:13px;white-space:pre-wrap}
+.feedback.good{background:#1c4c3c;color:#d7ffe7}.feedback.bad{background:#482e36;color:#ffe0e1}
+.task-title{font-size:15px;font-weight:790;margin:14px 0 4px}
+.task-desc{color:#c0d6d5;font-size:13px}
+.task-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.modal-back{position:fixed;inset:0;background:#0009;display:grid;place-items:center;padding:20px;z-index:200}
+.modal-back[hidden]{display:none}
+.dialog{border-radius:17px;background:#162c3b;border:1px solid #456d6a;padding:24px;max-width:460px;width:100%}
+.dialog h2{font-size:19px;margin:0 0 8px}.dialog p{color:#b7d0d2}
+footer{border-top:1px solid var(--line);padding:22px 0 30px;color:var(--muted);font-size:12px}
+footer .links{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:8px}
+@media(max-width:970px){.layout{grid-template-columns:1fr}.side{order:-1}.zone-list{grid-template-columns:repeat(2,minmax(0,1fr))}.counts{max-width:500px}}
+@media(max-width:520px){.wrap{padding:0 13px}.hero{padding-top:20px}.zone-list{grid-template-columns:1fr}.office-title{align-items:flex-start;flex-direction:column}.formula{grid-template-columns:65px 24px minmax(0,1fr)}.panel{padding:14px}.worksheet-panel{padding:0}.top{gap:10px}.navviews button{flex:1;min-width:100px}}
+</style>
+</head>
+<body>
+<header class="site-head"><div class="wrap top">
+ <div class="brand"><span class="logo">X</span><span>Excel Interface Lab <span style="font-size:12px;color:#92c6b8">· Básico</span></span></div>
+ <div class="site-actions"><a href="../../">← Catálogo de Demos</a><a href="https://github.com/DuvanCalderon/Demos/tree/main/Excel/Simulador-Interfaz-Basica" target="_blank" rel="noopener noreferrer">Código ↗</a></div>
+</div></header>
+<main class="wrap">
+<section class="hero">
+ <div class="eyebrow">Laboratorio interactivo · Interfaz de Excel</div>
+ <h1>Conoce Excel.<br><span style="color:var(--mint)">Úsalo sin miedo.</span></h1>
+ <p class="lead">Descubre para qué sirven la cinta de opciones, el cuadro de nombres, la barra de fórmulas y las hojas. Después interactúa con un libro simulado y resuelve 12 retos prácticos.</p>
+ <p class="disclaimer">Versión educativa recreada para GitHub Pages. <strong>El HTML original de Notion se conserva sin cambios.</strong> No es Microsoft Excel ni abre ni guarda archivos .xlsx reales.</p>
+</section>
+<div class="navviews" role="tablist" aria-label="Modo de práctica">
+ <button type="button" data-view="explorar" class="active" role="tab" aria-selected="true">🧭 Explorar</button>
+ <button type="button" data-view="laboratorio" role="tab" aria-selected="false">🧮 Laboratorio</button>
+ <button type="button" data-view="retos" role="tab" aria-selected="false">🎯 Retos</button>
+</div>
+<div class="layout">
+<section class="panel worksheet-panel" aria-label="Simulador de la interfaz de Excel">
+ <div class="office">
+ <div class="office-title">
+  <div class="quick" aria-label="Barra de acceso rápido"><button type="button" id="save" title="Guardar (simulado)">💾 Guardar</button><button type="button" id="undo" title="Deshacer">↶</button><button type="button" id="redo" title="Rehacer">↷</button></div>
+  <div class="file-title">Libro1 — Excel (simulador) <span id="saveState">● Listo</span></div>
+ </div>
+ <div class="office-tabs" role="group" aria-label="Pestañas de la cinta de opciones"><button type="button" data-ribbon="Inicio" class="active">Inicio</button><button type="button" data-ribbon="Insertar">Insertar</button><button type="button" data-ribbon="Fórmulas">Fórmulas</button><button type="button" data-ribbon="Datos">Datos</button><button type="button" data-ribbon="Vista">Vista</button></div>
+ <div class="ribbon" id="ribbonActions" aria-label="Herramientas de la pestaña seleccionada"></div>
+ <div class="formula"><input id="nameBox" aria-label="Cuadro de nombres" title="Escribe dirección como C4 o rango A1:C1" value="A1"><div class="fx">fx</div><input id="formulaBar" aria-label="Barra de fórmulas. Escribe valores y pulsa Enter" value="" placeholder="Escribe un valor o fórmula y pulsa Enter"></div>
+ <div class="table-scroll"><table class="sheet" id="grid" aria-label="Hoja de cálculo editable de 10 columnas y 14 filas"></table></div>
+ <div class="office-bottom"><div class="sheets" id="sheetTabs" aria-label="Pestañas de hojas"></div><div class="status" id="statusBar">Listo · A1</div></div>
+ <div class="hintline">Haz clic en una celda para seleccionarla. Edita su valor con la barra de fórmulas y pulsa Enter; usa F2 como acceso rápido.</div>
+ </div>
+ <div class="work-tools"><input id="renameInput" aria-label="Nuevo nombre para la hoja actual" placeholder="Nombre de la hoja"><button type="button" id="renameSheet" class="btn">Renombrar hoja</button><button type="button" id="newSheet" class="btn">＋ Nueva hoja</button><button type="button" id="restoreBook" class="btn">Restaurar libro</button></div>
+</section>
+<aside class="panel side views">
+ <div class="view" data-section="explorar">
+  <h2>🧭 Explora la interfaz</h2><p class="task-desc">Señala las zonas, descubre para qué se utilizan y luego practica en la hoja de la izquierda.</p>
+  <div class="counts"><div class="count"><strong id="zonesCount">0/8</strong><span>Zonas exploradas</span></div><div class="count"><strong id="cellCount">0</strong><span>Celdas editadas</span></div><div class="count"><strong id="sheetCount">3</strong><span>Hojas</span></div></div>
+  <div class="zone-list" id="zones"></div>
+  <div class="info" id="zoneInfo" role="status" aria-live="polite">Selecciona una zona para ver una explicación y un ejemplo.</div>
+ </div>
+ <div class="view" data-section="laboratorio" hidden>
+  <h2>🧮 Tu laboratorio</h2><p class="task-desc">Esta es una interfaz simulada. Puedes seleccionar celdas, escribir datos y fórmulas sencillas, cambiar hojas, usar la cinta y probar deshacer/rehacer.</p>
+  <div class="counts"><div class="count"><strong id="labCells">0</strong><span>Celdas editadas</span></div><div class="count"><strong id="labSheets">3</strong><span>Hojas</span></div><div class="count"><strong id="labSave">0</strong><span>Guardados</span></div></div>
+  <div class="info"><b>Mini experimento:</b> selecciona B2, escribe <code>120</code> en la barra de fórmulas y pulsa Enter. Repite en B3 con <code>80</code>. Después, escribe <code>=SUMA(B2:B3)</code> en C2 y observa el resultado.</div>
+  <p class="task-desc">Pulsa <b>F2</b> o haz doble clic sobre una celda para editarla en la barra de fórmulas. El botón Guardar registra un guardado simulado, no crea un archivo de Excel.</p>
+  <button type="button" id="switchToTasks" class="btn main">Ir a los 12 retos →</button>
+ </div>
+ <div class="view" data-section="retos" hidden>
+  <h2>🎯 Retos de la interfaz</h2>
+  <div class="counts"><div class="count"><strong id="solved">0/12</strong><span>Completados</span></div><div class="count"><strong id="xp">0</strong><span>Puntos</span></div><div class="count"><strong id="progressPct">0%</strong><span>Avance</span></div></div>
+  <div class="meter"><div id="meterFill"></div></div><div class="tasks" id="taskList"></div>
+  <div class="task-title" id="taskTitle"></div><p class="task-desc" id="taskDesc"></p>
+  <div class="task-actions"><button type="button" id="checkTask" class="btn main">Comprobar reto</button><button type="button" id="hintTask" class="btn">💡 Pista</button><button type="button" id="nextTask" class="btn">Siguiente →</button></div>
+  <div class="feedback" id="feedback" role="status" hidden></div>
+  <div class="task-actions"><button type="button" id="resetProgress" class="btn">↻ Reiniciar progreso</button></div>
+ </div>
+</aside>
+</div>
+</main>
+<footer><div class="wrap"><div class="links"><a href="../../">← Catálogo principal</a><a href="https://github.com/DuvanCalderon/Demos/tree/main/Excel/Simulador-Interfaz-Basica" target="_blank" rel="noopener noreferrer">Código en GitHub ↗</a><a href="https://app.notion.com/p/41760fb536738142b7d6cf10d79ea500" target="_blank" rel="noopener noreferrer">Simulador original en Notion ↗</a></div>Excel Interface Lab · Recreación educativa independiente. No ejecuta Excel real.</div></footer>
+<div class="modal-back" id="confirmModal" hidden><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="confirmTitle"><h2 id="confirmTitle">¿Reiniciar?</h2><p id="confirmText">Se perderán los cambios de la simulación.</p><div class="task-actions"><button type="button" id="cancelConfirm" class="btn">Cancelar</button><button type="button" id="acceptConfirm" class="btn main">Sí, reiniciar</button></div></div></div>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const KEY="excel-interface-lab-v1";
+const zones=[
+ ["quick","Barra de acceso rápido","Contiene acciones frecuentes como Guardar, Deshacer y Rehacer. Puedes usarlas sin cambiar de pestaña.","Pulsa el botón 💾 Guardar del simulador."],
+ ["title","Barra de título","Muestra el nombre del libro abierto. Un libro puede contener varias hojas.","Aquí el libro se llama Libro1."],
+ ["ribbon","Cinta de opciones","Agrupa herramientas en pestañas como Inicio, Insertar, Fórmulas, Datos y Vista.","Cambia a la pestaña Fórmulas y observa sus herramientas."],
+ ["name","Cuadro de nombres","Identifica la celda seleccionada y permite saltar a una dirección como D5 o seleccionar un rango como A1:C1.","Escribe C4 en el cuadro a la izquierda de fx y pulsa Enter."],
+ ["formula","Barra de fórmulas","Permite ver y editar el contenido real de una celda, aunque se muestre otro resultado calculado.","Selecciona B2 y escribe 120; también admite =SUMA(B2:B3)."],
+ ["grid","Filas, columnas y celdas","Las columnas se identifican con letras y las filas con números. Cada celda tiene una dirección como B3.","Haz clic en D4 en la cuadrícula."],
+ ["sheets","Pestañas de hojas","Permiten cambiar, crear y renombrar hojas dentro de un mismo libro.","Cambia a Inventario o crea una nueva hoja."],
+ ["status","Barra de estado","Muestra información contextual, como la celda seleccionada y el estado de trabajo.","Observa la línea inferior de la cuadrícula después de seleccionar una celda."]
+];
+const tasks=[
+ {title:"Localiza una celda",desc:"Selecciona la celda C4 mediante un clic en la cuadrícula.",hint:"Busca la columna C y la fila 4.",check:s=>s.selected==="C4"&&s.flags.clickedC4},
+ {title:"Edita desde la barra de fórmulas",desc:"En la hoja Ventas, escribe el valor 2500 en B2 y confirma con Enter.",hint:"Selecciona la hoja Ventas, B2, escribe 2500 en fx y pulsa Enter.",check:s=>s.sheets.Ventas?.B2==="2500"},
+ {title:"Usa el cuadro de nombres",desc:"Salta a H7 escribiendo esa dirección en el cuadro de nombres.",hint:"El cuadro de nombres está justo a la izquierda de fx.",check:s=>s.selected==="H7"&&s.flags.nameH7},
+ {title:"Crea una fórmula",desc:"En la hoja Ventas, escribe =SUMA(B2:B4) en D5.",hint:"Selecciona D5, introduce =SUMA(B2:B4) y pulsa Enter.",check:s=>s.sheets.Ventas?.D5?.toUpperCase()==="=SUMA(B2:B4)"},
+ {title:"Explora la cinta",desc:"Activa la pestaña Fórmulas de la cinta de opciones.",hint:"Busca Inicio · Insertar · Fórmulas en la parte superior.",check:s=>s.ribbon==="Fórmulas"},
+ {title:"Guardar desde acceso rápido",desc:"Pulsa Guardar en la barra de acceso rápido al menos una vez.",hint:"Es el botón con el símbolo de disquete.",check:s=>s.flags.saved>0},
+ {title:"Cambia de hoja",desc:"Selecciona la pestaña Inventario.",hint:"Las pestañas están debajo de la cuadrícula.",check:s=>s.current==="Inventario"},
+ {title:"Renombra una hoja",desc:"Renombra la hoja Resumen como Informe.",hint:"Selecciona Resumen, escribe Informe en el campo bajo la hoja y pulsa Renombrar hoja.",check:s=>s.sheets.Informe!==undefined},
+ {title:"Aplica negrita",desc:"Selecciona A1 y usa la herramienta Negrita de la pestaña Inicio.",hint:"Selecciona A1, activa Inicio y pulsa Negrita.",check:s=>s.format?.[s.current]?.A1?.bold===true},
+ {title:"Cambia el relleno",desc:"Aplica un fondo azul a la celda B2.",hint:"Selecciona B2, entra a Inicio y pulsa Relleno azul.",check:s=>s.format?.[s.current]?.B2?.blue===true},
+ {title:"Selecciona un rango",desc:"Utiliza el cuadro de nombres para seleccionar A1:C1.",hint:"Escribe A1:C1 y pulsa Enter en el cuadro de nombres.",check:s=>s.range==="A1:C1"&&s.flags.namedRange},
+ {title:"Crea otra hoja",desc:"Añade una hoja nueva al libro.",hint:"Usa el botón ＋ Nueva hoja, situado bajo el simulador.",check:s=>Object.keys(s.sheets).length>=4}
+];
+const seed=()=>({Ventas:{A1:"Artículo",B1:"Importe",C1:"Unidades",A2:"Cuaderno",B2:"1200",C2:"3",A3:"Lápiz",B3:"800",C3:"5",A4:"Carpeta",B4:"400",C4:"2"},Inventario:{A1:"Producto",B1:"Stock",A2:"Cuaderno",B2:"12",A3:"Lápiz",B3:"34"},Resumen:{A1:"Mes",B1:"Total",A2:"Noviembre"}});
+const fresh=()=>({sheets:seed(),format:{},current:"Ventas",selected:"A1",range:"",ribbon:"Inicio",savedTasks:{},view:"explorar",explored:[],flags:{saved:0,clickedC4:false,nameH7:false,namedRange:false},stats:{edited:0},taskIndex:0});
+let state=fresh(),past=[],future=[];
+try{const saved=JSON.parse(localStorage.getItem(KEY)||"null");if(saved&&saved.sheets&&saved.flags&&saved.savedTasks&&saved.current)state=Object.assign(fresh(),saved);}catch(e){}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+const escapeHTML=v=>String(v??"").replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
+const addr=/^[A-J](?:[1-9]|1[0-4])$/;
+const rangeRe=/^([A-J])([1-9]|1[0-4]):([A-J])([1-9]|1[0-4])$/;
+function cells(spec){
+ const m=spec.match(rangeRe);if(!m)return addr.test(spec)?[spec]:[];
+ const a=m[1].charCodeAt(0),b=m[3].charCodeAt(0),y1=+m[2],y2=+m[4],out=[];
+ if(a>b||y1>y2)return [];
+ for(let y=y1;y<=y2;y++)for(let x=a;x<=b;x++)out.push(String.fromCharCode(x)+y);
+ return out;
+}
+function number(v){const n=Number(v);return Number.isFinite(n)?n:0}
+function shownValue(addr){
+ const raw=state.sheets[state.current]?.[addr]||"";
+ if(!raw.startsWith("="))return raw;
+ const sum=raw.match(/^=SUMA\(([A-J](?:[1-9]|1[0-4])):([A-J](?:[1-9]|1[0-4]))\)$/i);
+ if(sum){const keys=cells(sum[1]+":"+sum[2]);return keys.length?String(keys.reduce((a,k)=>a+number(state.sheets[state.current][k]),0)):"#REF!";}
+ const add=raw.match(/^=([A-J](?:[1-9]|1[0-4]))\+([A-J](?:[1-9]|1[0-4]))$/i);
+ if(add)return String(number(state.sheets[state.current][add[1]])+number(state.sheets[state.current][add[2]]));
+ return "#FÓRMULA";
+}
+function snapshot(){past.push(JSON.stringify(state));if(past.length>35)past.shift();future=[]}
+function markChanged(){state.stats.edited++;persist();render()}
+function setStatus(message){$('saveState').textContent="● "+message}
+function renderGrid(){
+ const keys=new Set(state.range?cells(state.range):[]);
+ let html='<thead><tr><th class="rowhead"></th>';for(let c=65;c<=74;c++)html+='<th>'+String.fromCharCode(c)+'</th>';html+='</tr></thead><tbody>';
+ for(let y=1;y<=14;y++){html+='<tr><th class="rowhead">'+y+'</th>';for(let c=65;c<=74;c++){
+ const address=String.fromCharCode(c)+y,style=state.format?.[state.current]?.[address]||{},classes=[];
+ if(address===state.selected)classes.push('selected');else if(keys.has(address))classes.push('ranged');
+ if(style.bold)classes.push("boldcell");if(style.blue)classes.push("bluecell");if(style.center)classes.push("centercell");
+ html+='<td tabindex="0" role="button" aria-label="Celda '+address+'" data-address="'+address+'" class="'+classes.join(" ")+'" title="'+address+'">'+escapeHTML(shownValue(address))+'</td>';
+ }html+='</tr>';}
+ $('grid').innerHTML=html+'</tbody>';
+}
+function renderRibbon(){
+ const v=state.ribbon;
+ const actions={
+ Inicio:[["bold","B Negrita"],["blue","▣ Relleno azul"],["center","≡ Centrar"],["clear","Borrar formato"]],
+ Insertar:[["insertSample","Insertar texto de muestra"]],
+ "Fórmulas":[["insertSum","Insertar =SUMA(B2:B4)"]],
+ Datos:[["sortInfo","Acerca de ordenar"]],
+ Vista:[["toggleGrid","Mostrar información"]]
+ };
+ $('ribbonActions').innerHTML=actions[v].map(([id,label])=>'<button type="button" data-tool="'+id+'">'+label+'</button>').join('')+'<span class="ribbon-note">'+escapeHTML(v)+' · Herramientas simplificadas</span>';
+ document.querySelectorAll('[data-ribbon]').forEach(b=>{b.classList.toggle('active',b.dataset.ribbon===v);b.setAttribute('aria-pressed',String(b.dataset.ribbon===v))});
+}
+function renderSheetTabs(){
+ $('sheetTabs').innerHTML=Object.keys(state.sheets).map(x=>'<button type="button" data-sheet="'+escapeHTML(x)+'" class="'+(x===state.current?'active':'')+'">'+escapeHTML(x)+'</button>').join('');
+}
+function renderExplore(){
+ $('zonesCount').textContent=state.explored.length+'/8';
+ $('zones').innerHTML=zones.map(([id,name,ex])=>'<button type="button" data-zone="'+id+'" class="zone '+(state.explored.includes(id)?'active':'')+'"><b>'+escapeHTML(name)+'</b><small>'+escapeHTML(ex)+'</small></button>').join('');
+}
+function taskFeedback(msg,cls){const el=$('feedback');el.hidden=false;el.textContent=msg;el.className='feedback '+(cls||'');}
+function renderTasks(){
+ const completed=Object.keys(state.savedTasks).filter(k=>state.savedTasks[k]).length;
+ $('solved').textContent=completed+'/12';$('xp').textContent=completed*10;$('progressPct').textContent=Math.round(completed/12*100)+'%';$('meterFill').style.width=(completed/12*100)+'%';
+ $('taskList').innerHTML=tasks.map((t,i)=>'<button type="button" class="task '+(i===state.taskIndex?'active ':'')+(state.savedTasks[i]?'done':'')+'" data-task="'+i+'"><span class="num">'+(state.savedTasks[i]?'✓':i+1)+'</span>'+escapeHTML(t.title)+'</button>').join('');
+ $('taskTitle').textContent=(state.taskIndex+1)+'. '+tasks[state.taskIndex].title;$('taskDesc').textContent=tasks[state.taskIndex].desc;
+}
+function render(){
+ if(!state.sheets[state.current])state.current=Object.keys(state.sheets)[0];
+ if(!addr.test(state.selected))state.selected='A1';
+ renderGrid();renderSheetTabs();renderRibbon();renderExplore();renderTasks();
+ $('nameBox').value=state.range||state.selected;$('formulaBar').value=state.sheets[state.current]?.[state.selected]||'';
+ $('cellCount').textContent=state.stats.edited;$('labCells').textContent=state.stats.edited;
+ $('sheetCount').textContent=Object.keys(state.sheets).length;$('labSheets').textContent=Object.keys(state.sheets).length;$('labSave').textContent=state.flags.saved;
+ $('statusBar').textContent='Listo · '+state.current+' · '+(state.range||state.selected);
+ document.querySelectorAll('[data-view]').forEach(b=>{const active=b.dataset.view===state.view;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active))});
+ document.querySelectorAll('[data-section]').forEach(el=>el.hidden=el.dataset.section!==state.view);
+ persist();
+}
+function setView(view){state.view=view;render()}
+function selectCell(address,viaName=false){if(!addr.test(address))return;state.selected=address;state.range='';if(address==="C4"&&!viaName)state.flags.clickedC4=true;if(address==="H7"&&viaName)state.flags.nameH7=true;render()}
+function setRange(text){const addrText=text.toUpperCase().trim();if(addr.test(addrText)){selectCell(addrText,true);setStatus('Celda '+addrText);return;}
+ if(!rangeRe.test(addrText)||cells(addrText).length===0){setStatus('Dirección inválida');$('nameBox').value=state.range||state.selected;return;}
+ state.range=addrText;state.selected=addrText.split(":")[0];state.flags.namedRange=addrText==="A1:C1";setStatus('Rango '+addrText);render()}
+function editCell(value){snapshot();state.sheets[state.current][state.selected]=value;markChanged();setStatus('Contenido cambiado');}
+function toolAction(tool){
+ if(tool==="sortInfo"){setStatus('Ordenar es una función de Datos');return}
+ if(tool==="toggleGrid"){setStatus('La cuadrícula ya está visible');return}
+ if(tool==="insertSum"){editCell("=SUMA(B2:B4)");return}
+ if(tool==="insertSample"){editCell("Ejemplo");return}
+ const selected=state.range?cells(state.range):[state.selected];
+ snapshot();
+ state.format[state.current] ||= {};
+ for(const a of selected){const old=state.format[state.current][a]||{};if(tool==="clear"){delete state.format[state.current][a];continue;}state.format[state.current][a]={...old,[tool]:true};}
+ markChanged();setStatus("Formato aplicado");
+}
+function showZone(id){
+ const z=zones.find(x=>x[0]===id);if(!z)return;
+ if(!state.explored.includes(id))state.explored.push(id);
+ $('zoneInfo').innerHTML='<b>'+escapeHTML(z[1])+'</b><div>'+escapeHTML(z[2])+'</div><p>'+escapeHTML(z[3])+'</p>';
+ renderExplore();persist();
+}
+function addSheet(){
+ if(Object.keys(state.sheets).length>=12){setStatus('Máximo de 12 hojas');return}
+ snapshot();let k=1;while(state.sheets['Hoja'+k])k++;
+ state.sheets['Hoja'+k]={};state.current='Hoja'+k;state.selected='A1';state.range='';markChanged();setStatus('Nueva hoja creada');
+}
+function renameSheet(){
+ const name=$('renameInput').value.trim();
+ if(!name||name.length>28||/[\\/:?*\[\]]/.test(name)){setStatus('Escribe un nombre válido');return}
+ if(name!==state.current&&state.sheets[name]){setStatus('Nombre de hoja duplicado');return}
+ if(name===state.current){setStatus('La hoja ya tiene ese nombre');return}
+ snapshot();state.sheets[name]=state.sheets[state.current];delete state.sheets[state.current];
+ state.format[name]=state.format[state.current]||{};delete state.format[state.current];
+ state.current=name;$('renameInput').value='';markChanged();setStatus('Hoja renombrada');
+}
+function undo(){if(!past.length){setStatus('Nada para deshacer');return}future.push(JSON.stringify(state));state=JSON.parse(past.pop());render();setStatus('Última acción deshecha')}
+function redo(){if(!future.length){setStatus('Nada para rehacer');return}past.push(JSON.stringify(state));state=JSON.parse(future.pop());render();setStatus('Acción rehecha')}
+let onAccept=null,focusBefore=null;
+function confirmAction(title,description,fn){focusBefore=document.activeElement;onAccept=fn;$('confirmTitle').textContent=title;$('confirmText').textContent=description;$('confirmModal').hidden=false;$('cancelConfirm').focus()}
+function closeConfirm(){$('confirmModal').hidden=true;if(focusBefore?.focus)focusBefore.focus();onAccept=null}
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
+document.querySelectorAll('[data-ribbon]').forEach(b=>b.addEventListener('click',()=>{state.ribbon=b.dataset.ribbon;render()}));
+$('ribbonActions').addEventListener('click',e=>{const b=e.target.closest('[data-tool]');if(b)toolAction(b.dataset.tool)});
+$('grid').addEventListener('click',e=>{const c=e.target.closest('[data-address]');if(c)selectCell(c.dataset.address)});
+$('grid').addEventListener('dblclick',e=>{const c=e.target.closest('[data-address]');if(c){selectCell(c.dataset.address);$('formulaBar').focus();$('formulaBar').select()}});
+$('grid').addEventListener('keydown',e=>{const c=e.target.closest('[data-address]');if(c&&(e.key==='Enter'||e.key===' ')){e.preventDefault();selectCell(c.dataset.address);$('formulaBar').focus()}});
+$('nameBox').addEventListener('keydown',e=>{if(e.key==='Enter'){setRange(e.target.value);$('formulaBar').focus();}});
+$('formulaBar').addEventListener('keydown',e=>{if(e.key==='Enter'){editCell(e.target.value);e.target.blur()}});
+document.addEventListener('keydown',e=>{if(e.key==='F2'&&document.activeElement!==$('formulaBar')){e.preventDefault();$('formulaBar').focus();$('formulaBar').select()}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();saveAction()}});
+$('sheetTabs').addEventListener('click',e=>{const b=e.target.closest('[data-sheet]');if(b){state.current=b.dataset.sheet;state.selected='A1';state.range='';render()}});
+$('zones').addEventListener('click',e=>{const b=e.target.closest('[data-zone]');if(b)showZone(b.dataset.zone)});
+$('zones').addEventListener('mouseover',e=>{const b=e.target.closest('[data-zone]');if(b)showZone(b.dataset.zone)});
+$('newSheet').addEventListener('click',addSheet);$('renameSheet').addEventListener('click',renameSheet);
+$('renameInput').addEventListener('keydown',e=>{if(e.key==='Enter')renameSheet()});
+$('taskList').addEventListener('click',e=>{const b=e.target.closest('[data-task]');if(b){state.taskIndex=+b.dataset.task;render();$('feedback').hidden=true}});
+$('checkTask').addEventListener('click',()=>{const t=tasks[state.taskIndex],ok=Boolean(t.check(state));if(ok){state.savedTasks[state.taskIndex]=true;persist();renderTasks();taskFeedback('✓ ¡Correcto! Puedes repetirlo o pasar al siguiente reto.','good');}else taskFeedback('Aún no se cumple el objetivo. '+t.hint,'bad')});
+$('hintTask').addEventListener('click',()=>taskFeedback('💡 '+tasks[state.taskIndex].hint));
+$('nextTask').addEventListener('click',()=>{state.taskIndex=(state.taskIndex+1)%tasks.length;$('feedback').hidden=true;render()});
+$('switchToTasks').addEventListener('click',()=>setView('retos'));
+function saveAction(){state.flags.saved++;persist();render();setStatus('Guardado en este navegador (simulado)')}
+$('save').addEventListener('click',saveAction);$('undo').addEventListener('click',undo);$('redo').addEventListener('click',redo);
+$('restoreBook').addEventListener('click',()=>confirmAction('¿Restaurar el libro?','Se restablecerán los datos y nombres de las hojas simuladas. Los retos completados se conservarán.',()=>{snapshot();state.sheets=seed();state.format={};state.current='Ventas';state.selected='A1';state.range='';markChanged();setStatus('Libro restaurado')}));
+$('resetProgress').addEventListener('click',()=>confirmAction('¿Reiniciar el progreso?','Se borrarán los retos superados y el registro de zonas exploradas. Los datos del libro se conservarán.',()=>{state.savedTasks={};state.explored=[];state.taskIndex=0;render()}));
+$('cancelConfirm').addEventListener('click',closeConfirm);
+$('acceptConfirm').addEventListener('click',()=>{const action=onAccept;closeConfirm();if(action)action()});
+$('confirmModal').addEventListener('click',e=>{if(e.target.id==='confirmModal')closeConfirm()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('confirmModal').hidden)closeConfirm()});
+render();
+})();
+</script>
+</body>
+</html>
