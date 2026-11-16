@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101521">
+<meta name="description" content="Terminal Lab — simulador educativo de Linux: 12 misiones, 8 preguntas y 9 capturas recreadas para analizar.">
+<link rel="canonical" href="https://duvancalderon.github.io/Demos/Terminal-y-Linea-de-Comandos/07-Terminal-Lab-Interactivo/">
+<title>Terminal Lab — Aprender, practicar y analizar</title>
+<style>
+:root{color-scheme:dark;--bg:#0b0f1a;--panel:#141b2b;--panel2:#1b2638;--line:#34415a;--text:#ecf2ff;--muted:#a3b0c7;--mint:#82ead1;--purple:#b1a5ff;--gold:#ffcd88;--bad:#ffc1c6}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse 1050px 550px at 90% -15%,#46387875,transparent 75%),var(--bg);color:var(--text);font:15px/1.56 system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--mint);outline-offset:3px}button:disabled{opacity:.5;cursor:not-allowed}
+a{color:var(--mint)}.wrap{max-width:1280px;margin:auto;padding:0 22px}
+.top{border-bottom:1px solid #2b3852;background:#0d1422e0}
+.top-inner{min-height:76px;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;padding:12px 0}
+.brand{display:flex;align-items:center;gap:12px;font-size:20px;font-weight:850;letter-spacing:-.55px}.brand-icon{width:43px;height:43px;background:linear-gradient(135deg,#7754b9,#42377d);display:grid;place-items:center;border-radius:13px;font-size:22px}
+.links{display:flex;gap:8px;flex-wrap:wrap}.links a{text-decoration:none;border:1px solid #465574;border-radius:9px;font-size:12px;font-weight:750;padding:8px 11px}.links a:hover{background:#243249}
+main{padding:30px 0 55px}.eyebrow{color:var(--mint);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:2px}
+h1{font-size:clamp(30px,4.1vw,49px);line-height:1.1;letter-spacing:-1.2px;margin:9px 0}
+.lead{color:#c2cee0;max-width:800px;margin:12px 0}
+.caveat{border-left:3px solid var(--gold);border-radius:8px;background:#282839;color:#d5d6e5;padding:11px 14px;font-size:12px;max-width:970px;margin:16px 0}
+.metrics{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0 24px}
+.metric{display:flex;align-items:center;gap:9px;background:#192236;border:1px solid var(--line);border-radius:13px;padding:11px 16px;color:#b5c4da;font-size:12px}.metric strong{font-size:23px;color:var(--mint)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.tab{border:1px solid #4b5479;background:#1b273b;padding:10px 15px;border-radius:11px;font-weight:760;font-size:13px;color:#c5cde0}
+.tab.active{background:#3e3768;border-color:#b9a6ff;color:#fff}
+.panel{background:linear-gradient(145deg,#172236,#121b2b);border:1px solid var(--line);border-radius:17px;padding:20px;min-width:0}
+.panel h2{font-size:19px;margin:0 0 9px}.panel h3{font-size:16px;margin:0 0 10px}
+.sub{color:var(--muted);font-size:13px;margin:3px 0 15px}
+.view[hidden]{display:none}
+.learn-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.learn-card{background:#19283a;border:1px solid #3c4a64;border-radius:14px;padding:17px}
+.learn-card b{display:block;font-size:15px;color:#e6e3ff;margin-bottom:6px}.learn-card p{font-size:13px;color:#b6c7d5;margin:0}.learn-card code{color:#9af2d3}
+.section-actions{display:flex;gap:9px;flex-wrap:wrap;margin:17px 0 0}
+.btn{color:#edf5ff;background:#28364d;border:1px solid #51647d;border-radius:10px;padding:10px 14px;font-size:13px;font-weight:760}
+.btn:hover{filter:brightness(1.12)}.btn.main{background:linear-gradient(120deg,#a6eddb,#79c6c3);color:#0b2430;border-color:transparent}.btn.alt{background:#3c3768;border-color:#7d77ad}.btn.warn{color:#ffd7d9;border-color:#81515a;background:transparent}
+.lab-grid{display:grid;grid-template-columns:270px minmax(0,1fr);gap:16px;align-items:start}
+.side{position:sticky;top:16px}.mission-list{display:grid;gap:6px;max-height:600px;overflow-y:auto}
+.mission{display:flex;align-items:center;gap:8px;background:#1c2a3f;border:1px solid #364b68;color:#c7d3e3;border-radius:10px;text-align:left;padding:9px 10px;font-size:12px}
+.mission.active{border-color:#c2a9ff;background:#3c3456;color:white}.mission.done{border-color:#59857a;color:#c2f3df}
+.numb{width:25px;height:25px;border-radius:8px;display:grid;place-items:center;background:#34435d;font-weight:800;flex:0 0 auto}
+.rail{height:8px;background:#344155;border-radius:30px;overflow:hidden;margin:10px 0 13px}.rail>span{display:block;background:linear-gradient(90deg,#ab91ff,#84edc7);height:100%;width:0;transition:width .25s}
+.stack{display:grid;gap:14px;min-width:0}
+.m-title{font-size:20px;font-weight:850;margin:5px 0 9px}
+.desc{font-size:13px;color:#c7d4e3;margin:7px 0}
+.feedback{padding:12px 13px;border:1px solid #47667b;background:#24394c;color:#e5f3fc;border-radius:10px;font-size:13px;margin-top:12px;white-space:pre-wrap}
+.feedback.good{background:#194239;border-color:#548979;color:#dcfff1}.feedback.bad{background:#4a2b36;border-color:#986070;color:#ffe5e5}
+.feedback[hidden]{display:none}
+.terminal{background:#080d17;border:1px solid #3c4d6e;border-radius:15px;overflow:hidden}
+.term-head{background:#1d2840;border-bottom:1px solid #3c4d6e;padding:11px 13px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:12px;font-weight:750}
+.term-screen{height:305px;overflow-y:auto;padding:15px 17px;color:#d8f4eb;white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.6 ui-monospace,Consolas,monospace}
+.term-line{margin:0 0 7px}.term-line.cmd{color:#bfa7ff}.term-line.err{color:#ffb4b4}.term-line.dim{color:#99a9bb}
+.term-form{display:flex;gap:7px;padding:11px;background:#101b2c;border-top:1px solid #31435f}
+.term-form .prompt{color:#86efc5;align-self:center;font:13px ui-monospace,Consolas,monospace;flex:0 0 auto}
+.term-form input{flex:1;min-width:0;border:1px solid #405773;border-radius:9px;background:#0b1424;color:white;padding:10px 12px;font:13px ui-monospace,Consolas,monospace}
+.term-foot{background:#131d2f;display:flex;justify-content:space-between;align-items:center;padding:8px 12px;color:#9caec5;font-size:11px;gap:8px}
+.term-foot button{background:transparent;color:#bfb4ff;border:0;font-size:11px;padding:5px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chips button{border:1px solid #42546f;border-radius:8px;padding:7px 10px;background:#1e3042;color:#dbeaf0;font:12px ui-monospace,Consolas,monospace}
+.q-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(250px,.65fr);gap:16px}
+.question-kicker{color:#a89bfb;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px}
+.question-title{font-size:21px;line-height:1.3;margin:10px 0 17px}
+.answers{display:grid;gap:9px;margin-bottom:12px}
+.answer{text-align:left;border:1px solid #425775;border-radius:11px;color:#e6f0ff;background:#1a2a3d;padding:13px 15px;font-size:13px}
+.answer:hover{background:#273650}.answer.selected{border-color:#b7a8ff;background:#3a345c}
+.explainer{background:#213448;border-left:3px solid var(--purple);padding:14px;border-radius:10px;color:#c9d5e4;font-size:13px}
+.explainer b{color:#bfaeff}
+.screenshot{background:#0a1019;border:1px solid #58657b;border-radius:13px;overflow:hidden;margin:16px 0}
+.screenshot .bar{padding:9px 13px;background:#24344d;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#d2e0f0}
+.screenshot pre{white-space:pre-wrap;overflow-wrap:anywhere;padding:17px 18px;margin:0;min-height:190px;color:#dcf8e3;font:13px/1.55 ui-monospace,Consolas,monospace}
+.screenshot .foot{padding:8px 12px;background:#17283a;color:#99b3c6;font-size:11px}
+.resetbar{margin:20px 0 0;border-top:1px solid #354360;padding:16px 0 0;display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.toast{font-size:12px;color:#b4fad9}
+footer{border-top:1px solid #35425a;padding:22px 0 38px;color:#a4afc1;font-size:12px}
+footer .links{margin-bottom:9px}
+@media(max-width:1000px){.lab-grid,.q-layout{grid-template-columns:1fr}.side{position:static}.mission-list{grid-template-columns:repeat(2,minmax(0,1fr));max-height:350px}}
+@media(max-width:660px){.wrap{padding:0 14px}main{padding-top:18px}.panel{padding:14px}.learn-grid{grid-template-columns:1fr}.mission-list{grid-template-columns:1fr}.metrics{gap:6px}.metric{padding:9px 10px}.term-screen{height:260px}.term-form .btn{padding:9px 10px}.tabs .tab{flex:1;min-width:135px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap top-inner"><div class="brand"><span class="brand-icon" aria-hidden="true">⌨️</span> Terminal Lab <span style="font-size:12px;color:#a5aac9;font-weight:650">Linux · Shell · Comandos</span></div><nav class="links"><a href="../../">← Demos</a><a href="../">Índice de Terminal</a><a href="https://github.com/DuvanCalderon/Demos/tree/main/Terminal-y-Linea-de-Comandos/07-Terminal-Lab-Interactivo" target="_blank" rel="noopener noreferrer">Código ↗</a></nav></div></header>
+<main class="wrap">
+<div class="eyebrow">Aprende haciendo · Simulación educativa segura</div>
+<h1>Entiende la terminal.<br><span style="color:#b6a3ff">Domina los comandos.</span></h1>
+<p class="lead">Aprende la diferencia entre terminal, shell y sistema operativo. Después experimenta con una terminal de Linux virtual y ponte a prueba con misiones, preguntas y capturas recreadas.</p>
+<p class="caveat"><strong>Recreación educativa independiente:</strong> el HTML original v4 de Notion permanece intacto. Las 9 «capturas» de esta web son <strong>escenarios de terminal recreados</strong>, no las imágenes originales del archivo de Notion. No ejecuta comandos en tu equipo.</p>
+<div class="metrics"><div class="metric"><strong id="countM">0/12</strong> Misiones</div><div class="metric"><strong id="countQ">0/8</strong> Preguntas</div><div class="metric"><strong id="countI">0/9</strong> Capturas</div><div class="metric"><strong id="countXP">0</strong> XP</div></div>
+<div class="tabs" role="tablist" aria-label="Modos de aprendizaje">
+ <button type="button" role="tab" data-tab="aprender" class="tab active" aria-selected="true">📚 Aprender</button>
+ <button type="button" role="tab" data-tab="laboratorio" class="tab" aria-selected="false">⌨️ Laboratorio</button>
+ <button type="button" role="tab" data-tab="evaluacion" class="tab" aria-selected="false">📝 Evaluación</button>
+ <button type="button" role="tab" data-tab="imagenes" class="tab" aria-selected="false">🔍 Analizar capturas</button>
+</div>
+<section id="aprender" class="view">
+ <div class="panel"><h2>La diferencia está en las capas</h2><p class="sub">Una analogía sencilla: la terminal es la ventana, el shell es el traductor y el sistema operativo es quien hace el trabajo.</p>
+ <div class="learn-grid">
+  <div class="learn-card"><b>🪟 Terminal</b><p>Es la interfaz donde escribes y lees texto. Ejemplos: Windows Terminal, GNOME Terminal y la terminal integrada de VS Code.</p></div>
+  <div class="learn-card"><b>🗣️ Shell</b><p>Interpreta lo que escribes y organiza la ejecución de comandos. Ejemplos: Bash, Zsh y PowerShell.</p></div>
+  <div class="learn-card"><b>⚙️ Sistema operativo</b><p>Administra procesos, archivos, memoria y dispositivos. Linux y Windows ofrecen las funciones que el shell solicita.</p></div>
+  <div class="learn-card"><b>📂 Rutas</b><p>Con <code>pwd</code> averiguas dónde estás; <code>ls</code> muestra archivos; <code>cd</code> cambia de carpeta.</p></div>
+  <div class="learn-card"><b>🧱 Crear archivos</b><p><code>mkdir</code> crea directorios y <code>touch</code> crea archivos vacíos. <code>cat</code> permite leer texto.</p></div>
+  <div class="learn-card"><b>🧪 Practicar sin riesgos</b><p>Este laboratorio guarda un sistema de archivos ficticio dentro del navegador. No se accede a los archivos reales de tu equipo.</p></div>
+ </div><div class="section-actions"><button type="button" class="btn main" id="startLab">Ir a las 12 misiones →</button><button type="button" class="btn" id="startImages">Analizar las capturas →</button></div></div>
+</section>
+<section id="laboratorio" class="view" hidden>
+ <div class="lab-grid">
+  <aside class="panel side"><h2>🎯 12 misiones</h2><p class="sub">Ejecuta comandos de Bash y comprueba tus acciones.</p><div class="rail"><span id="meterM"></span></div><div class="mission-list" id="missions"></div></aside>
+  <div class="stack">
+   <div class="panel"><div class="question-kicker" id="missionLevel">Nivel básico</div><div id="missionTitle" class="m-title"></div><p id="missionDescription" class="desc"></p><div class="section-actions"><button class="btn" id="missionHint">💡 Pista</button><button class="btn" id="missionSolution">Ver solución</button><button class="btn main" id="checkMission">Comprobar misión</button><button class="btn alt" id="nextMission">Siguiente →</button></div><div id="missionFeedback" class="feedback" role="status" aria-live="polite" hidden></div></div>
+   <div class="terminal"><div class="term-head"><span>● ● ● &nbsp; Bash · Linux (virtual)</span><span>Sin acceso a tu computador</span></div><div id="screen" class="term-screen" role="log" aria-label="Salida de la terminal"></div><form id="commandForm" class="term-form"><span id="prompt" class="prompt">learner@linux:~$</span><input id="commandInput" type="text" aria-label="Escribe un comando en la terminal virtual" autocomplete="off" spellcheck="false" placeholder="Escribe help para empezar"><button class="btn main" type="submit">Ejecutar</button></form><div class="term-foot"><span>Enter ejecutar · ↑ ↓ historial</span><button type="button" id="clearTerminal">Limpiar terminal</button></div></div>
+   <div class="panel"><h3>Comandos de ejemplo</h3><div id="examples" class="chips"></div><p class="sub" style="margin-top:13px">Los cambios se realizan en un sistema de archivos virtual. Escribe <code>help</code> para ver los comandos implementados.</p></div>
+  </div>
+ </div>
+</section>
+<section id="evaluacion" class="view" hidden>
+ <div class="q-layout"><div class="panel"><div id="quizCounter" class="question-kicker"></div><h2 id="quizTitle" class="question-title"></h2><div id="quizAnswers" class="answers"></div><div class="section-actions"><button class="btn main" id="quizCheck">Comprobar</button><button class="btn" id="quizHint">💡 Pista</button><button class="btn" id="quizSolution">Ver solución</button><button class="btn alt" id="quizNext">Siguiente →</button></div><div id="quizFeedback" class="feedback" role="status" aria-live="polite" hidden></div></div><aside class="panel"><h2>📝 Evaluación de conceptos</h2><p class="sub">8 preguntas con dificultad progresiva, respuestas de opción múltiple y explicaciones.</p><div class="rail"><span id="meterQ"></span></div><p>Los aciertos cuentan como completados. Puedes repetir las preguntas y mejorar tu resultado.</p><div class="section-actions"><button class="btn" id="quizPrev">← Anterior</button></div></aside></div>
+</section>
+<section id="imagenes" class="view" hidden>
+ <div class="q-layout"><div class="panel"><div class="question-kicker" id="imageCounter"></div><h2 class="question-title" id="imageTitle"></h2><div class="screenshot"><div class="bar"><span>● ● ● &nbsp; Terminal recreada</span><span id="imageBadge">Linux Bash</span></div><pre id="imageCode"></pre><div class="foot">Ejemplo visual generado para este demo; no es una captura original de Notion.</div></div><div class="answers" id="imageAnswers"></div><div class="section-actions"><button class="btn main" id="imageCheck">Comprobar</button><button class="btn" id="imageHint">💡 Pista</button><button class="btn" id="imageSolution">Ver solución</button><button class="btn alt" id="imageNext">Siguiente →</button></div><div id="imageFeedback" class="feedback" role="status" aria-live="polite" hidden></div></div><aside class="panel"><h2>🔍 Lee la terminal</h2><p class="sub">9 escenarios visuales de terminal, cada uno con una pregunta, pistas y explicación de la respuesta.</p><div class="rail"><span id="meterI"></span></div><p>Observa el prompt, el comando y la salida antes de elegir. La última parte aumenta la dificultad.</p><div class="section-actions"><button class="btn" id="imagePrev">← Anterior</button></div></aside></div>
+</section>
+<div class="resetbar"><button type="button" id="resetAll" class="btn warn">↻ Reiniciar todo el progreso</button><button type="button" id="undoReset" class="btn" disabled>↶ Deshacer reinicio</button><span class="toast" id="resetNotice" role="status"></span></div>
+</main>
+<footer><div class="wrap"><nav class="links"><a href="../../">← Catálogo principal</a><a href="../">Todos los demos de terminal</a><a href="https://app.notion.com/p/41760fb536738160b39ac7650c5f6247" target="_blank" rel="noopener noreferrer">Original v4 en Notion</a></nav><p>Terminal Lab · Recreación educativa independiente · No ejecuta comandos del sistema operativo.</p></div></footer>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id),KEY="terminal-lab-interactivo-recreado-v1",HOME="/home/learner";
+const missions=[
+ ["Básico","¿Dónde estoy?","Descubre tu directorio inicial con el comando que imprime la ruta actual.","Escribe pwd.","pwd","homePwd"],
+ ["Básico","Archivos ocultos","Lista los archivos del directorio personal incluyendo los ocultos.","Usa ls -la.","ls -la","listHidden"],
+ ["Básico","¿Quién soy?","Pregunta al sistema el nombre del usuario actual.","Prueba whoami.","whoami","whoami"],
+ ["Básico","Crea un directorio","Crea la carpeta proyectos dentro de /home/learner.","Utiliza mkdir proyectos.","mkdir proyectos","created"],
+ ["Intermedio","Entra al proyecto","Cambia la terminal al directorio proyectos.","Utiliza cd proyectos.","cd proyectos","entered"],
+ ["Intermedio","Comprueba la ruta","Desde proyectos, consulta tu ruta absoluta.","Usa pwd cuando el prompt indique proyectos.","pwd","projectPwd"],
+ ["Intermedio","Crea un archivo","Crea el archivo notas.txt dentro de proyectos.","Usa touch notas.txt.","touch notas.txt","fileCreated"],
+ ["Intermedio","Lista los detalles","En proyectos, lista con detalles los archivos creados.","Prueba ls -l.","ls -l","listDetails"],
+ ["Avanzado","Escribe en el archivo","Guarda la palabra hola en notas.txt usando redirección.","Usa echo hola > notas.txt.","echo hola > notas.txt","wrote"],
+ ["Avanzado","Lee el archivo","Muestra el contenido de notas.txt en pantalla.","Utiliza cat notas.txt.","cat notas.txt","read"],
+ ["Avanzado","Sube un nivel","Vuelve de proyectos al directorio personal.","Usa cd ... ¡Ojo con los puntos!","cd ..","back"],
+ ["Avanzado","Valida el directorio","Lista las carpetas del directorio personal tras regresar desde proyectos.","Usa ls en /home/learner.","ls","finalList"]
+];
+const quizzes=[
+ ["¿Cuál es la principal función de una terminal?",["Gestionar memoria física","Ofrecer una interfaz para interactuar por comandos","Interpretar el código del kernel"],1,"La terminal muestra una interfaz; el shell interpreta los comandos.","Distingue la ventana de quien interpreta lo que escribes."],
+ ["¿Qué programa interpreta órdenes como ls o cd?",["Bash","El monitor","La tarjeta gráfica"],0,"Bash es un shell. Hay otros, como Zsh y PowerShell.","Se ejecuta dentro de la terminal."],
+ ["¿Qué muestra pwd?",["Archivos ocultos","La ruta del directorio actual","Los permisos del usuario"],1,"pwd significa print working directory.","Piensa en tu ubicación dentro del sistema de archivos."],
+ ["¿Qué hace ls -a?",["Lista incluso nombres ocultos","Borra los archivos","Cambia de carpeta"],0,"La opción -a incluye entradas que comienzan por punto.","La opción se refiere a all."],
+ ["¿Qué comando sube al directorio padre?",["cd /","cd ..","mkdir .."],1,".. representa el directorio superior a la ruta actual.","Dos puntos suelen indicar el directorio padre."],
+ ["¿Qué diferencia mkdir de touch?",["Ambos eliminan archivos","mkdir crea carpetas; touch puede crear archivos","mkdir inicia Linux"],1,"mkdir crea directorios y touch puede crear un archivo vacío.","Uno es 'make directory'."],
+ ["¿Qué hace echo hola > notas.txt en Bash?",["Agrega texto sin reemplazar","Escribe hola en el archivo, reemplazando su contenido previo","Ejecuta notas.txt"],1,"La redirección > sobrescribe; >> añade al final.","Observa un único símbolo >."],
+ ["¿Qué significa Permission denied al ejecutar un comando?",["Que la ruta no existe en todos los casos","Que el sistema denegó la operación por permisos","Que se ejecutó correctamente"],1,"Indica un problema de autorización o permisos de la operación solicitada.","No es sinónimo de 'command not found'."]
+];
+const images=[
+ ["Reconoce el prompt","learner@ubuntu:~$ pwd\n/home/learner\nlearner@ubuntu:~$ _",["El comando muestra el directorio actual","Se borró el directorio personal","Se inició el intérprete Python"],0,"El resultado /home/learner es la ruta actual.","pwd imprime una ruta.","Linux Bash"],
+ ["¿Qué lista ls -la?","learner@ubuntu:~$ ls -la\ndrwxr-xr-x  3 learner learner 4096 .\ndrwxr-xr-x  6 root    root    4096 ..\n-rw-r--r--  1 learner learner   98 .bashrc\n-rw-r--r--  1 learner learner   18 notas.txt",["Los archivos ocultos y los detalles","Solamente procesos activos","Solo directorios sin archivos"],0,"-l aporta detalles y -a incluye ocultos como .bashrc.","Observa el archivo que empieza por punto.","Linux Bash"],
+ ["Identifica un error de ruta","learner@ubuntu:~$ cd proyectos\nbash: cd: proyectos: No such file or directory",["El directorio no existe en esa ruta","El shell se cerró correctamente","Se creó proyectos"],0,"cd falla si el destino indicado no existe en la ruta consultada.","No such file or directory describe una ruta inexistente.","Linux Bash"],
+ ["¿En qué entorno estamos?","PS C:\\Users\\student> wsl\nWelcome to Ubuntu\nstudent@ubuntu:~$ _",["Dentro de Ubuntu/Bash después de wsl","Dentro de Python (>>>)","En el BIOS"],0,"wsl permite abrir un entorno Linux desde Windows cuando WSL está configurado.","Observa el prompt final student@ubuntu.","PowerShell → Bash"],
+ ["Comprende cd ..","learner@ubuntu:~/proyectos$ cd ..\nlearner@ubuntu:~$ pwd\n/home/learner",["Subimos al directorio padre","Se borró proyectos","Regresamos a Windows"],0,"cd .. sube un nivel en la jerarquía de directorios.","La ruta cambia de proyectos a home.","Linux Bash"],
+ ["¿Qué pasó con notas.txt?","learner@ubuntu:~/proyectos$ echo hola > notas.txt\nlearner@ubuntu:~/proyectos$ cat notas.txt\nhola",["Se escribió y luego se leyó hola","Se ejecutó el archivo como un programa","Se eliminaron los datos"],0,"La redirección > escribe el archivo y cat permite mostrarlo.","Observa el resultado del comando cat.","Linux Bash"],
+ ["Distingue intérprete y shell", "learner@ubuntu:~$ python3\nPython 3.12.0\n>>> 2 + 2\n4\n>>> _",["Estamos dentro del REPL de Python","Estamos en Bash normal","Estamos en el gestor de paquetes"],0,"El indicador >>> corresponde al intérprete interactivo de Python.","El prompt >>> es la pista fundamental.","Python REPL"],
+ ["Identifica el problema","learner@ubuntu:~$ ./script.sh\nbash: ./script.sh: Permission denied",["Falta un permiso o autorización apropiada","El script necesariamente no existe","La ejecución terminó con éxito"],0,"Permission denied informa que la operación fue rechazada por restricciones de permisos. No significa automáticamente que el archivo esté ausente.","Fíjate en la frase literal del error.","Linux Bash"],
+ ["Interpreta una canalización","learner@ubuntu:~$ cat notas.txt | grep error\nerror: archivo faltante\nerror: permiso insuficiente",["grep filtró las líneas que contienen error","grep borró el archivo","cat ejecutó un programa de Windows"],0,"| conecta la salida de cat con la entrada de grep, que filtra las líneas coincidentes.","La barra vertical enlaza procesos.","Linux Bash"]
+];
+function initFS(){return {"/":{type:"dir"},"/home":{type:"dir"},[HOME]:{type:"dir"},[HOME+"/.bashrc"]:{type:"file",value:"export PATH=$PATH"},[HOME+"/bienvenida.txt"]:{type:"file",value:"¡Bienvenido a Terminal Lab!"}}}
+function fresh(){return {tab:"aprender",mission:0,quiz:0,image:0,missionDone:{},quizChoice:{},quizDone:{},imageChoice:{},imageDone:{},flags:{},cwd:HOME,fs:initFS(),learned:{}}}
+let state;try{const saved=JSON.parse(localStorage.getItem(KEY)||"null");state=saved&&saved.fs&&saved.flags&&saved.missionDone&&saved.quizDone&&saved.imageDone?saved:fresh()}catch(e){state=fresh()}
+let history=[],historyAt=0,resetBackup=null;
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+function visible(tab){state.tab=tab;document.querySelectorAll(".view").forEach(v=>v.hidden=v.id!==tab);document.querySelectorAll("[data-tab]").forEach(b=>{const active=b.dataset.tab===tab;b.classList.toggle("active",active);b.setAttribute("aria-selected",String(active))});persist()}
+function count(obj){return Object.values(obj).filter(Boolean).length}
+function stats(){const m=count(state.missionDone),q=count(state.quizDone),i=count(state.imageDone);$("countM").textContent=m+"/12";$("countQ").textContent=q+"/8";$("countI").textContent=i+"/9";$("countXP").textContent=String(10*(m+q+i));$("meterM").style.width=100*m/12+"%";$("meterQ").style.width=100*q/8+"%";$("meterI").style.width=100*i/9+"%"}
+function feedback(id,txt,type){const e=$(id);e.hidden=false;e.className="feedback "+(type||"");e.textContent=txt}
+function esc(s){return String(s).replace(/[&<>"]/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[x]))}
+function norm(path){const out=[];for(const part of path.split("/")){if(!part||part===".")continue;if(part==="..")out.pop();else out.push(part)}return "/"+out.join("/")}
+function locate(p){if(!p||p==="~")return HOME;if(p.startsWith("~/"))return norm(HOME+"/"+p.slice(2));return norm(p[0]==="/"?p:state.cwd+"/"+p)}
+function childNames(dir,details,hidden){const names=Object.keys(state.fs).filter(p=>p!==dir&&p.startsWith(dir==="/"?"/":dir+"/")&&!p.slice(dir==="/"?1:dir.length+1).includes("/")).sort();const filtered=hidden?names:names.filter(p=>!p.split("/").pop().startsWith("."));if(!details)return filtered.map(p=>p.split("/").pop()).join("  ")||"(vacío)";return filtered.map(p=>(state.fs[p].type==="dir"?"drwxr-xr-x ":"-rw-r--r-- ")+p.split("/").pop()).join("\n")||"(vacío)"}
+function runCmd(raw){
+ const parts=raw.trim().split(/\s+/),cmd=parts[0],args=parts.slice(1),arg=args[0]||"";
+ if(cmd==="help")return "Comandos disponibles: help, pwd, ls [-la|-l|-a], whoami, cd, mkdir, touch, echo, cat, clear, uname, exit.\nComandos ejecutados solo en una simulación.";
+ if(cmd==="pwd"){if(state.cwd===HOME)state.flags.homePwd=true;if(state.cwd===HOME+"/proyectos")state.flags.projectPwd=true;return state.cwd}
+ if(cmd==="whoami"){state.flags.whoami=true;return "learner"}
+ if(cmd==="ls"){const name=args.find(x=>!x.startsWith("-"))||".";const p=locate(name);if(state.fs[p]?.type!=="dir")return {error:"ls: no se encuentra "+name};const flag=args.join(""),details=flag.includes("l"),hidden=flag.includes("a");if(state.cwd===HOME&&details&&hidden)state.flags.listHidden=true;if(state.cwd===HOME+"/proyectos"&&details)state.flags.listDetails=true;if(state.cwd===HOME&&state.flags.back&&!flag)state.flags.finalList=true;return childNames(p,details,hidden)}
+ if(cmd==="cd"){const p=locate(arg||"~");if(state.fs[p]?.type!=="dir")return {error:"cd: "+(arg||"")+" : directorio inexistente"};const old=state.cwd;state.cwd=p;if(p===HOME+"/proyectos")state.flags.entered=true;if(old===HOME+"/proyectos"&&p===HOME)state.flags.back=true;return ""}
+ if(cmd==="mkdir"){if(args.length!==1)return {error:"Uso: mkdir carpeta"};const p=locate(arg),parent=norm(p+"/..");if(state.fs[parent]?.type!=="dir")return {error:"mkdir: no existe directorio padre"};if(state.fs[p])return {error:"mkdir: ya existe"};state.fs[p]={type:"dir"};if(p===HOME+"/proyectos")state.flags.created=true;return ""}
+ if(cmd==="touch"){if(args.length!==1)return {error:"Uso: touch archivo"};const p=locate(arg),parent=norm(p+"/..");if(state.fs[parent]?.type!=="dir"||state.fs[p]?.type==="dir")return {error:"touch: ruta inválida"};state.fs[p] ||= {type:"file",value:""};if(p===HOME+"/proyectos/notas.txt")state.flags.fileCreated=true;return ""}
+ if(cmd==="echo"){const match=raw.match(/^echo\s+(.+?)\s*>\s*([^\s]+)$/);if(match){const p=locate(match[2]),parent=norm(p+"/..");if(state.fs[parent]?.type!=="dir")return {error:"echo: directorio no encontrado"};let v=match[1].replace(/^["']|["']$/g,"");state.fs[p]={type:"file",value:v};if(p===HOME+"/proyectos/notas.txt"&&v.toLowerCase().includes("hola"))state.flags.wrote=true;return ""}return args.join(" ")}
+ if(cmd==="cat"){if(args.length!==1)return {error:"Uso: cat archivo"};const p=locate(arg);if(state.fs[p]?.type!=="file")return {error:"cat: archivo no encontrado: "+arg};const data=state.fs[p].value||"";if(p===HOME+"/proyectos/notas.txt"&&data.toLowerCase().includes("hola"))state.flags.read=true;return data||"(archivo vacío)"}
+ if(cmd==="uname")return "Linux terminal-lab 6.x (kernel ficticio)";
+ if(cmd==="clear"){$("screen").replaceChildren();return ""}
+ if(cmd==="exit")return "Este laboratorio no cierra tu navegador. Puedes continuar practicando Bash.";
+ return {error:"bash: "+cmd+": comando no reconocido en este simulador. Prueba help."}
+}
+function appendLine(t,cls){const d=document.createElement("div");d.className="term-line "+(cls||"");d.textContent=t;$("screen").appendChild(d);$("screen").scrollTop=$("screen").scrollHeight}
+function command(text){const input=text.trim();if(!input)return;appendLine("learner@linux:"+state.cwd+"$ "+input,"cmd");const result=runCmd(input);if(result&&typeof result==="object"&&result.error)appendLine(result.error,"err");else if(result)appendLine(result,"");persist();render();$("commandInput").value=""}
+function renderMissions(){const m=missions[state.mission];$("missionLevel").textContent="Nivel "+m[0];$("missionTitle").textContent=(state.mission+1)+". "+m[1];$("missionDescription").textContent=m[2];$("missions").innerHTML=missions.map((x,i)=>'<button type="button" class="mission '+(i===state.mission?'active ':'')+(state.missionDone[i]?'done':'')+'" data-mission="'+i+'"><span class="numb">'+(state.missionDone[i]?'✓':(i+1))+'</span><span>'+esc(x[1])+'</span></button>').join("");$("prompt").textContent="learner@linux:"+(state.cwd===HOME?"~":state.cwd.split("/").pop())+"$";const choices=["pwd","ls -la","whoami","mkdir proyectos","cd proyectos","touch notas.txt","echo hola > notas.txt","cat notas.txt","cd ..","help"]; $("examples").innerHTML=choices.map(x=>'<button type="button" data-cmd="'+esc(x)+'">'+esc(x)+'</button>').join("")}
+function renderAnswers(prefix,data,index,selected){$(prefix+"Counter").textContent=(prefix==="quiz"?"Pregunta ":"Escenario ")+(index+1)+" / "+(prefix==="quiz"?"8":"9");$(prefix+"Title").textContent=data[0];$(prefix+"Answers").innerHTML=data[1].map((x,i)=>'<button type="button" class="answer '+(selected===i?'selected':'')+'" data-'+prefix+'-answer="'+i+'" aria-pressed="'+String(selected===i)+'">'+String.fromCharCode(65+i)+'. '+esc(x)+'</button>').join("")}
+function renderQuiz(){const item=quizzes[state.quiz];renderAnswers("quiz",[item[0],item[1]],state.quiz,state.quizChoice[state.quiz]);}
+function renderImages(){const item=images[state.image];$("imageCounter").textContent="Escenario "+(state.image+1)+" / 9";$("imageTitle").textContent=item[0];$("imageCode").textContent=item[1];$("imageBadge").textContent=item[6];$("imageAnswers").innerHTML=item[2].map((x,i)=>'<button type="button" class="answer '+(state.imageChoice[state.image]===i?'selected':'')+'" data-image-answer="'+i+'" aria-pressed="'+String(state.imageChoice[state.image]===i)+'">'+String.fromCharCode(65+i)+'. '+esc(x)+'</button>').join("")}
+function render(){visible(state.tab);stats();renderMissions();renderQuiz();renderImages();$("undoReset").disabled=!resetBackup}
+function selectQuestion(prefix,index){if(prefix==="quiz"){state.quizChoice[state.quiz]=index;renderQuiz()}else{state.imageChoice[state.image]=index;renderImages()}persist()}
+function checkQuestion(prefix,reveal){const quiz=prefix==="quiz",idx=quiz?state.quiz:state.image,items=quiz?quizzes:images,item=items[idx],correct=quiz?item[2]:item[3],answer=quiz?state.quizChoice[idx]:state.imageChoice[idx],feedbackId=prefix+"Feedback";
+ if(answer===undefined&&!reveal){feedback(feedbackId,"Elige una respuesta antes de comprobar.","bad");return}
+ if(reveal){feedback(feedbackId,"Solución: "+String.fromCharCode(65+correct)+". "+(quiz?item[4]:item[4]),"");return}
+ const yes=answer===correct;
+ if(quiz){if(yes)state.quizDone[idx]=true}else{if(yes)state.imageDone[idx]=true}
+ feedback(feedbackId,(yes?"✓ ¡Correcto! ":"Todavía no. ")+(quiz?item[4]:item[4]),yes?"good":"bad");persist();stats()
+}
+document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>{visible(b.dataset.tab);render()}));
+$("startLab").addEventListener("click",()=>{visible("laboratorio");render()});$("startImages").addEventListener("click",()=>{visible("imagenes");render()});
+$("missions").addEventListener("click",e=>{const b=e.target.closest("[data-mission]");if(!b)return;state.mission=+b.dataset.mission;$("missionFeedback").hidden=true;persist();renderMissions()});
+$("commandForm").addEventListener("submit",e=>{e.preventDefault();const v=$("commandInput").value;if(v.trim()){history.push(v);historyAt=history.length;command(v)}});
+$("commandInput").addEventListener("keydown",e=>{if(e.key!=="ArrowUp"&&e.key!=="ArrowDown")return;if(!history.length)return;e.preventDefault();historyAt=Math.max(0,Math.min(history.length,historyAt+(e.key==="ArrowUp"?-1:1)));$("commandInput").value=history[historyAt]||""});
+$("clearTerminal").addEventListener("click",()=>{$("screen").replaceChildren();appendLine("Terminal limpiada. Los archivos y el progreso permanecen intactos.","dim")});
+$("examples").addEventListener("click",e=>{const b=e.target.closest("[data-cmd]");if(!b)return;$("commandInput").value=b.dataset.cmd;$("commandInput").focus()});
+$("missionHint").addEventListener("click",()=>feedback("missionFeedback","💡 "+missions[state.mission][3],""));
+$("missionSolution").addEventListener("click",()=>feedback("missionFeedback","Solución orientativa: "+missions[state.mission][4]+". Ejecuta ese comando en el entorno virtual.",""));
+$("checkMission").addEventListener("click",()=>{const m=missions[state.mission],ok=!!state.flags[m[5]];if(ok){state.missionDone[state.mission]=true;feedback("missionFeedback","✓ ¡Correcto! Cumpliste la acción requerida en la terminal.","good");persist();stats()}else feedback("missionFeedback","Aún falta ejecutar el comando requerido. Puedes consultar la pista.","bad")});
+$("nextMission").addEventListener("click",()=>{state.mission=(state.mission+1)%missions.length;$("missionFeedback").hidden=true;persist();renderMissions()});
+$("quizAnswers").addEventListener("click",e=>{const b=e.target.closest("[data-quiz-answer]");if(b)selectQuestion("quiz",+b.dataset.quizAnswer)});
+$("imageAnswers").addEventListener("click",e=>{const b=e.target.closest("[data-image-answer]");if(b)selectQuestion("image",+b.dataset.imageAnswer)});
+$("quizCheck").addEventListener("click",()=>checkQuestion("quiz",false));$("imageCheck").addEventListener("click",()=>checkQuestion("image",false));
+$("quizSolution").addEventListener("click",()=>checkQuestion("quiz",true));$("imageSolution").addEventListener("click",()=>checkQuestion("image",true));
+$("quizHint").addEventListener("click",()=>feedback("quizFeedback","💡 "+quizzes[state.quiz][5],""));
+$("imageHint").addEventListener("click",()=>feedback("imageFeedback","💡 "+images[state.image][5],""));
+function move(prefix,dir){const quiz=prefix==="quiz",len=quiz?quizzes.length:images.length;const k=quiz?"quiz":"image";state[k]=(state[k]+dir+len)%len;$(prefix+"Feedback").hidden=true;persist();quiz?renderQuiz():renderImages()}
+$("quizNext").addEventListener("click",()=>move("quiz",1));$("quizPrev").addEventListener("click",()=>move("quiz",-1));$("imageNext").addEventListener("click",()=>move("image",1));$("imagePrev").addEventListener("click",()=>move("image",-1));
+$("resetAll").addEventListener("click",()=>{if(!confirm("¿Reiniciar misiones, preguntas, capturas y el sistema de archivos virtual? Puedes deshacer después."))return;resetBackup=JSON.stringify(state);state=fresh();history=[];historyAt=0;$("screen").replaceChildren();appendLine("Laboratorio reiniciado. Puedes deshacer el reinicio con el botón inferior.","dim");$("resetNotice").textContent="Se reinició el progreso. Puedes deshacer este cambio.";render()});
+$("undoReset").addEventListener("click",()=>{if(!resetBackup)return;state=JSON.parse(resetBackup);resetBackup=null;$("resetNotice").textContent="Progreso anterior restaurado.";render()});
+appendLine("Bienvenido a Terminal Lab. Prueba help para comenzar.","dim");render();
+})();
+</script>
+</body>
+</html>
