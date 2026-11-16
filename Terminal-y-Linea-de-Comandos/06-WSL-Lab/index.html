@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0d1421">
+<meta name="description" content="WSL Lab: laboratorio interactivo con terminal PowerShell y Ubuntu simuladas y 12 misiones sobre WSL, Bash y directorios Windows–Linux.">
+<link rel="canonical" href="https://duvancalderon.github.io/Demos/Terminal-y-Linea-de-Comandos/06-WSL-Lab/">
+<title>WSL Lab — Laboratorio interactivo Windows + Ubuntu</title>
+<style>
+:root{color-scheme:dark;--bg:#090e18;--surface:#111a29;--surface2:#182539;--stroke:#334056;--text:#eef4fa;--muted:#9eafc0;--orange:#f4a66a;--mint:#83e7c8;--red:#ffabb5}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse 950px 480px at 0 -170px,#79412166,transparent 74%),var(--bg);color:var(--text);font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}
+button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.43}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+a{color:var(--mint)}.shell{max-width:1250px;padding:0 23px;margin:auto}
+.top{background:#0b1422dc;border-bottom:1px solid var(--stroke)}.topin{min-height:73px;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;padding:12px 0}
+.brand{display:flex;align-items:center;gap:12px;font-weight:850;font-size:21px;letter-spacing:-.6px}.logo{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:24px;background:linear-gradient(135deg,#e77d3f,#a34f2d)}
+.links{display:flex;gap:8px;flex-wrap:wrap}.links a{padding:8px 11px;text-decoration:none;font-size:12px;border:1px solid #46616a;border-radius:10px;font-weight:750}
+.links a:hover{background:#26384c}
+main{padding-top:28px;padding-bottom:60px}
+.eyebrow{font-size:11px;color:var(--orange);text-transform:uppercase;font-weight:850;letter-spacing:2px}
+h1{font-size:clamp(29px,4.4vw,46px);letter-spacing:-1.4px;margin:7px 0;line-height:1.12}
+.lead{font-size:15px;color:#bfd0dc;max-width:890px;margin:12px 0}
+.note{color:#e1d5cb;font-size:12px;background:#292338;border-left:3px solid #f3ae6e;border-radius:8px;padding:10px 13px;margin-top:14px;max-width:970px}
+.stats{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
+.stat{padding:10px 16px;border-radius:13px;border:1px solid #364358;background:#141f31;display:flex;align-items:center;gap:9px;font-size:12px;color:var(--muted)}
+.stat strong{font-size:20px;color:var(--mint)}
+.main-grid{display:grid;grid-template-columns:280px minmax(0,1fr);align-items:start;gap:17px;margin-top:22px}
+.panel{border:1px solid var(--stroke);border-radius:17px;background:linear-gradient(135deg,#172337,#111b2a);min-width:0;padding:17px}
+.panel h2{margin:0 0 8px;font-size:17px}.caption{font-size:12px;color:var(--muted);margin:0 0 11px}
+.lesson-panel{position:sticky;top:16px}
+.progress{height:8px;background:#2c3e4a;border-radius:20px;overflow:hidden;margin:10px 0}
+.progress span{display:block;height:100%;background:linear-gradient(90deg,#ec9152,#8be8bc);width:0;transition:width .25s}
+.mission-list{display:grid;gap:6px;max-height:600px;overflow-y:auto;padding-right:2px}
+.mission{border:1px solid #35465a;background:#19283b;border-radius:10px;padding:10px 9px;color:#ccdae5;display:flex;align-items:center;gap:9px;text-align:left;font-size:12px}
+.mission:hover{border-color:#f0ad7b}.mission.active{border-color:var(--orange);background:#382b30;color:white}.mission.done{border-color:#397464}
+.num{display:grid;place-items:center;border-radius:8px;width:27px;height:27px;flex:0 0 auto;background:#2a3d50;font-weight:850;font-size:12px}
+.mission.done .num{background:#2d755b;color:white}
+.lessonbottom{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}
+.btn{border:1px solid #456475;border-radius:10px;background:#26394c;color:#e4eff5;padding:9px 13px;font-weight:750;font-size:13px}
+.btn:hover{filter:brightness(1.16)}.btn.main{background:linear-gradient(105deg,#f6b17a,#ef9358);color:#321b10;border-color:transparent}
+.btn.mint{background:#2c685b;border-color:#68b39a}.btn.ghost{background:transparent}
+.stack{display:grid;gap:15px;min-width:0}
+.mode-row{display:flex;justify-content:space-between;align-items:center;gap:9px;flex-wrap:wrap}
+.mode-pill{font-size:11px;color:#9ef0d2;border:1px solid #376e65;border-radius:30px;padding:4px 10px}
+.guide-tabs{display:flex;gap:7px;flex-wrap:wrap}
+.guide-tabs button{font-size:12px;color:#b8cbd8;background:#1a2a3b;border-radius:9px;border:1px solid #41546b;padding:8px 12px}
+.guide-tabs button.active{border-color:var(--orange);color:#ffdabd;background:#3a2a2c}
+.task-name{font-weight:800;font-size:21px;margin:10px 0 6px}
+.task-desc{font-size:13px;color:#c1d1da;white-space:pre-wrap}
+.task-hint{font-size:12px;color:#b5c8d3;background:#182b3c;padding:11px 13px;border-radius:11px;border-left:3px solid #79b8c5;margin:12px 0;white-space:pre-wrap}
+.task-hint[hidden],.helptext[hidden]{display:none}
+.terminal{border-radius:14px;background:#0a101d;border:1px solid #40516a;overflow:hidden;min-width:0}
+.terminal-head{background:#192439;border-bottom:1px solid #40516a;padding:11px 12px;display:flex;justify-content:space-between;align-items:center;gap:11px;flex-wrap:wrap}
+.terminal-title{font-size:12px;font-weight:750}.dots{color:#e89068;font-size:14px;margin-right:9px}
+.screen{height:360px;overflow-y:auto;padding:14px 16px;white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;color:#e3efe9}
+.line{margin:0 0 8px}.line.output{color:#b3d2c8}.line.error{color:#ffb4ad}.line.command{color:#f5be91}.line.system{color:#92b4c7}
+.term-form{display:flex;gap:8px;padding:10px 12px;background:#111d2b;border-top:1px solid #37435b}
+.prompt{flex:0 0 auto;font:12px/2.5 ui-monospace,Consolas,monospace;color:#83e7c8;min-width:37px}
+.term-form input{width:100%;min-width:0;color:#effff8;background:#0c1824;border:1px solid #39516a;border-radius:9px;padding:9px 11px;font:13px ui-monospace,Consolas,monospace}
+.terminal-footer{padding:9px 12px;border-top:1px solid #37435b;display:flex;justify-content:space-between;gap:9px;align-items:center;flex-wrap:wrap;font-size:11px;color:#a0b0c0}
+.terminal-footer button{border:none;background:transparent;color:#bfe2f4;cursor:pointer;font-size:11px}
+.feed{padding:12px 14px;border-radius:12px;background:#1d3142;border-left:3px solid #6cb9c9;color:#ddf3ec;font-size:13px;white-space:pre-wrap}
+.feed.good{background:#173d34;border-color:#80eac0}.feed.warn{background:#3a2c2e;border-color:#ffb1a8}
+.feed[hidden]{display:none}
+.examples{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}.examples button{border:1px solid #435e68;color:#d5e4e5;background:#162839;padding:7px 9px;font:12px ui-monospace,Consolas,monospace;border-radius:7px}.examples button:hover{border-color:var(--orange)}
+details{margin-top:11px;border:1px solid #344b5c;border-radius:11px;padding:11px 13px;font-size:12px;color:#d4e5e9}
+summary{cursor:pointer;font-weight:780;color:#f8c59e}
+.about{font-size:13px;color:#bbcedc;line-height:1.6}.about code{color:#afeed1}
+footer{color:#96a9b9;border-top:1px solid #344356;font-size:12px;padding:22px 0 30px}
+footer .footlinks{display:flex;gap:13px;flex-wrap:wrap;margin-bottom:8px}
+@media(max-width:900px){.main-grid{grid-template-columns:1fr}.lesson-panel{position:static}.mission-list{grid-template-columns:repeat(2,minmax(0,1fr));max-height:none}}
+@media(max-width:560px){.shell{padding:0 14px}.mission-list{grid-template-columns:1fr}.topin{gap:12px}main{padding-top:18px}.panel{padding:13px}.screen{height:290px;padding:10px}.term-form{gap:5px}.btn{padding:9px 11px}.lessonbottom .btn{flex:1}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header class="top"><div class="shell topin"><div class="brand"><span class="logo" aria-hidden="true">🐧</span> WSL Lab <span style="font-size:12px;color:#b7c3d8;font-weight:650">Windows × Ubuntu</span></div><nav class="links"><a href="../../">← Catálogo de Demos</a><a href="../">Índice Terminal</a><a href="https://github.com/DuvanCalderon/Demos/tree/main/Terminal-y-Linea-de-Comandos/06-WSL-Lab" target="_blank" rel="noopener noreferrer">Código ↗</a></nav></div></header>
+<main class="shell">
+<section><div class="eyebrow">Linux / Terminal · Learning Studio</div><h1>Dos sistemas. Una terminal.<br><span style="color:#f3a86f">Cero miedo a experimentar.</span></h1><p class="lead">Explora cómo Windows se conecta con Ubuntu mediante WSL. Alterna entre PowerShell y Bash, practica rutas y archivos virtuales y completa doce misiones interactivas.</p><p class="note"><strong>Recreación educativa independiente.</strong> No es una copia del HTML v3 incrustado en Notion; el original permanece sin modificaciones. Esta terminal no ejecuta comandos reales ni modifica Windows, WSL o Ubuntu.</p><div class="stats"><div class="stat"><strong id="doneCount">0/12</strong> Misiones completadas</div><div class="stat"><strong id="score">0</strong> XP</div><div class="stat"><strong id="modeLabel">PowerShell</strong> Entorno activo</div></div></section>
+<div class="main-grid">
+<aside class="panel lesson-panel"><h2>🎯 Ruta de 12 misiones</h2><p class="caption">Practica las acciones en la terminal y comprueba cada objetivo.</p><div class="progress" aria-label="Progreso de las misiones"><span id="progressFill"></span></div><div id="missions" class="mission-list"></div><div class="lessonbottom"><button class="btn ghost" id="resetProgress" type="button">↺ Reiniciar progreso</button><button class="btn ghost" id="resetWorld" type="button">Restaurar laboratorio</button></div></aside>
+<section class="stack">
+<div class="panel"><div class="mode-row"><h2 style="margin:0">Misión actual</h2><span class="mode-pill" id="environment">● Windows PowerShell</span></div><div id="taskName" class="task-name"></div><div id="taskDescription" class="task-desc"></div><div id="taskFeedback" class="feed" role="status" aria-live="polite" hidden></div><div class="lessonbottom"><button class="btn" id="hint" type="button">💡 Pista</button><button class="btn" id="solution" type="button">Ver solución</button><button class="btn main" id="check" type="button">Comprobar misión</button><button class="btn mint" id="next" type="button">Siguiente →</button></div><div id="taskHint" class="task-hint" hidden></div></div>
+<div class="terminal"><div class="terminal-head"><div class="terminal-title"><span class="dots" aria-hidden="true">● ● ●</span><span id="terminalHeading">PowerShell · WSL Lab</span></div><span style="color:#a7c0ce;font-size:11px">● Simulación segura</span></div><div class="screen" id="screen" role="log" aria-live="polite" aria-label="Terminal simulada"><div class="line system">WSL Lab listo. Escribe help para conocer los comandos.</div></div><form id="terminalForm" class="term-form" autocomplete="off"><span id="prompt" class="prompt">PS &gt;</span><input id="command" type="text" spellcheck="false" aria-label="Escribe un comando" placeholder="Prueba wsl --status" autocomplete="off"><button type="submit" class="btn main">Ejecutar</button></form><div class="terminal-footer"><span>↑ ↓ historial · Enter ejecutar · Todo ocurre dentro de esta página</span><button id="clear" type="button">Limpiar terminal</button></div></div>
+<div class="panel"><h2>⚡ Comandos para experimentar</h2><p class="caption">Pulsa uno para escribirlo en la terminal; después ejecuta cuando quieras.</p><div id="quick" class="examples"></div><details><summary>¿Qué es WSL, y qué pasa con mis archivos?</summary><div class="about"><p><strong>WSL (Windows Subsystem for Linux)</strong> permite usar distribuciones Linux en Windows. Desde PowerShell, <code>wsl</code> abre Linux; <code>exit</code> vuelve a Windows. En Linux, <code>/mnt/c</code> da acceso al disco C: de Windows cuando el automontaje está habilitado.</p><p>La terminal de este laboratorio usa una <strong>copia virtual del sistema de archivos</strong>. Los ejemplos no cambian carpetas reales ni ejecutan PowerShell, Bash o Ubuntu.</p></div></details></div>
+</section>
+</div></main>
+<footer><div class="shell"><div class="footlinks"><a href="../../">← Catálogo general</a><a href="../">Todos los demos de terminal</a><a href="https://app.notion.com/p/41960fb53673804f93bae6a2d656cb09" target="_blank" rel="noopener noreferrer">Versión original en Notion ↗</a></div>WSL Lab · Simulación educativa recreada · HTML + CSS + JavaScript · Sin dependencias.</div></footer>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id),KEY="wsl-lab-recreacion-v1",HOME="/home/student";
+const tasks=[
+ {title:"Consultar el estado de WSL",desc:"Desde PowerShell, averigua el estado de WSL y su versión predeterminada.",hint:"El comando comienza por wsl y utiliza la opción --status.",solution:"wsl --status",flag:"status"},
+ {title:"Listar distribuciones",desc:"Muestra las distribuciones WSL y su estado de ejecución.",hint:"Escribe wsl -l -v o wsl --list --verbose.",solution:"wsl -l -v",flag:"list"},
+ {title:"Abrir Ubuntu",desc:"Entra a Ubuntu desde Windows PowerShell.",hint:"Escribe wsl y presiona Enter.",solution:"wsl",flag:"entered"},
+ {title:"Identificar tu directorio",desc:"Ya en Ubuntu, muestra tu ruta actual usando Bash.",hint:"El comando se llama pwd.",solution:"pwd",flag:"pwdLinux"},
+ {title:"Mostrar archivos ocultos",desc:"Lista el contenido de tu directorio de Ubuntu con detalles y archivos ocultos.",hint:"Usa ls con la opción -la.",solution:"ls -la",flag:"listed"},
+ {title:"Entrar al disco C:",desc:"Visita Documentos de Windows desde Ubuntu mediante el montaje /mnt/c.",hint:"La ruta es /mnt/c/Users/Student/Documents.",solution:"cd /mnt/c/Users/Student/Documents",flag:"mounted"},
+ {title:"Volver a tu HOME",desc:"Regresa al directorio principal de tu usuario Linux.",hint:"~ representa tu carpeta personal.",solution:"cd ~",flag:"home"},
+ {title:"Crear una carpeta",desc:"Crea una carpeta llamada proyectos dentro de tu HOME.",hint:"Crea carpetas con mkdir.",solution:"mkdir proyectos",flag:"mkdir"},
+ {title:"Moverte al proyecto",desc:"Entra en la carpeta proyectos que acabas de crear.",hint:"Usa cd proyectos.",solution:"cd proyectos",flag:"cdProject"},
+ {title:"Crear un archivo",desc:"Crea un archivo vacío llamado notas.txt dentro de proyectos.",hint:"Usa touch notas.txt.",solution:"touch notas.txt",flag:"touch"},
+ {title:"Leer un archivo",desc:"Lee el contenido de notas.txt (puede estar vacío).",hint:"Utiliza cat notas.txt desde la carpeta proyectos.",solution:"cat notas.txt",flag:"cat"},
+ {title:"Regresar a Windows",desc:"Sal de Ubuntu y vuelve a PowerShell.",hint:"Desde Bash, usa exit.",solution:"exit",flag:"exited"}
+];
+function newFS(){return {
+ "/":{type:"dir"},"/home":{type:"dir"},[HOME]:{type:"dir"},[HOME+"/README.md"]:{type:"file",content:"Bienvenido a Ubuntu en WSL Lab."},
+ "/mnt":{type:"dir"},"/mnt/c":{type:"dir"},"/mnt/c/Users":{type:"dir"},"/mnt/c/Users/Student":{type:"dir"},
+ "/mnt/c/Users/Student/Documents":{type:"dir"},"/mnt/c/Users/Student/Documents/ejemplo.txt":{type:"file",content:"Documento de Windows visible desde Ubuntu (virtual)."}
+};}
+function fresh(){return {mode:"windows",cwd:HOME,fs:newFS(),flags:{},solved:{},index:0,distroRunning:false,viewHint:false};}
+let state;try{const data=JSON.parse(localStorage.getItem(KEY)||"null");state=data&&data.fs&&data.flags&&data.solved&&tasks[data.index]?data:fresh()}catch(e){state=fresh()}
+let history=[],hi=0;
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+function append(text,cls){const line=document.createElement("div");line.className="line "+(cls||"output");line.textContent=text;$("screen").appendChild(line);$("screen").scrollTop=$("screen").scrollHeight}
+function normalized(p){const parts=[];for(const chunk of p.split("/")){if(!chunk||chunk===".")continue;if(chunk==="..")parts.pop();else parts.push(chunk)}return "/"+parts.join("/")}
+function pathTo(p){if(!p||p==="~")return HOME;if(p.startsWith("~/"))return normalized(HOME+"/"+p.slice(2));if(p.startsWith("/"))return normalized(p);return normalized(state.cwd+"/"+p)}
+function listing(folder,details){const children=Object.keys(state.fs).filter(k=>k!==folder&&k.startsWith(folder==="/"?"/":folder+"/")&&k.slice(folder==="/"?1:folder.length+1).indexOf("/")===-1).sort();if(!details)return children.map(k=>k.split("/").pop()).join("  ")||"(vacío)";return ["total "+children.length].concat(children.map(k=>(state.fs[k].type==="dir"?"drwxr-xr-x":"-rw-r--r--")+" 1 student student "+(state.fs[k].type==="file"?(state.fs[k].content||"").length:"4096")+" "+k.split("/").pop())).join("\n")}
+function setFlag(k){state.flags[k]=true}
+function powershell(raw){
+ const q=raw.toLowerCase().replace(/\s+/g," ").trim();
+ if(q==="help")return "PowerShell: wsl, wsl --status, wsl -l -v, wsl --shutdown, wsl --version, pwd, dir, cls, help.";
+ if(q==="pwd"||q==="cd"||q==="cd .")return "Path\n----\nC:\\Users\\Student";
+ if(q==="dir"||q==="ls")return "Directorio: C:\\Users\\Student\n\nDocuments     Desktop     Downloads";
+ if(q==="wsl --status"){setFlag("status");return "Distribución predeterminada: Ubuntu\nVersión predeterminada: 2\nWSL está disponible (simulado)."}
+ if(["wsl -l -v","wsl --list --verbose","wsl --list -v"].includes(q)){setFlag("list");return "  NAME      STATE         VERSION\n* Ubuntu    "+(state.distroRunning?"Running       ":"Stopped       ")+"2"}
+ if(q==="wsl --version")return "WSL versión 2 (ejemplo simulado)\nKernel Linux (ejemplo)";
+ if(q==="wsl"||q==="wsl -d ubuntu"){state.mode="linux";state.distroRunning=true;state.cwd=HOME;setFlag("entered");return "Bienvenido a Ubuntu (WSL simulado).\nEscribe pwd, ls -la o help para practicar."}
+ if(q==="wsl --shutdown"){state.distroRunning=false;return "Se detuvieron las distribuciones WSL (simulación)."}
+ if(q==="cls"||q==="clear"){$("screen").replaceChildren();return ""}
+ if(q==="exit")return "Ya estás en PowerShell. Para entrar a Ubuntu escribe wsl.";
+ return "PowerShell: comando no reconocido por este simulador. Escribe help.";
+}
+function linux(raw){
+ const parts=raw.trim().split(/\s+/),cmd=parts[0],args=parts.slice(1);
+ if(cmd==="help")return "Bash: pwd, ls, ls -la, cd, mkdir, touch, cat, whoami, uname -a, echo, python3 --version, clear, exit.";
+ if(cmd==="pwd"){setFlag("pwdLinux");return state.cwd}
+ if(cmd==="whoami")return "student";
+ if(cmd==="uname")return "Linux ubuntu-wsl 6.x (kernel de ejemplo; simulación)";
+ if(cmd==="python3"&&args[0]==="--version")return "Python 3.12.x (versión de ejemplo)";
+ if(cmd==="ls"){const arg=args.find(a=>!a.startsWith("-"));const p=pathTo(arg||".");if(state.fs[p]?.type!=="dir")return {error:"ls: no existe el directorio "+p};if(args.some(x=>/^-.*l.*a|^-.*a.*l/.test(x)))setFlag("listed");return listing(p,args.includes("-la")||args.includes("-al")||args.includes("-l"))}
+ if(cmd==="cd"){const p=pathTo(args[0]||"~");if(state.fs[p]?.type!=="dir")return {error:"bash: cd: "+(args[0]||"")+" : directorio inexistente"};state.cwd=p;if(p==="/mnt/c/Users/Student/Documents")setFlag("mounted");if(p===HOME&&state.flags.mounted)setFlag("home");if(p===HOME+"/proyectos")setFlag("cdProject");return ""}
+ if(cmd==="mkdir"){if(args.length!==1)return {error:"Uso: mkdir nombre"};const p=pathTo(args[0]);const parent=normalized(p+"/..");if(!state.fs[parent]||state.fs[parent].type!=="dir")return {error:"mkdir: directorio padre inexistente"};if(state.fs[p])return {error:"mkdir: ya existe: "+args[0]};state.fs[p]={type:"dir"};if(p===HOME+"/proyectos")setFlag("mkdir");return ""}
+ if(cmd==="touch"){if(args.length!==1)return {error:"Uso: touch nombre.txt"};const p=pathTo(args[0]),parent=normalized(p+"/..");if(state.fs[parent]?.type!=="dir")return {error:"touch: no existe el directorio padre"};if(state.fs[p]?.type==="dir")return {error:"touch: es un directorio"};state.fs[p]=state.fs[p]||{type:"file",content:""};if(p===HOME+"/proyectos/notas.txt")setFlag("touch");return ""}
+ if(cmd==="cat"){if(args.length!==1)return {error:"Uso: cat archivo"};const p=pathTo(args[0]);if(state.fs[p]?.type!=="file")return {error:"cat: archivo no encontrado: "+args[0]};if(p===HOME+"/proyectos/notas.txt")setFlag("cat");return state.fs[p].content||"(archivo vacío)"}
+ if(cmd==="echo")return args.join(" ");
+ if(cmd==="clear"){$("screen").replaceChildren();return ""}
+ if(cmd==="exit"){state.mode="windows";state.cwd=HOME;setFlag("exited");return "Sesión de Ubuntu cerrada. Has vuelto a PowerShell."}
+ return {error:"bash: "+cmd+": comando no reconocido por este simulador. Escribe help."};
+}
+function command(raw){
+ const input=raw.trim();if(!input)return;
+ append((state.mode==="windows"?"PS > ":("student@ubuntu:"+state.cwd+"$ "))+input,"command");
+ const result=state.mode==="windows"?powershell(input):linux(input);
+ if(typeof result==="object"&&result.error)append(result.error,"error");else if(result)append(result,"output");
+ persist();render();$("command").value="";
+}
+function complete(){const t=tasks[state.index],ok=!!state.flags[t.flag];if(ok){state.solved[state.index]=true;persist();render();feedback("✓ ¡Correcto! La acción que pedía este reto se ha ejecutado en la terminal simulada.","good")}
+ else feedback("Todavía no se ha completado esta acción. Utiliza la pista o revisa el comando en la terminal.","warn")}
+function feedback(msg,cls){$("taskFeedback").hidden=false;$("taskFeedback").className="feed "+(cls||"");$("taskFeedback").textContent=msg}
+function render(){
+ const done=tasks.filter((x,i)=>state.solved[i]).length;
+ $("doneCount").textContent=done+"/"+tasks.length;$("score").textContent=String(done*10);
+ $("progressFill").style.width=String(done/tasks.length*100)+"%";
+ $("modeLabel").textContent=state.mode==="windows"?"PowerShell":"Ubuntu Bash";
+ $("environment").textContent=state.mode==="windows"?"● Windows PowerShell":"● Ubuntu / Bash";
+ $("terminalHeading").textContent=state.mode==="windows"?"PowerShell · WSL Lab":"Ubuntu · Bash / WSL";
+ $("prompt").textContent=state.mode==="windows"?"PS >":"$";
+ $("missions").innerHTML=tasks.map((t,i)=>'<button type="button" class="mission '+(i===state.index?'active ':'')+(state.solved[i]?'done':'')+'" data-mission="'+i+'" aria-current="'+(i===state.index?'step':'false')+'"><span class="num">'+(state.solved[i]?'✓':i+1)+'</span><span>'+t.title+'</span></button>').join("");
+ const task=tasks[state.index];$("taskName").textContent=(state.index+1)+". "+task.title;$("taskDescription").textContent=task.desc;
+ $("taskHint").hidden=!state.viewHint;
+ $("next").textContent=state.index===tasks.length-1?"Volver al inicio ↻":"Siguiente →";
+ const examples=state.mode==="windows"?["wsl --status","wsl -l -v","wsl","wsl --version","help"]:["pwd","ls -la","cd /mnt/c/Users/Student/Documents","cd ~","mkdir proyectos","cd proyectos","touch notas.txt","cat notas.txt","exit"];
+ $("quick").innerHTML=examples.map(v=>'<button type="button" data-example="'+v.replace(/&/g,"&amp;").replace(/"/g,"&quot;")+'">'+v+'</button>').join("");
+}
+function showTask(i){state.index=i;state.viewHint=false;$("taskFeedback").hidden=true;render();persist()}
+$("terminalForm").addEventListener("submit",e=>{e.preventDefault();const value=$("command").value;if(value.trim()){history.push(value);hi=history.length;command(value)}});
+$("command").addEventListener("keydown",e=>{if(e.key==="ArrowUp"||e.key==="ArrowDown"){if(!history.length)return;e.preventDefault();hi=Math.max(0,Math.min(history.length,hi+(e.key==="ArrowUp"?-1:1)));$("command").value=history[hi]||""}});
+$("missions").addEventListener("click",e=>{const b=e.target.closest("[data-mission]");if(b)showTask(+b.dataset.mission)});
+$("quick").addEventListener("click",e=>{const b=e.target.closest("[data-example]");if(b){$("command").value=b.dataset.example;$("command").focus()}});
+$("hint").addEventListener("click",()=>{state.viewHint=true;$("taskHint").hidden=false;$("taskHint").textContent="💡 "+tasks[state.index].hint});
+$("solution").addEventListener("click",()=>{state.viewHint=true;$("taskHint").hidden=false;$("taskHint").textContent="Solución orientativa: "+tasks[state.index].solution+"\nEjecuta el comando en el entorno correspondiente y comprueba la misión."});
+$("check").addEventListener("click",complete);
+$("next").addEventListener("click",()=>showTask((state.index+1)%tasks.length));
+$("clear").addEventListener("click",()=>{$("screen").replaceChildren();append("Terminal limpiada. La simulación y el progreso se conservan.","system");$("command").focus()});
+$("resetProgress").addEventListener("click",()=>{if(confirm("¿Borrar las misiones completadas y los XP? Mantendremos los archivos y la sesión actual.")){state.solved={};state.flags={};showTask(0);feedback("Progreso reiniciado.","good")}});
+$("resetWorld").addEventListener("click",()=>{if(confirm("¿Restaurar toda la simulación de WSL? Se perderán archivos virtuales y progreso.")){state=fresh();history=[];hi=0;$("screen").replaceChildren();append("Simulación restaurada. Prueba wsl --status.","system");showTask(0);$("command").focus()}});
+$("screen").addEventListener("click",()=>$("command").focus());
+$("taskHint").hidden=true;render();
+})();
+</script>
+</body>
+</html>
