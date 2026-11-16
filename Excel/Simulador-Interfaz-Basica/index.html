@@ -280,9 +280,11 @@ function toolAction(tool){
 }
 function showZone(id){
  const z=zones.find(x=>x[0]===id);if(!z)return;
- if(!state.explored.includes(id))state.explored.push(id);
+ const firstVisit=!state.explored.includes(id);
+ if(firstVisit)state.explored.push(id);
  $('zoneInfo').innerHTML='<b>'+escapeHTML(z[1])+'</b><div>'+escapeHTML(z[2])+'</div><p>'+escapeHTML(z[3])+'</p>';
- renderExplore();persist();
+ if(firstVisit)renderExplore();
+ persist();
 }
 function addSheet(){
  if(Object.keys(state.sheets).length>=12){setStatus('Máximo de 12 hojas');return}
