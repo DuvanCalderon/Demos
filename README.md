@@ -8,7 +8,7 @@ Laboratorios y simuladores web para **aprender haciendo**: explora conceptos, pr
 
 La página principal incluye búsqueda, filtros por categoría, vistas de tarjetas y lista compacta. Diseñada para computadores y dispositivos móviles, sin instalaciones.
 
-## 📚 Catálogo (23 laboratorios en 8 categorías)
+## 📚 Catálogo (24 laboratorios en 8 categorías)
 
 ### 🇬🇧 English
 
@@ -36,6 +36,7 @@ La página principal incluye búsqueda, filtros por categoría, vistas de tarjet
 
 | Laboratorio | Abrir demo | Código |
 |---|---|---|
+| Excel Interface Lab — simulador de la interfaz (12 retos, recreación) | [Abrir ↗](https://duvancalderon.github.io/Demos/Excel/Simulador-Interfaz-Basica/) | [Ver carpeta](./Excel/Simulador-Interfaz-Basica/) |
 | Excel Lab — formatos y autorrelleno (12 retos, recreación) | [Abrir ↗](https://duvancalderon.github.io/Demos/Excel/Formatos-Celda-Autorrelleno/) | [Ver carpeta](./Excel/Formatos-Celda-Autorrelleno/) |
 | Review Lab 04 — formato visual | [Abrir ↗](https://duvancalderon.github.io/Demos/Excel/Clase04-Formato-Visual-Verificador/) | [Ver carpeta](./Excel/Clase04-Formato-Visual-Verificador/) |
 | Review Lab 05 — errores en tablas | [Abrir ↗](https://duvancalderon.github.io/Demos/Excel/Clase05-Tablas-Limpias-Verificador/) | [Ver carpeta](./Excel/Clase05-Tablas-Limpias-Verificador/) |
