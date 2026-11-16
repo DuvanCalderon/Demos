@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080d19">
+<meta name="description" content="Demos Learning Studio: 14 laboratorios interactivos para aprender programación, idiomas, Excel, Linux, química, hardware y matemáticas con práctica real.">
+<meta property="og:title" content="Demos — Learning Studio">
+<meta property="og:description" content="Aprende explorando. Una biblioteca de laboratorios web interactivos, simuladores 3D y retos prácticos.">
+<meta property="og:type" content="website">
+<title>Demos — Learning Studio | DuvanCalderon</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%237c6cff'/%3E%3Cpath d='M20 18h15c11 0 17 6 17 14s-6 14-17 14H20z' fill='none' stroke='white' stroke-width='7'/%3E%3C/svg%3E">
+<style>
+:root{color-scheme:dark;--bg:#080d19;--surface:#10182a;--surface2:#151f34;--text:#f1f4fb;--muted:#99a7bf;--line:#28354b;--accent:#9887ff;--accent2:#5de2d0;--wrap:1180px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:95px}
+body{margin:0;min-width:320px;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.5}
+body:before{content:"";position:absolute;z-index:-1;top:0;left:0;right:0;height:780px;background:radial-gradient(ellipse 48% 45% at 77% 12%,rgba(101,83,212,.19),transparent 100%),radial-gradient(ellipse 45% 40% at 7% 35%,rgba(20,119,156,.11),transparent 100%);pointer-events:none}
+a{color:inherit;text-decoration:none}button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #c0b7ff;outline-offset:3px}
+.container{max-width:var(--wrap);padding:0 28px;margin:auto}
+.topbar{position:sticky;top:0;z-index:30;background:rgba(8,13,25,.84);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid rgba(146,164,201,.13)}
+.nav-inner{height:76px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand{display:flex;align-items:center;gap:11px;flex-shrink:0}
+.brand-mark{display:grid;place-items:center;width:39px;height:39px;background:linear-gradient(145deg,#8e7aff,#5d50de);color:#fff;font-weight:900;font-size:20px;letter-spacing:-1px;border-radius:12px;box-shadow:0 5px 24px rgba(111,92,245,.28)}
+.brand-copy{display:flex;flex-direction:column;line-height:1.12}.brand-copy strong{font-size:15px;letter-spacing:-.3px}.brand-copy small{font-size:11px;letter-spacing:.7px;color:#9aa8c1;font-weight:700;margin-top:4px}
+.nav-links{display:flex;align-items:center;gap:30px;font-size:13px;font-weight:650;color:#b2bfd5}
+.nav-links a:hover,.nav-links a.active{color:white}.nav-github{border:1px solid #3b4965;border-radius:11px;padding:10px 15px;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;background:rgba(255,255,255,.025)}
+.nav-github:hover{background:#1c2740}
+.hero{display:grid;grid-template-columns:1.07fr .93fr;align-items:center;gap:48px;padding-top:96px;padding-bottom:100px}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(142,122,255,.29);border-radius:100px;background:rgba(119,102,247,.095);padding:9px 13px;color:#c9c0ff;font-size:11px;font-weight:800;letter-spacing:1.1px}
+.dot{width:7px;height:7px;border-radius:50%;background:#64e8c4;box-shadow:0 0 12px rgba(100,232,196,.7)}
+.hero h1{font-size:clamp(42px,5.3vw,72px);letter-spacing:-3.9px;line-height:1.055;margin:26px 0 22px;font-weight:830}
+.hero h1 .gradient{color:#a794ff;background:linear-gradient(110deg,#a49bff,#70cde6 80%,#78e4cf);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero-description{font-size:17px;line-height:1.75;color:#adbad0;max-width:540px;margin:0}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:29px}
+.btn{display:inline-flex;justify-content:center;align-items:center;gap:9px;padding:13px 19px;border-radius:12px;font-size:13px;font-weight:750;transition:transform .18s,background .18s,border-color .18s}
+.btn:hover{transform:translateY(-2px)}
+.btn-primary{background:#9988ff;color:#0b1021;box-shadow:0 10px 28px #6d58d03d}.btn-primary:hover{background:#b4a9ff}
+.btn-ghost{background:#141d30;border:1px solid #32415b;color:#d9e3f4}.btn-ghost:hover{background:#202b45}
+.stats{display:flex;gap:27px;flex-wrap:wrap;margin-top:42px}
+.stat{display:flex;flex-direction:column;gap:4px}
+.stat strong{font-size:23px;letter-spacing:-1px}.stat span{font-size:11px;color:#8d9cb7;font-weight:600}
+.stat+.stat{border-left:1px solid #2b3850;padding-left:27px}
+.hero-visual{position:relative;max-width:530px;width:100%;justify-self:end}
+.visual-halo{position:absolute;inset:-28px;border-radius:32px;background:radial-gradient(circle at 60% 45%,rgba(120,100,249,.2),transparent 68%);filter:blur(20px);z-index:-1}
+.browser{border:1px solid #39435f;border-radius:19px;background:#121b2e;overflow:hidden;box-shadow:0 30px 75px rgba(0,0,0,.3),0 0 0 7px rgba(155,143,255,.025);transform:rotate(1deg)}
+.browser-top{height:44px;background:#18233a;border-bottom:1px solid #2c3a54;display:flex;gap:7px;align-items:center;padding:0 16px}
+.circle{height:9px;width:9px;border-radius:50%;background:#ec6e76}.circle:nth-child(2){background:#edc46b}.circle:nth-child(3){background:#55cda8}
+.browser-path{margin:auto;color:#7d8ca8;font-size:11px;padding-right:35px;font-family:ui-monospace,monospace}
+.browser-body{padding:27px 27px 20px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;min-height:245px;font-size:13px;color:#c9d6ec;line-height:2.05}
+.code-muted{color:#627794}.code-key{color:#b7a0ff}.code-value{color:#85dfcc}.code-function{color:#f2c984}
+.cursor{display:inline-block;width:7px;height:17px;vertical-align:middle;background:#b6a7ff;animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+.visual-footer{padding:14px 24px;border-top:1px solid #293a54;display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11px;color:#91a5c3}
+.live-pill{color:#84e6c9;display:inline-flex;align-items:center;gap:7px}
+.float-card{position:absolute;z-index:2;right:-18px;bottom:-38px;display:flex;align-items:center;gap:12px;border:1px solid #34445c;padding:12px 15px;background:#1c2840;box-shadow:0 16px 35px rgba(0,0,0,.25);border-radius:14px;transition:transform .2s}
+.float-card:hover{transform:translateY(-3px)}.float-icon{font-size:24px}.float-card strong{display:block;font-size:12px}.float-card small{display:block;font-size:10px;color:#a9b9d3}
+.section{padding-top:35px;padding-bottom:90px}
+.section-overline{font-size:11px;letter-spacing:1.5px;font-weight:800;color:#a99cff;text-transform:uppercase;margin-bottom:10px}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:28px}
+.section h2{font-size:clamp(28px,3vw,39px);letter-spacing:-1.5px;line-height:1.18;margin:0 0 10px}
+.section-intro{font-size:14px;color:var(--muted);margin:0;max-width:680px}
+.count-badge{font-size:12px;color:#d7d0ff;background:#211e3f;border:1px solid #3d346d;border-radius:100px;padding:8px 13px;white-space:nowrap;font-weight:700}
+.toolbelt{display:flex;gap:12px;align-items:center;margin:27px 0 17px}
+.search-shell{position:relative;flex:1;max-width:500px}
+.search-shell svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:19px;height:19px;color:#7d8da8;pointer-events:none}
+.search-shell input{width:100%;height:50px;border:1px solid #324059;border-radius:13px;background:#131d30;color:#f1f5ff;padding:0 92px 0 46px;outline:none;transition:border-color .2s,box-shadow .2s}
+.search-shell input:focus{border-color:#9e8dfc;box-shadow:0 0 0 3px #9887ff25}
+.search-shell input::placeholder{color:#7e8ea9}
+.search-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);padding:5px 9px;border:0;border-radius:6px;color:#a8b7d2;background:transparent;font-size:11px;font-weight:700}
+.search-clear:hover{background:#263653;color:white}
+.filter-row{display:flex;gap:9px;overflow-x:auto;padding:2px 1px 16px;scrollbar-width:thin;scrollbar-color:#36425f transparent}
+.filter{border:1px solid #293850;background:#111a2b;color:#a9bad3;border-radius:100px;padding:9px 13px;font-size:12px;white-space:nowrap;font-weight:650;transition:background .2s,border-color .2s,color .2s}
+.filter span{font-size:10px;opacity:.65;margin-left:5px}
+.filter:hover{background:#202b42;color:#fff}
+.filter.active{background:#2b2556;color:#e6e0ff;border-color:#7565bf}
+.results-line{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#8fa1bf;font-size:12px;font-weight:650;padding:5px 0 21px}
+.results-line strong{color:#d6e2f5}
+.view-toggle{padding:6px 10px;border:1px solid #30405b;color:#bac7dc;border-radius:8px;background:#151f32;font-size:11px;font-weight:650}
+.view-toggle[aria-pressed="true"]{border-color:#9d8ff9;color:#e1dafe}
+.lab-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.lab-card{min-width:0;border:1px solid #27354c;border-radius:18px;overflow:hidden;background:linear-gradient(160deg,#121b2c,#0f1727);transition:transform .22s,border-color .22s,box-shadow .22s}
+.lab-card:hover{transform:translateY(-5px);border-color:#506080;box-shadow:0 22px 40px rgba(0,0,0,.21)}
+.lab-art{display:block;height:164px;position:relative;overflow:hidden;border-bottom:1px solid #2b3952}
+.art-purple{--art:#7960e9;--art2:#30246d}.art-violet{--art:#a47cff;--art2:#34236d}.art-blue{--art:#59a7ed;--art2:#163b69}.art-green{--art:#4dd3a5;--art2:#115547}.art-orange{--art:#f2a560;--art2:#6c3624}.art-cyan{--art:#55d4dd;--art2:#155468}.art-slate{--art:#81a1cc;--art2:#263e5a}.art-rose{--art:#ed83b3;--art2:#612b55}.art-amber{--art:#f3c570;--art2:#634a24}
+.lab-art{background:radial-gradient(ellipse 70% 90% at 75% 65%,color-mix(in srgb,var(--art) 23%,transparent),transparent),linear-gradient(125deg,#131b2c,var(--art2))}
+.art-grid{position:absolute;inset:0;opacity:.17;background-image:linear-gradient(to right,#b4c3ff 1px,transparent 1px),linear-gradient(to bottom,#b4c3ff 1px,transparent 1px);background-size:27px 27px;mask-image:linear-gradient(to right,transparent 10%,black 95%)}
+.art-glow{position:absolute;width:180px;height:180px;background:var(--art);opacity:.15;filter:blur(45px);right:25px;top:15px;border-radius:50%}
+.art-icon{position:absolute;left:26px;top:35px;font-size:57px;line-height:1;filter:drop-shadow(0 12px 16px rgba(0,0,0,.25));transition:transform .2s}
+.lab-card:hover .art-icon{transform:translateY(-4px) rotate(-5deg)}
+.art-kicker{position:absolute;bottom:18px;left:24px;font:750 10px ui-monospace,Consolas,monospace;letter-spacing:1.2px;color:#e4eafd;opacity:.83}
+.art-arrow{position:absolute;top:16px;right:17px;font-size:20px;border:1px solid #ffffff30;border-radius:9px;width:32px;height:32px;text-align:center;line-height:29px;background:#0b12242c;color:#eef3ff}
+.lab-content{padding:20px 21px 21px}
+.lab-topline{display:flex;justify-content:space-between;gap:9px;align-items:center;margin-bottom:12px}
+.lab-category{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#aa9dff}
+.lab-index{font-size:10px;color:#7384a1;font-family:ui-monospace,Consolas,monospace}
+.lab-content h3{font-size:20px;letter-spacing:-.55px;line-height:1.25;margin:0 0 3px}
+.lab-content h3 a:hover{color:#baaaff}
+.lab-subtitle{font-size:12px;color:#c1cce0;margin:0 0 13px;font-weight:600}
+.lab-description{font-size:12px;line-height:1.72;color:#9baaC4;min-height:62px;margin:0 0 16px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;min-height:26px}
+.tags span{font-size:10px;background:#1b2940;border:1px solid #2a3b55;color:#9fb1ce;border-radius:6px;padding:5px 7px;line-height:1.1}
+.lab-links{display:flex;align-items:center;justify-content:space-between;border-top:1px solid #28374d;margin-top:20px;padding-top:15px;gap:10px}
+.launch-link{font-size:12px;font-weight:800;color:#b7acff}.launch-link:hover{color:#d7cfff}
+.source-link{font-size:11px;font-weight:650;color:#8d9fbc}.source-link:hover{color:white}
+.lab-grid.compact{grid-template-columns:repeat(2,minmax(0,1fr))}
+.lab-grid.compact .lab-card{display:grid;grid-template-columns:145px minmax(0,1fr)}
+.lab-grid.compact .lab-art{height:100%;min-height:205px;border-right:1px solid #2b3952;border-bottom:0}
+.lab-grid.compact .art-icon{left:20px;top:42px;font-size:43px}
+.lab-grid.compact .art-kicker{font-size:9px;left:13px}
+.lab-grid.compact .lab-description{min-height:0}
+.empty{border:1px dashed #3a4a65;border-radius:17px;padding:52px 20px;text-align:center;color:#aab8d2;background:#111a2b}
+.empty strong{display:block;font-size:19px;color:white;margin-bottom:6px}
+.empty p{margin:0 0 17px;font-size:13px}
+.empty button{border-radius:9px;background:#2d2759;border:1px solid #7262c1;color:#eeeaff;padding:10px 15px;font-weight:700}
+.bonus{margin-top:28px;display:flex;justify-content:space-between;gap:18px;align-items:center;border:1px solid #3b4566;border-radius:17px;background:linear-gradient(100deg,#23203e,#18253a);padding:20px 24px}
+.bonus-copy{display:flex;align-items:center;gap:13px}.bonus-icon{font-size:28px}
+.bonus strong{font-size:13px}.bonus p{margin:3px 0 0;color:#b3c0d8;font-size:12px}
+.bonus a{white-space:nowrap;font-size:12px;font-weight:800;color:#d0c7ff}
+.site-footer{border-top:1px solid #243149;background:#0a1120;padding:31px 0}
+.footer-inner{display:flex;justify-content:space-between;gap:20px;align-items:center;color:#8394af;font-size:12px}
+.footer-inner strong{color:#dce4f4}
+.footer-links{display:flex;gap:22px;flex-wrap:wrap}.footer-links a:hover{color:white}
+@media(max-width:1000px){.hero{grid-template-columns:1fr 1fr;gap:24px}.hero h1{font-size:50px;letter-spacing:-2.7px}.lab-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.lab-grid.compact{grid-template-columns:1fr}.float-card{right:0}}
+@media(max-width:730px){.container{padding:0 19px}.nav-inner{height:66px}.nav-links{gap:14px}.nav-links>a:first-child{display:none}.nav-github{padding:9px 12px}.hero{display:flex;flex-direction:column;align-items:stretch;gap:43px;padding-top:66px;padding-bottom:70px}.hero h1{max-width:630px}.hero-visual{max-width:540px;align-self:center}.stats{margin-top:30px;gap:19px}.stat+.stat{padding-left:19px}.section{padding-bottom:62px}.section-head{align-items:flex-start;flex-direction:column;gap:7px}.lab-grid{gap:16px}.bonus{align-items:flex-start;flex-direction:column}.footer-inner{align-items:flex-start;flex-direction:column}}
+@media(max-width:540px){.brand-copy small{display:none}.nav-links{gap:10px}.nav-github{font-size:12px}.hero h1{font-size:clamp(40px,11vw,55px);letter-spacing:-2.5px}.hero-description{font-size:15px}.hero-actions .btn{font-size:12px}.stats{gap:12px}.stat strong{font-size:21px}.stat+.stat{padding-left:13px}.stat span{font-size:10px}.browser-body{padding:20px 15px;min-height:210px;font-size:11px}.float-card{bottom:-32px;right:4px}.lab-grid,.lab-grid.compact{grid-template-columns:1fr}.lab-grid.compact .lab-card{grid-template-columns:115px 1fr}.lab-grid.compact .lab-content{padding:14px}.lab-grid.compact .lab-description,.lab-grid.compact .tags,.lab-grid.compact .lab-index{display:none}.lab-grid.compact .lab-art{min-height:200px}.toolbelt{margin-top:18px}.search-shell{max-width:none}.section h2{font-size:30px}.lab-description{min-height:0}.bonus{padding:17px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<a href="#laboratorios" style="position:absolute;left:-9999px;top:0;background:#b8acff;color:#11142b;padding:10px;z-index:40" onfocus="this.style.left='10px'" onblur="this.style.left='-9999px'">Saltar a laboratorios</a>
+<header class="topbar">
+  <div class="container nav-inner">
+    <a class="brand" href="./" aria-label="Demos Learning Studio, inicio"><span class="brand-mark">D</span><span class="brand-copy"><strong>Demos</strong><small>LEARNING STUDIO</small></span></a>
+    <nav class="nav-links" aria-label="Navegación principal">
+      <a class="active" href="#inicio">Inicio</a><a href="#laboratorios">Laboratorios</a>
+      <a class="nav-github" href="https://github.com/DuvanCalderon/Demos" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+    </nav>
+  </div>
+</header>
+<main>
+<section class="hero container" id="inicio">
+  <div class="hero-copy">
+    <span class="eyebrow"><span class="dot"></span> TU BIBLIOTECA DE APRENDIZAJE</span>
+    <h1>Aprende haciendo.<br><span class="gradient">Explora sin límites.</span></h1>
+    <p class="hero-description">Programación, idiomas, simulaciones 3D y mucho más. Una colección de laboratorios interactivos donde cada concepto se convierte en algo que puedes probar.</p>
+    <div class="hero-actions">
+      <a href="#laboratorios" class="btn btn-primary">Explorar laboratorios <span aria-hidden="true">↗</span></a>
+      <a href="https://github.com/DuvanCalderon/Demos" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">Ver repositorio <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="stats" aria-label="Estadísticas de la colección">
+      <div class="stat"><strong>14</strong><span>Laboratorios</span></div>
+      <div class="stat"><strong>8</strong><span>Categorías</span></div>
+      <div class="stat"><strong>3D</strong><span>Simulaciones</span></div>
+      <div class="stat"><strong>100%</strong><span>Desde el navegador</span></div>
+    </div>
+  </div>
+  <div class="hero-visual" aria-label="Vista ilustrativa de un entorno de aprendizaje">
+    <div class="visual-halo"></div>
+    <div class="browser">
+      <div class="browser-top"><i class="circle"></i><i class="circle"></i><i class="circle"></i><span class="browser-path">learning-studio / explore.js</span></div>
+      <div class="browser-body">
+        <div><span class="code-muted">// La teoría cobra vida aquí</span></div>
+        <div><span class="code-key">const</span> curiosidad = <span class="code-value">true</span>;</div>
+        <div><span class="code-key">const</span> conocimiento = <span class="code-value">"en progreso"</span>;</div>
+        <div>&nbsp;</div>
+        <div><span class="code-function">while</span> (curiosidad) {</div>
+        <div>&nbsp;&nbsp;<span class="code-function">explorar</span>();</div>
+        <div>&nbsp;&nbsp;<span class="code-function">experimentar</span>();</div>
+        <div>&nbsp;&nbsp;<span class="code-function">aprender</span>(); <span class="cursor"></span></div>
+        <div>}</div>
+      </div>
+      <div class="visual-footer"><span class="live-pill"><span class="dot"></span> Learning mode: ON</span><span>HTML · CSS · JS</span></div>
+    </div>
+    <a class="float-card" href="./English/Body-Parts-Lab/" aria-label="Abrir Body Atlas, laboratorio 2D y 3D"><span class="float-icon">🧍</span><span><strong>Body Atlas</strong><small>Explora un laboratorio 2D + 3D ↗</small></span></a>
+  </div>
+</section>
+<section class="section container" id="laboratorios">
+  <div class="section-overline">EXPLORA · PRACTICA · DOMINA</div>
+  <div class="section-head">
+    <div><h2>Todos los laboratorios<span style="color:#a995ff">.</span></h2><p class="section-intro">Elige una categoría o busca por tema. Cada tarjeta abre un proyecto real, listo para practicar directamente en tu navegador.</p></div>
+    <span class="count-badge">14 demos disponibles</span>
+  </div>
+  <div class="toolbelt">
+    <div class="search-shell">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+      <input id="project-search" type="search" placeholder="Buscar: Python, Excel, 3D, Linux..." autocomplete="off" aria-label="Buscar laboratorios">
+      <button type="button" id="search-clear" class="search-clear" hidden>Limpiar</button>
+    </div>
+  </div>
+  <div class="filter-row" role="group" aria-label="Filtrar por categoría"><button class="filter active" type="button" data-filter="Todos" aria-pressed="true">Todos <span>14</span></button><button class="filter" type="button" data-filter="English" aria-pressed="false">🇬🇧 English <span>2</span></button>
+<button class="filter" type="button" data-filter="Python" aria-pressed="false">🐍 Python <span>2</span></button>
+<button class="filter" type="button" data-filter="Excel" aria-pressed="false">📊 Excel <span>2</span></button>
+<button class="filter" type="button" data-filter="Hardware" aria-pressed="false">💻 Hardware <span>1</span></button>
+<button class="filter" type="button" data-filter="Química" aria-pressed="false">⚛️ Química <span>1</span></button>
+<button class="filter" type="button" data-filter="Linux" aria-pressed="false">⌨️ Linux <span>2</span></button>
+<button class="filter" type="button" data-filter="Español" aria-pressed="false">📚 Español <span>3</span></button>
+<button class="filter" type="button" data-filter="Métodos numéricos" aria-pressed="false">∑ Métodos numéricos <span>1</span></button></div>
+  <div class="results-line"><span id="results-count" role="status" aria-live="polite">Mostrando <strong>14</strong> de 14 laboratorios</span><button type="button" id="view-toggle" class="view-toggle" aria-pressed="false" aria-label="Cambiar a vista compacta">☷ Vista compacta</button></div>
+  <div class="lab-grid" id="lab-grid"><article class="lab-card" data-category="English" data-search="WordBloom English Vocabulary Lab Aprende 12 palabras en inglés con tarjetas, pronunciación, niveles de práctica y seguimiento de progreso. English Vocabulary Flashcards Listening" style="--card-index:0">
+  <a class="lab-art art-purple" href="./English/" aria-label="Abrir WordBloom">
+    <span class="art-glow" aria-hidden="true"></span><span class="art-grid" aria-hidden="true"></span>
+    <span class="art-icon" aria-hidden="true">🔤</span><span class="art-kicker">VOCABULARY</span>
+    <span class="art-arrow" aria-hidden="true">↗</span>
+  </a>
+  <div class="lab-content">
+    <div class="lab-topline"><span class="lab-category">English</span><span class="lab-index">01 / 14</span></div>
+    <h3><a href="./English/">WordBloom</a></h3>
+    <p class="lab-subtitle">English Vocabulary Lab</p>
+    <p class="lab-description">Aprende 12 palabras en inglés con tarjetas, pronunciación, niveles de práctica y seguimiento de progreso.</p>
+    <div class="tags"><span>Vocabulary</span><span>Flashcards</span><span>Listening</span></div>
+    <div class="lab-links"><a class="launch-link" href="./English/">Abrir laboratorio <span aria-hidden="true">↗</span></a><a class="source-link" href="https://github.com/DuvanCalderon/Demos/tree/main/English" target="_blank" rel="noopener noreferrer" aria-label="Ver código de WordBloom en GitHub">Código <span aria-hidden="true">↗</span></a></div>
+  </div>
+</article>
+<article class="lab-card" data-category="English" data-search="Body Atlas Interactive English Lab Explora 30 partes del cuerpo en inglés en modelos 2D y 3D, arrastra etiquetas y practica con actividades. English 3D / 2D Anatomía Inglés" style="--card-index:1">
+  <a class="lab-art art-violet" href="./English/Body-Parts-Lab/" aria-label="Abrir Body Atlas">
+    <span class="art-glow" aria-hidden="true"></span><span class="art-grid" aria-hidden="true"></span>
+    <span class="art-icon" aria-hidden="true">🧍</span><span class="art-kicker">3D + 2D</span>
+    <span class="art-arrow" aria-hidden="true">↗</span>
+  </a>
+  <div class="lab-content">
+    <div class="lab-topline"><span class="lab-category">English</span><span class="lab-index">02 / 14</span></div>
+    <h3><a href="./English/Body-Parts-Lab/">Body Atlas</a></h3>
+    <p class="lab-subtitle">Interactive English Lab</p>
+    <p class="lab-description">Explora 30 partes del cuerpo en inglés en modelos 2D y 3D, arrastra etiquetas y practica con actividades.</p>
+    <div class="tags"><span>3D / 2D</span><span>Anatomía</span><span>Inglés</span></div>
+    <div class="lab-links"><a class="launch-link" href="./English/Body-Parts-Lab/">Abrir laboratorio <span aria-hidden="true">↗</span></a><a class="source-link" href="https://github.com/DuvanCalderon/Demos/tree/main/English/Body-Parts-Lab" target="_blank" rel="noopener noreferrer" aria-label="Ver código de Body Atlas en GitHub">Código <span aria-hidden="true">↗</span></a></div>
+  </div>
+</article>
+<article class="lab-card" data-category="Python" data-search="Python Strings Lab Slicing, Replace &amp; Split Manipula cadenas de texto con slicing, replace y split mediante explicaciones y ejercicios interactivos. Python Strings Práctica Fundamentos" style="--card-index:2">
+  <a class="lab-art art-blue" href="./Python/Fundamentos/Clase12-Slicing-Replace-Split/" aria-label="Abrir Python Strings Lab">
+    <span class="art-glow" aria-hidden="true"></span><span class="art-grid" aria-hidden="true"></span>
+    <span class="art-icon" aria-hidden="true">🐍</span><span class="art-kicker">PYTHON</span>
+    <span class="art-arrow" aria-hidden="true">↗</span>
+  </a>
+  <div class="lab-content">
+    <div class="lab-topline"><span class="lab-category">Python</span><span class="lab-index">03 / 14</span></div>
+    <h3><a href="./Python/Fundamentos/Clase12-Slicing-Replace-Split/">Python Strings Lab</a></h3>
+    <p class="lab-subtitle">Slicing, Replace &amp; Split</p>
+    <p class="lab-description">Manipula cadenas de texto con slicing, replace y split mediante explicaciones y ejercicios interactivos.</p>
+    <div class="tags"><span>Strings</span><span>Práctica</span><span>Fundamentos</span></div>
+    <div class="lab-links"><a class="launch-link" href="./Python/Fundamentos/Clase12-Slicing-Replace-Split/">Abrir laboratorio <span aria-hidden="true">↗</span></a><a class="source-link" href="https://github.com/DuvanCalderon/Demos/tree/main/Python/Fundamentos/Clase12-Slicing-Replace-Split" target="_blank" rel="noopener noreferrer" aria-label="Ver código de Python Strings Lab en GitHub">Código <span aria-hidden="true">↗</span></a></div>
+  </div>
+</article>
+<article class="lab-card" data-category="Python" data-search="Truth Lab Booleanos, True / False y Casting Experimenta con valores booleanos, conversiones de tipos y expresiones verdaderas o falsas. Python Booleanos Casting Ejercicios" style="--card-index:3">
+  <a class="lab-art art-blue" href="./Python/Fundamentos/Clase13-Booleanos-True-False-Casting/" aria-label="Abrir Truth Lab">
+    <span class="art-glow" aria-hidden="true"></span><span class="art-grid" aria-hidden="true"></span>
+    <span class="art-icon" aria-hidden="true">⚡</span><span class="art-kicker">PYTHON</span>
+    <span class="art-arrow" aria-hidden="true">↗</span>
+  </a>
+  <div class="lab-content">
+    <div class="lab-topline"><span class="lab-category">Python</span><span class="lab-index">04 / 14</span></div>
+    <h3><a href="./Python/Fundamentos/Clase13-Booleanos-True-False-Casting/">Truth Lab</a></h3>
+    <p class="lab-subtitle">Booleanos, True / False y Casting</p>
+    <p class="lab-description">Experimenta con valores booleanos, conversiones de tipos y expresiones verdaderas o falsas.</p>
+    <div class="tags"><span>Booleanos</span><span>Casting</span><span>Ejercicios</span></div>
+    <div class="lab-links"><a class="launch-link" href="./Python/Fundamentos/Clase13-Booleanos-True-False-Casting/">Abrir laboratorio <span aria-hidden="true">↗</span></a><a class="source-link" href="https://github.com/DuvanCalderon/Demos/tree/main/Python/Fundamentos/Clase13-Booleanos-True-False-Casting" target="_blank" rel="noopener noreferrer" aria-label="Ver código de Truth Lab en GitHub">Código <span aria-hidden="true">↗</span></a></div>
+  </div>
+</article>
+<article class="lab-card" data-category="Excel" data-search="Excel Review Lab 04 Formato visual y alineación Practica el formato visual en Excel real y verifica tus archivos .xlsx directamente desde el laboratorio. Excel Excel Formato Validador .xlsx" style="--card-index:4">
+  <a class="lab-art art-green" href="./Excel/Clase04-Formato-Visual-Verificador/" aria-label="Abrir Excel Review Lab 04">
+    <span class="art-glow" aria-hidden="true"></span><span class="art-grid" aria-hidden="true"></span>
+    <span class="art-icon" aria-hidden="true">📊</span><span class="art-kicker">EXCEL</span>
+    <span class="art-arrow" aria-hidden="true">↗</span>
+  </a>
+  <div class="lab-content">
+    <div class="lab-topline"><span class="lab-category">Excel</span><span class="lab-index">05 / 14</span></div>
+    <h3><a href="./Excel/Clase04-Formato-Visual-Verificador/">Excel Review Lab 04</a></h3>
+    <p class="lab-subtitle">Formato visual y alineación</p>
+    <p class="lab-description">Practica el formato visual en Excel real y verifica tus archivos .xlsx directamente desde el laboratorio.</p>
+    <div class="tags"><span>Excel</span><span>Formato</span><span>Validador .xlsx</span></div>
+    <div class="lab-links"><a class="launch-link" href="./Excel/Clase04-Formato-Visual-Verificador/">Abrir laboratorio <span aria-hidden="true">↗</span></a><a class="source-link" href="https://github.com/DuvanCalderon/Demos/tree/main/Excel/Clase04-Formato-Visual-Verificador" target="_blank" rel="noopener noreferrer" aria-label="Ver código de Excel Review Lab 04 en GitHub">Código <span aria-hidden="true">↗</span></a></div>
+  </div>
+</article>
+<article class="lab-card" data-category="Excel" data-search="Excel Review Lab 05 Errores que arruinan tus tablas Aprende a evitar errores comunes en tablas y comprueba tu trabajo mediante un verificador de Excel. Excel Tablas Buenas prácticas Validador .xlsx" style="--card-index:5">
+  <a class="lab-art art-green" href="./Excel/Clase05-Tablas-Limpias-Verificador/" aria-label="Abrir Excel Review Lab 05">
+    <span class="art-glow" aria-hidden="true"></span><span class="art-grid" aria-hidden="true"></span>
+    <span class="art-icon" aria-hidden="true">📋</span><span class="art-kicker">EXCEL</span>
+    <span class="art-arrow" aria-hidden="true">↗</span>
+  </a>
+  <div class="lab-content">
+    <div class="lab-topline"><span class="lab-category">Excel</span><span class="lab-index">06 / 14</span></div>
+    <h3><a href="./Excel/Clase05-Tablas-Limpias-Verificador/">Excel Review Lab 05</a></h3>
+    <p class="lab-subtitle">Errores que arruinan tus tablas</p>
+    <p class="lab-description">Aprende a evitar errores comunes en tablas y comprueba tu trabajo mediante un verificador de Excel.</p>
+    <div class="tags"><span>Tablas</span><span>Buenas prácticas</span><span>Validador .xlsx</span></div>
+    <div class="lab-links"><a class="launch-link" href="./Excel/Clase05-Tablas-Limpias-Verificador/">Abrir laboratorio <span aria-hidden="true">↗</span></a><a class="source-link" href="https://github.com/DuvanCalderon/Demos/tree/main/Excel/Clase05-Tablas-Limpias-Verificador" target="_blank" rel="noopener noreferrer" aria-label="Ver código de Excel Review Lab 05 en GitHub">Código <span aria-hidden="true">↗</span></a></div>
+  </div>
+</article>
+<article class="lab-card" data-category="Hardware" data-search="LegionLab 3D Mantenimiento de Lenovo Legion 5 Desarma y vuelve a ensamblar un portátil virtual: tornillos, tapa, batería, RAM, SSD y ventiladores. Hardware 3D Hardware Mantenimiento" style="--card-index:6">
+  <a class="lab-art art-orange" href="./Hardware/Legion5-15ARH05H-3D/" aria-label="Abrir LegionLab 3D">
+    <span class="art-glow" aria-hidden="true"></span><span class="art-grid" aria-hidden="true"></span>
+    <span class="art-icon" aria-hidden="true">💻</span><span class="art-kicker">SIMULADOR 3D</span>
+    <span class="art-arrow" aria-hidden="true">↗</span>
+  </a>
+  <div class="lab-content">
+    <div class="lab-topline"><span class="lab-category">Hardware</span><span class="lab-index">07 / 14</span></div>
+    <h3><a href="./Hardware/Legion5-15ARH05H-3D/">LegionLab 3D</a></h3>
+    <p class="lab-subtitle">Mantenimiento de Lenovo Legion 5</p>
+    <p class="lab-description">Desarma y vuelve a ensamblar un portátil virtual: tornillos, tapa, batería, RAM, SSD y ventiladores.</p>
+    <div class="tags"><span>3D</span><span>Hardware</span><span>Mantenimiento</span></div>
+    <div class="lab-links"><a class="launch-link" href="./Hardware/Legion5-15ARH05H-3D/">Abrir laboratorio <span aria-hidden="true">↗</span></a><a class="source-link" href="https://github.com/DuvanCalderon/Demos/tree/main/Hardware/Legion5-15ARH05H-3D" target="_blank" rel="noopener noreferrer" aria-label="Ver código de LegionLab 3D en GitHub">Código <span aria-hidden="true">↗</span></a></div>
+  </div>
+</article>
+<article class="lab-card" data-category="Química" data-search="AtomLab Laboratorio interactivo de química Construye y explora átomos para entender cómo se relacionan sus partículas y la estructura de la materia. Química 3D Átomos Ciencia" style="--card-index:7">
+  <a class="lab-art art-cyan" href="./Quimica/AtomLab/" aria-label="Abrir AtomLab">
+    <span class="art-glow" aria-hidden="true"></span><span class="art-grid" aria-hidden="true"></span>
+    <span class="art-icon" aria-hidden="true">⚛️</span><span class="art-kicker">SIMULACIÓN 3D</span>
+    <span class="art-arrow" aria-hidden="true">↗</span>
+  </a>
+  <div class="lab-content">
+    <div class="lab-topline"><span class="lab-category">Química</span><span class="lab-index">08 / 14</span></div>
+    <h3><a href="./Quimica/AtomLab/">AtomLab</a></h3>
+    <p class="lab-subtitle">Laboratorio interactivo de química</p>
+    <p class="lab-description">Construye y explora átomos para entender cómo se relacionan sus partículas y la estructura de la materia.</p>
+    <div class="tags"><span>3D</span><span>Átomos</span><span>Ciencia</span></div>
+    <div class="lab-links"><a class="launch-link" href="./Quimica/AtomLab/">Abrir laboratorio <span aria-hidden="true">↗</span></a><a class="source-link" href="https://github.com/DuvanCalderon/Demos/tree/main/Quimica/AtomLab" target="_blank" rel="noopener noreferrer" aria-label="Ver código de AtomLab en GitHub">Código <span aria-hidden="true">↗</span></a></div>
+  </div>
+</article>
+<article class="lab-card" data-category="Linux" data-search="CommandLab Comandos esenciales de Linux Ejecuta comandos en una terminal simulada y supera retos progresivos de línea de comandos. Linux Terminal Comandos Retos" style="--card-index:8">
+  <a class="lab-art art-slate" href="./Terminal-y-Linea-de-Comandos/04-Comandos-Esenciales/" aria-label="Abrir CommandLab">
+    <span class="art-glow" aria-hidden="true"></span><span class="art-grid" aria-hidden="true"></span>
+    <span class="art-icon" aria-hidden="true">⌨️</span><span class="art-kicker">LINUX</span>
+    <span class="art-arrow" aria-hidden="true">↗</span>
+  </a>
+  <div class="lab-content">
+    <div class="lab-topline"><span class="lab-category">Linux</span><span class="lab-index">09 / 14</span></div>
+    <h3><a href="./Terminal-y-Linea-de-Comandos/04-Comandos-Esenciales/">CommandLab</a></h3>
+    <p class="lab-subtitle">Comandos esenciales de Linux</p>
+    <p class="lab-description">Ejecuta comandos en una terminal simulada y supera retos progresivos de línea de comandos.</p>
+    <div class="tags"><span>Terminal</span><span>Comandos</span><span>Retos</span></div>
+    <div class="lab-links"><a class="launch-link" href="./Terminal-y-Linea-de-Comandos/04-Comandos-Esenciales/">Abrir laboratorio <span aria-hidden="true">↗</span></a><a class="source-link" href="https://github.com/DuvanCalderon/Demos/tree/main/Terminal-y-Linea-de-Comandos/04-Comandos-Esenciales" target="_blank" rel="noopener noreferrer" aria-label="Ver código de CommandLab en GitHub">Código <span aria-hidden="true">↗</span></a></div>
+  </div>
+</article>
+<article class="lab-card" data-category="Linux" data-search="Linux Navigator Navegación entre directorios Practica cómo moverte por el sistema de archivos con comandos y desafíos de navegación. Linux Directorios CLI Práctica" style="--card-index:9">
+  <a class="lab-art art-slate" href="./Terminal-y-Linea-de-Comandos/05-Navegacion-Directorios/" aria-label="Abrir Linux Navigator">
+    <span class="art-glow" aria-hidden="true"></span><span class="art-grid" aria-hidden="true"></span>
+    <span class="art-icon" aria-hidden="true">🧭</span><span class="art-kicker">LINUX</span>
+    <span class="art-arrow" aria-hidden="true">↗</span>
+  </a>
+  <div class="lab-content">
+    <div class="lab-topline"><span class="lab-category">Linux</span><span class="lab-index">10 / 14</span></div>
+    <h3><a href="./Terminal-y-Linea-de-Comandos/05-Navegacion-Directorios/">Linux Navigator</a></h3>
+    <p class="lab-subtitle">Navegación entre directorios</p>
+    <p class="lab-description">Practica cómo moverte por el sistema de archivos con comandos y desafíos de navegación.</p>
+    <div class="tags"><span>Directorios</span><span>CLI</span><span>Práctica</span></div>
+    <div class="lab-links"><a class="launch-link" href="./Terminal-y-Linea-de-Comandos/05-Navegacion-Directorios/">Abrir laboratorio <span aria-hidden="true">↗</span></a><a class="source-link" href="https://github.com/DuvanCalderon/Demos/tree/main/Terminal-y-Linea-de-Comandos/05-Navegacion-Directorios" target="_blank" rel="noopener noreferrer" aria-label="Ver código de Linux Navigator en GitHub">Código <span aria-hidden="true">↗</span></a></div>
+  </div>
+</article>
+<article class="lab-card" data-category="Español" data-search="Palabra Viva · Tanda 1 22 palabras para practicar Amplía tu vocabulario español con tarjetas, retos de aplicación y repaso de errores. Español 22 palabras Tarjetas Aplicación" style="--card-index:10">
+  <a class="lab-art art-rose" href="./Vocabulario-Espanol/Tanda-1/" aria-label="Abrir Palabra Viva · Tanda 1">
+    <span class="art-glow" aria-hidden="true"></span><span class="art-grid" aria-hidden="true"></span>
+    <span class="art-icon" aria-hidden="true">📖</span><span class="art-kicker">VOCABULARIO</span>
+    <span class="art-arrow" aria-hidden="true">↗</span>
+  </a>
+  <div class="lab-content">
+    <div class="lab-topline"><span class="lab-category">Español</span><span class="lab-index">11 / 14</span></div>
+    <h3><a href="./Vocabulario-Espanol/Tanda-1/">Palabra Viva · Tanda 1</a></h3>
+    <p class="lab-subtitle">22 palabras para practicar</p>
+    <p class="lab-description">Amplía tu vocabulario español con tarjetas, retos de aplicación y repaso de errores.</p>
+    <div class="tags"><span>22 palabras</span><span>Tarjetas</span><span>Aplicación</span></div>
+    <div class="lab-links"><a class="launch-link" href="./Vocabulario-Espanol/Tanda-1/">Abrir laboratorio <span aria-hidden="true">↗</span></a><a class="source-link" href="https://github.com/DuvanCalderon/Demos/tree/main/Vocabulario-Espanol/Tanda-1" target="_blank" rel="noopener noreferrer" aria-label="Ver código de Palabra Viva · Tanda 1 en GitHub">Código <span aria-hidden="true">↗</span></a></div>
+  </div>
+</article>
+<article class="lab-card" data-category="Español" data-search="Palabra Viva · Tanda 2 22 palabras más Una nueva tanda con práctica contextual, actividades y repaso para consolidar el significado de las palabras. Español 22 palabras Simulación Repaso" style="--card-index:11">
+  <a class="lab-art art-rose" href="./Vocabulario-Espanol/Tanda-2/" aria-label="Abrir Palabra Viva · Tanda 2">
+    <span class="art-glow" aria-hidden="true"></span><span class="art-grid" aria-hidden="true"></span>
+    <span class="art-icon" aria-hidden="true">📝</span><span class="art-kicker">VOCABULARIO</span>
+    <span class="art-arrow" aria-hidden="true">↗</span>
+  </a>
+  <div class="lab-content">
+    <div class="lab-topline"><span class="lab-category">Español</span><span class="lab-index">12 / 14</span></div>
+    <h3><a href="./Vocabulario-Espanol/Tanda-2/">Palabra Viva · Tanda 2</a></h3>
+    <p class="lab-subtitle">22 palabras más</p>
+    <p class="lab-description">Una nueva tanda con práctica contextual, actividades y repaso para consolidar el significado de las palabras.</p>
+    <div class="tags"><span>22 palabras</span><span>Simulación</span><span>Repaso</span></div>
+    <div class="lab-links"><a class="launch-link" href="./Vocabulario-Espanol/Tanda-2/">Abrir laboratorio <span aria-hidden="true">↗</span></a><a class="source-link" href="https://github.com/DuvanCalderon/Demos/tree/main/Vocabulario-Espanol/Tanda-2" target="_blank" rel="noopener noreferrer" aria-label="Ver código de Palabra Viva · Tanda 2 en GitHub">Código <span aria-hidden="true">↗</span></a></div>
+  </div>
+</article>
+<article class="lab-card" data-category="Español" data-search="Palabra Viva · Tanda 3 21 palabras más Pon a prueba tu vocabulario con ejercicios y situaciones para aplicar nuevas palabras. Español 21 palabras Simulación Retos" style="--card-index:12">
+  <a class="lab-art art-rose" href="./Vocabulario-Espanol/Tanda-3/" aria-label="Abrir Palabra Viva · Tanda 3">
+    <span class="art-glow" aria-hidden="true"></span><span class="art-grid" aria-hidden="true"></span>
+    <span class="art-icon" aria-hidden="true">💬</span><span class="art-kicker">VOCABULARIO</span>
+    <span class="art-arrow" aria-hidden="true">↗</span>
+  </a>
+  <div class="lab-content">
+    <div class="lab-topline"><span class="lab-category">Español</span><span class="lab-index">13 / 14</span></div>
+    <h3><a href="./Vocabulario-Espanol/Tanda-3/">Palabra Viva · Tanda 3</a></h3>
+    <p class="lab-subtitle">21 palabras más</p>
+    <p class="lab-description">Pon a prueba tu vocabulario con ejercicios y situaciones para aplicar nuevas palabras.</p>
+    <div class="tags"><span>21 palabras</span><span>Simulación</span><span>Retos</span></div>
+    <div class="lab-links"><a class="launch-link" href="./Vocabulario-Espanol/Tanda-3/">Abrir laboratorio <span aria-hidden="true">↗</span></a><a class="source-link" href="https://github.com/DuvanCalderon/Demos/tree/main/Vocabulario-Espanol/Tanda-3" target="_blank" rel="noopener noreferrer" aria-label="Ver código de Palabra Viva · Tanda 3 en GitHub">Código <span aria-hidden="true">↗</span></a></div>
+  </div>
+</article>
+<article class="lab-card" data-category="Métodos numéricos" data-search="Órbita Laboratorio de punto fijo Explora iteraciones, condiciones de existencia y unicidad, cotas de error y práctica guiada de punto fijo. Métodos numéricos Punto fijo Iteraciones Matemáticas" style="--card-index:13">
+  <a class="lab-art art-amber" href="./punto-fijo/" aria-label="Abrir Órbita">
+    <span class="art-glow" aria-hidden="true"></span><span class="art-grid" aria-hidden="true"></span>
+    <span class="art-icon" aria-hidden="true">🪐</span><span class="art-kicker">MATEMÁTICAS</span>
+    <span class="art-arrow" aria-hidden="true">↗</span>
+  </a>
+  <div class="lab-content">
+    <div class="lab-topline"><span class="lab-category">Métodos numéricos</span><span class="lab-index">14 / 14</span></div>
+    <h3><a href="./punto-fijo/">Órbita</a></h3>
+    <p class="lab-subtitle">Laboratorio de punto fijo</p>
+    <p class="lab-description">Explora iteraciones, condiciones de existencia y unicidad, cotas de error y práctica guiada de punto fijo.</p>
+    <div class="tags"><span>Punto fijo</span><span>Iteraciones</span><span>Matemáticas</span></div>
+    <div class="lab-links"><a class="launch-link" href="./punto-fijo/">Abrir laboratorio <span aria-hidden="true">↗</span></a><a class="source-link" href="https://github.com/DuvanCalderon/Demos/tree/main/punto-fijo" target="_blank" rel="noopener noreferrer" aria-label="Ver código de Órbita en GitHub">Código <span aria-hidden="true">↗</span></a></div>
+  </div>
+</article></div>
+  <div class="empty" id="no-results" hidden><strong>Sin resultados por ahora 🔎</strong><p>Prueba con otro término o vuelve a ver todos los laboratorios.</p><button type="button" id="reset-filters">Mostrar todos</button></div>
+  <aside class="bonus"><div class="bonus-copy"><span class="bonus-icon">⌨️</span><div><strong>¿Quieres explorar los laboratorios de Linux juntos?</strong><p>También tienes un índice independiente de terminal y línea de comandos.</p></div></div><a href="./Terminal-y-Linea-de-Comandos/">Ir al índice de Linux ↗</a></aside>
+</section>
+</main>
+<footer class="site-footer"><div class="container footer-inner"><span><strong>Demos — Learning Studio</strong> · Aprender creando, una práctica a la vez.</span><div class="footer-links"><a href="#inicio">Volver arriba ↑</a><a href="https://github.com/DuvanCalderon/Demos" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></footer>
+<script>
+(function(){
+  "use strict";
+  const input = document.getElementById("project-search");
+  const clear = document.getElementById("search-clear");
+  const filters = Array.from(document.querySelectorAll(".filter"));
+  const cards = Array.from(document.querySelectorAll(".lab-card"));
+  const count = document.getElementById("results-count");
+  const empty = document.getElementById("no-results");
+  const grid = document.getElementById("lab-grid");
+  const view = document.getElementById("view-toggle");
+  let active = "Todos";
+  const normalize = value => value.toLocaleLowerCase("es").normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+  function update(){
+    const query = normalize(input.value.trim());
+    let visible = 0;
+    cards.forEach(card => {
+      const matchesCategory = active === "Todos" || card.dataset.category === active;
+      const matchesQuery = !query || normalize(card.dataset.search).includes(query);
+      const show = matchesCategory && matchesQuery;
+      card.hidden = !show;
+      if(show) visible++;
+    });
+    count.innerHTML = "Mostrando <strong>" + visible + "</strong> de " + cards.length + " laboratorios";
+    empty.hidden = visible !== 0;
+    clear.hidden = input.value.length === 0;
+  }
+  function chooseCategory(category){
+    active = category;
+    filters.forEach(button => {
+      const selected = button.dataset.filter === category;
+      button.classList.toggle("active",selected);
+      button.setAttribute("aria-pressed",String(selected));
+    });
+    update();
+  }
+  function reset(){
+    input.value = "";
+    chooseCategory("Todos");
+    input.focus();
+  }
+  input.addEventListener("input",update);
+  clear.addEventListener("click",()=>{input.value="";update();input.focus()});
+  filters.forEach(button=>button.addEventListener("click",()=>chooseCategory(button.dataset.filter)));
+  document.getElementById("reset-filters").addEventListener("click",reset);
+  view.addEventListener("click",()=>{
+    const compact=grid.classList.toggle("compact");
+    view.setAttribute("aria-pressed",String(compact));
+    view.setAttribute("aria-label",compact?"Cambiar a vista de tarjetas":"Cambiar a vista compacta");
+    view.textContent=compact?"▦ Vista de tarjetas":"☷ Vista compacta";
+  });
+  document.addEventListener("keydown",event=>{
+    const target=event.target;
+    const typing=target && (target.matches("input,textarea,select") || target.isContentEditable);
+    if(event.key === "/" && !typing && !event.ctrlKey && !event.metaKey && !event.altKey){
+      event.preventDefault(); input.focus();
+    } else if(event.key === "Escape" && document.activeElement === input){
+      input.value="";update();input.blur();
+    }
+  });
+  update();
+})();
+</script>
+</body>
+</html>
