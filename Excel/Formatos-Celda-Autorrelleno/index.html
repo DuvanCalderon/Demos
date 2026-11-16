@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1421">
+<meta name="description" content="Laboratorio web educativo de Excel: formatos de celda, series, fechas, porcentajes, autorrelleno y 12 retos interactivos.">
+<link rel="canonical" href="https://duvancalderon.github.io/Demos/Excel/Formatos-Celda-Autorrelleno/">
+<title>Excel Lab — Formatos de celda y autorrelleno</title>
+<style>
+:root{color-scheme:dark;--bg:#09111c;--panel:#111e2c;--panel2:#17293a;--line:#294257;--text:#eaf7f4;--muted:#98b3bd;--mint:#6fe3b1;--teal:#23a78b;--amber:#ffcf86;--red:#fb9caa}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse 1000px 660px at 0% -15%,#17463e70,transparent 70%),var(--bg);color:var(--text);font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}
+a{color:var(--mint)}button,input,select{font:inherit}button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--mint);outline-offset:3px}
+button:disabled{opacity:.45;cursor:not-allowed}
+.wrap{max-width:1270px;margin:0 auto;padding:0 25px}
+header{border-bottom:1px solid #284051;background:#0b1824d9}
+.top{min-height:75px;display:flex;align-items:center;gap:18px;justify-content:space-between;flex-wrap:wrap;padding:12px 0}
+.brand{font-size:19px;font-weight:850;display:flex;align-items:center;gap:11px;letter-spacing:-.6px}
+.logo{width:37px;height:37px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(145deg,#1fba86,#176a5d);color:#f1fffa;font-size:21px}
+.toplinks{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.toplinks a{border:1px solid #345e5b;border-radius:10px;padding:8px 12px;text-decoration:none;font-size:13px;font-weight:750}
+.toplinks a:hover{background:#173c36}
+main{padding:35px 0 70px}
+.eyebrow{text-transform:uppercase;letter-spacing:2px;font-size:11px;font-weight:850;color:var(--mint)}
+h1{font-size:clamp(28px,4vw,49px);line-height:1.1;letter-spacing:-1.7px;margin:12px 0}
+.hero{display:grid;grid-template-columns:1.3fr .7fr;gap:25px;align-items:stretch}
+.lead{color:#bfd2d6;max-width:710px;font-size:16px}
+.note{color:#c4d1da;font-size:13px;background:#152536;border-left:3px solid var(--amber);padding:12px 15px;border-radius:8px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;align-self:stretch}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;justify-content:center}
+.stat strong{font-size:31px;color:var(--mint)}.stat span{color:var(--muted);font-size:12px;font-weight:700}
+.layout{display:grid;grid-template-columns:270px minmax(0,1fr);gap:18px;margin-top:28px;align-items:start}
+.panel{background:linear-gradient(145deg,#152536,#101c2c);border:1px solid var(--line);border-radius:19px;padding:19px;min-width:0}
+.sidebar{position:sticky;top:16px}
+.sidebar h2,.panel h2{font-size:17px;margin:0 0 12px}
+.meter{height:8px;border-radius:50px;background:#293f4d;overflow:hidden}.meter>div{height:100%;width:0%;background:linear-gradient(90deg,#33aa86,#a0f7cf);transition:width .3s}
+.lesson-list{display:grid;gap:7px;margin:15px 0}
+.lesson{border-radius:11px;border:1px solid #2b4857;text-align:left;background:#122536;color:#bad0d6;padding:10px 11px;display:flex;gap:9px;align-items:center}
+.lesson small{font-size:11px;color:#91aab7}.lesson strong{font-size:12px;display:block}.lesson.active{border-color:var(--mint);background:#163c38;color:white}.lesson.done .number{background:#256c55;color:#d6ffed}
+.number{width:26px;height:26px;display:grid;place-items:center;border-radius:9px;background:#263b4a;font-size:12px;flex:0 0 auto;font-weight:800}
+.workspace{min-width:0;display:grid;gap:16px}
+.challenge-title{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.challenge-title h2{margin:7px 0;font-size:21px}.subtitle{color:var(--muted);margin:2px 0 13px}
+.instructions{border:1px solid #305c58;border-radius:13px;background:#102e30;padding:13px 15px;color:#d6f5e8}
+.toolbar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:17px}
+.field{min-width:0}.field label{display:block;font-size:11px;font-weight:750;color:#9fb9bf;margin-bottom:5px}.field input,.field select{width:100%;padding:10px 11px;border:1px solid #3a5868;border-radius:10px;background:#0b1c2a;color:var(--text);min-width:0}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
+.btn{border:1px solid #3f6672;border-radius:10px;background:#1a3441;color:#d4e9e9;padding:10px 15px;font-weight:750}
+.btn:hover{filter:brightness(1.17)}.btn.main{background:linear-gradient(120deg,#7ae6b8,#65c9b0);color:#092a2a;border-color:transparent}.btn.ghost{background:transparent}
+.btn.danger{color:#ffc9ce;border-color:#804956}
+.help{margin-top:13px;border-radius:11px;padding:12px 14px;font-size:13px;white-space:pre-wrap}
+.help.good{background:#154336;border-left:3px solid #7bedbb}.help.bad{background:#442931;border-left:3px solid #f0a1ac}.help.info{background:#1e3248;border-left:3px solid #a2c9fc}
+.sheetwrap{overflow-x:auto;border-radius:13px;border:1px solid #355263;background:#f5f9f9;color:#263945}
+table.sheet{border-collapse:collapse;table-layout:fixed;min-width:675px;width:100%;font-size:12px}
+.sheet th{background:#e4ecec;color:#385761;position:relative;font-weight:800;min-width:80px;text-align:center;border:1px solid #c6d7da;padding:7px 3px}
+.sheet th.rownum{width:43px;min-width:43px}.sheet td{border:1px solid #d1dbde;background:#fff;padding:8px 6px;height:38px;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.sheet td.selected{outline:2px solid #198765;outline-offset:-2px;background:#ecf9f1}
+.sheet td:hover{outline:2px solid #76c5a9;outline-offset:-2px}
+.caption{font-size:12px;color:var(--muted);margin:10px 0 0}
+footer{border-top:1px solid var(--line);padding:22px 0 35px;font-size:13px;color:#9bafb8}
+footer .links{display:flex;gap:15px;flex-wrap:wrap;margin-bottom:8px}
+.visually-hidden{position:absolute;width:1px;height:1px;clip:rect(0,0,0,0);overflow:hidden}
+@media(max-width:1000px){.layout{grid-template-columns:1fr}.sidebar{position:static}.lesson-list{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:650px){.wrap{padding:0 15px}.hero{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.toolbar{grid-template-columns:1fr 1fr}.lesson-list{grid-template-columns:repeat(2,minmax(0,1fr))}.panel{padding:15px}.toplinks a{font-size:12px;padding:7px 9px}.btn{padding:9px 11px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="wrap top"><div class="brand"><div class="logo" aria-hidden="true">X</div>Excel Lab <span style="font-size:12px;color:#9fbab5;font-weight:600">Formatos &amp; Autorrelleno</span></div><nav class="toplinks"><a href="../../" aria-label="Regresar al catálogo principal">← Volver a Demos</a><a href="https://github.com/DuvanCalderon/Demos/tree/main/Excel/Formatos-Celda-Autorrelleno" target="_blank" rel="noopener noreferrer">Código ↗</a></nav></div></header>
+<main class="wrap">
+<div class="hero"><div><div class="eyebrow">Aprende haciendo · Excel básico</div><h1>Formatea. Autorrellena.<br><span style="color:var(--mint)">Comprende.</span></h1><p class="lead">Practica formatos de número, moneda, porcentaje, fechas y el controlador de relleno de Excel en una hoja simulada. Selecciona rangos, aplica operaciones, comprueba y aprende de cada intento.</p><div class="note">Versión educativa recreada para GitHub Pages. El HTML original de Notion se mantiene sin cambios. Esta hoja es un simulador y <strong>no modifica un archivo .xlsx real</strong>.</div></div><div class="stats"><div class="stat"><strong id="solvedCount">0/12</strong><span>Retos superados</span></div><div class="stat"><strong id="progressPercent">0%</strong><span>Progreso</span></div><div class="stat"><strong>3</strong><span>Temas principales</span></div><div class="stat"><strong id="score">0</strong><span>Puntos</span></div></div></div>
+<div class="layout">
+<aside class="panel sidebar"><h2>Tu ruta de aprendizaje</h2><p class="subtitle">12 desafíos. Puedes volver a cualquiera y repetirlo.</p><div class="meter" aria-label="Progreso del laboratorio"><div id="meterFill"></div></div><div class="lesson-list" id="lessonList"></div><button class="btn ghost danger" id="resetAll" type="button">↻ Reiniciar progreso</button></aside>
+<div class="workspace">
+<section class="panel" aria-label="Reto actual"><div class="challenge-title"><div><div class="eyebrow" id="challengeGroup">Formatos de celda</div><h2 id="challengeName"></h2></div><span id="challengePosition" style="color:var(--mint);font-size:12px;font-weight:800"></span></div><p class="subtitle" id="challengeDesc"></p><div class="instructions" id="challengeInstruction"></div><div class="toolbar"><div class="field"><label for="rangeField">Rango (ej. B2:B5)</label><input id="rangeField" placeholder="B2:B5" autocomplete="off" spellcheck="false"></div><div class="field"><label for="actionField">Operación</label><select id="actionField"><option value="currency">Moneda COP (2 decimales)</option><option value="percent">Porcentaje (1 decimal)</option><option value="date">Fecha DD/MM/AAAA</option><option value="bold">Negrita</option><option value="center">Alinear al centro</option><option value="blue">Relleno azul #DCEAF7</option><option value="decimal">Número (2 decimales)</option><option value="series">Serie numérica</option><option value="weekdays">Días de la semana</option><option value="months">Meses consecutivos</option><option value="tickets">Pedido 1, Pedido 2…</option><option value="repeat">Repetir mismo valor</option></select></div><div class="field"><label for="valueField">Inicio de serie / valor</label><input id="valueField" value="1" autocomplete="off"></div><div class="field"><label for="stepField">Paso (serie numérica)</label><input type="number" id="stepField" value="1"></div></div><div class="btnrow"><button class="btn main" id="apply" type="button">Aplicar a la hoja</button><button class="btn" id="check" type="button">Comprobar reto</button><button class="btn ghost" id="hint" type="button">💡 Pista</button><button class="btn ghost" id="solution" type="button">Ver solución</button></div><div class="help info" id="feedback" role="status" aria-live="polite" hidden></div><div class="btnrow" style="justify-content:space-between"><button class="btn ghost" id="prev" type="button">← Anterior</button><button class="btn ghost" id="restoreSheet" type="button">Restaurar hoja</button><button class="btn main" id="next" type="button">Siguiente →</button></div></section>
+<section class="panel"><div class="challenge-title"><h2>Hoja de práctica interactiva</h2><span style="color:var(--muted);font-size:12px">A1:F12</span></div><div class="sheetwrap"><table class="sheet" id="sheet" aria-label="Hoja de cálculo educativa simulada"></table></div><p class="caption">Haz clic en una celda o escribe el rango indicado arriba. La hoja permite aplicar formatos y generar series; no es una versión de Microsoft Excel.</p></section>
+</div></div></main>
+<footer><div class="wrap"><div class="links"><a href="../../">← Catálogo principal</a><a href="https://github.com/DuvanCalderon/Demos/tree/main/Excel/Formatos-Celda-Autorrelleno" target="_blank" rel="noopener noreferrer">Código en GitHub ↗</a><a href="https://app.notion.com/p/41760fb5367381768f90dd905afa8644" target="_blank" rel="noopener noreferrer">Laboratorio original en Notion ↗</a></div>Excel Lab · Formatos de celda y autorrelleno · Simulación educativa independiente.</div></footer>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id),KEY='excel-lab-formatos-autorrelleno-v1';
+const tasks=[
+{group:'Formatos de celda',name:'Dinero con dos decimales',desc:'Las cantidades son números, pero necesitas presentarlas como pesos colombianos.',range:'B2:B5',action:'currency',help:'Escribe B2:B5 en Rango y escoge Moneda COP (2 decimales).',why:'El formato de moneda cambia la apariencia del número, no su valor almacenado.'},
+{group:'Formatos de celda',name:'Porcentajes legibles',desc:'Los valores 0.15, 0.24... deben verse como porcentajes.',range:'C2:C5',action:'percent',help:'Selecciona C2:C5 y aplica Porcentaje (1 decimal).',why:'Un valor de 0.15 equivale a 15.0%, porque el formato porcentaje multiplica la presentación por 100.'},
+{group:'Formatos de celda',name:'Fechas consistentes',desc:'Las fechas deben presentarse como día/mes/año.',range:'D2:D5',action:'date',help:'Selecciona D2:D5 y usa Fecha DD/MM/AAAA.',why:'Un formato de fecha visualiza la misma fecha en un patrón homogéneo.'},
+{group:'Formatos de celda',name:'Encabezado destacado',desc:'Resalta todos los encabezados de la hoja.',range:'A1:F1',action:'bold',help:'Elige A1:F1 y aplica Negrita.',why:'La negrita enfatiza los títulos sin alterar las celdas de datos.'},
+{group:'Formatos de celda',name:'Encabezados centrados',desc:'Alinea horizontalmente los títulos.',range:'A1:F1',action:'center',help:'Elige A1:F1 y Alinear al centro.',why:'La alineación horizontal es distinta del formato de números.'},
+{group:'Formatos de celda',name:'Color de relleno exacto',desc:'Da una identidad visual suave a los importes.',range:'B2:B5',action:'blue',help:'Selecciona B2:B5 y aplica Relleno azul #DCEAF7.',why:'El relleno es el fondo de la celda. En una especificación precisa, el HEX importa.'},
+{group:'Autorrelleno',name:'Serie aritmética',desc:'Completa la columna F con 10, 20, 30… hasta 60.',range:'F2:F7',action:'series',start:'10',step:10,help:'Selecciona F2:F7, Serie numérica, inicio 10, paso 10.',why:'Excel puede detectar una progresión aritmética mediante dos ejemplos iniciales.'},
+{group:'Autorrelleno',name:'Números consecutivos',desc:'Genera 100, 101, 102… hasta 104.',range:'E8:E12',action:'series',start:'100',step:1,help:'Selecciona E8:E12, Serie numérica, inicio 100, paso 1.',why:'Un incremento de 1 permite enumerar rápidamente registros.'},
+{group:'Autorrelleno',name:'Días de la semana',desc:'Completa de lunes a viernes sin escribir cada día.',range:'A8:A12',action:'weekdays',help:'Selecciona A8:A12 y escoge Días de la semana.',why:'Excel reconoce listas personalizadas como los días de la semana.'},
+{group:'Autorrelleno',name:'Meses consecutivos',desc:'Completa enero, febrero, marzo, abril y mayo.',range:'C8:C12',action:'months',help:'Selecciona C8:C12 y escoge Meses consecutivos.',why:'Los meses forman una serie textual ordenada conocida por Excel.'},
+{group:'Autorrelleno',name:'Identificadores de pedidos',desc:'Genera Pedido 1, Pedido 2… hasta Pedido 5.',range:'B8:B12',action:'tickets',help:'Selecciona B8:B12 y escoge Pedido 1, Pedido 2…',why:'Autorrellenar identificadores ahorra tiempo en inventarios y pedidos.'},
+{group:'Formatos de celda',name:'Dos decimales sin cambiar valores',desc:'Presenta los importes de la columna E con dos decimales.',range:'E2:E5',action:'decimal',help:'Selecciona E2:E5 y aplica Número (2 decimales).',why:'El formato cambia la cantidad de decimales mostrados, pero no necesariamente redondea el número original.'}
+];
+const base={
+A1:'Concepto',B1:'Importe',C1:'Proporción',D1:'Fecha',E1:'Cantidad',F1:'Serie',
+A2:'Producto A',B2:12000.5,C2:.15,D2:'2026-11-16',E2:16.9,F2:1,
+A3:'Producto B',B3:7500.35,C3:.24,D3:'2026-11-17',E3:28.75,F3:2,
+A4:'Producto C',B4:23000,C4:.125,D4:'2026-11-18',E4:6.7,
+A5:'Producto D',B5:4300.8,C5:.05,D5:'2026-11-19',E5:81.234
+};
+const clone=o=>JSON.parse(JSON.stringify(o));
+const fresh=()=>({values:clone(base),formats:{},solved:{},index:0});
+let state;try{state=JSON.parse(localStorage.getItem(KEY));if(!state||typeof state!=='object'||!state.values||!state.formats)state=fresh();}catch(e){state=fresh();}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+function rangeCells(text){
+ const match=String(text||'').trim().toUpperCase().match(/^([A-F])(1[0-2]|[1-9])(?::([A-F])(1[0-2]|[1-9]))?$/);
+ if(!match)throw Error('Introduce un rango válido como B2:B5, dentro de A1:F12.');
+ const x1=match[1].charCodeAt(0)-65,y1=+match[2],x2=(match[3]||match[1]).charCodeAt(0)-65,y2=+(match[4]||match[2]);
+ if(x1>x2||y1>y2)throw Error('Escribe el rango desde la esquina superior izquierda a la inferior derecha.');
+ let cells=[];for(let y=y1;y<=y2;y++)for(let x=x1;x<=x2;x++)cells.push(String.fromCharCode(65+x)+y);return cells;
+}
+const money=v=>new Intl.NumberFormat('es-CO',{minimumFractionDigits:2,maximumFractionDigits:2}).format(v);
+function display(addr){
+ let v=state.values[addr];if(v===undefined||v===null)return '';
+ const f=state.formats[addr]||{};
+ if(typeof v==='number'){
+  if(f.type==='currency')return '$ '+money(v);
+  if(f.type==='percent')return (v*100).toFixed(1)+'%';
+  if(f.type==='decimal')return money(v);
+  return String(v);
+ }
+ if(f.type==='date'&&/^\d{4}-\d{2}-\d{2}$/.test(v))return v.slice(8,10)+'/'+v.slice(5,7)+'/'+v.slice(0,4);
+ return String(v);
+}
+function renderSheet(){
+ const sel=new Set((()=>{try{return rangeCells($('rangeField').value)}catch(e){return []}})());
+ const table=$('sheet');let html='<thead><tr><th class="rownum"></th>';for(let x=0;x<6;x++)html+='<th>'+String.fromCharCode(65+x)+'</th>';html+='</tr></thead><tbody>';
+ for(let y=1;y<=12;y++){html+='<tr><th class="rownum">'+y+'</th>';for(let x=0;x<6;x++){
+ const a=String.fromCharCode(65+x)+y,f=state.formats[a]||{},s=[];
+ if(f.bold)s.push('font-weight:800');if(f.center)s.push('text-align:center');if(f.blue)s.push('background:#DCEAF7');
+ const v=display(a).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+ html+='<td data-cell="'+a+'" class="'+(sel.has(a)?'selected':'')+'" style="'+s.join(';')+'" title="'+a+'">'+v+'</td>';
+ }html+='</tr>';}html+='</tbody>';table.innerHTML=html;
+}
+function progress(){
+ const done=tasks.filter((t,i)=>state.solved[i]===true).length;
+ $('solvedCount').textContent=done+'/'+tasks.length;$('progressPercent').textContent=Math.round(done/tasks.length*100)+'%';
+ $('score').textContent=done*10;$('meterFill').style.width=100*done/tasks.length+'%';
+ $('lessonList').innerHTML=tasks.map((t,i)=>'<button type="button" class="lesson '+(i===state.index?'active ':'')+(state.solved[i]?'done':'')+'" data-lesson="'+i+'" aria-current="'+(i===state.index?'step':'false')+'"><span class="number">'+(state.solved[i]?'✓':i+1)+'</span><span><strong>'+t.name+'</strong><small>'+t.group+'</small></span></button>').join('');
+}
+function setFeedback(message,kind){const el=$('feedback');el.hidden=false;el.className='help '+kind;el.textContent=message;}
+function showTask(){
+ const t=tasks[state.index];
+ $('challengeGroup').textContent=t.group;$('challengeName').textContent=t.name;$('challengeDesc').textContent=t.desc;
+ $('challengeInstruction').textContent='Objetivo: aplica '+t.action+' al rango '+t.range+'. '+(t.start!==undefined?'Inicio '+t.start+'; paso '+t.step+'.':'');
+ $('challengePosition').textContent='RETO '+(state.index+1)+' / '+tasks.length;
+ $('rangeField').value=t.range;$('actionField').value=t.action;$('valueField').value=t.start!==undefined?t.start:'1';$('stepField').value=t.step!==undefined?t.step:1;
+ $('feedback').hidden=true;$('prev').disabled=state.index===0;$('next').textContent=state.index===tasks.length-1?'Volver al inicio ↻':'Siguiente →';
+ progress();renderSheet();save();
+}
+function apply(){
+ let cells;try{cells=rangeCells($('rangeField').value)}catch(e){setFeedback(e.message,'bad');return;}
+ const kind=$('actionField').value,start=+$('valueField').value,step=+$('stepField').value;
+ if(kind==='series'&&(!Number.isFinite(start)||!Number.isFinite(step))){setFeedback('Introduce números válidos para el inicio y el paso.','bad');return;}
+ cells.forEach((addr,i)=>{
+  if(['currency','percent','date','decimal'].includes(kind))state.formats[addr]=Object.assign({},state.formats[addr]||{},{type:kind});
+  if(kind==='bold'||kind==='center'||kind==='blue')state.formats[addr]=Object.assign({},state.formats[addr]||{},{[kind]:true});
+  if(kind==='series')state.values[addr]=start+step*i;
+  if(kind==='weekdays')state.values[addr]=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'][i%7];
+  if(kind==='months')state.values[addr]=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio'][i%7];
+  if(kind==='tickets')state.values[addr]='Pedido '+(i+1);
+  if(kind==='repeat')state.values[addr]=$('valueField').value;
+ });
+ save();renderSheet();setFeedback('Operación aplicada a '+cells.length+' celda(s). Pulsa «Comprobar reto».','info');
+}
+function check(){
+ const t=tasks[state.index],cells=rangeCells(t.range);
+ let ok=cells.every((a,i)=>{
+ const f=state.formats[a]||{};
+ if(['currency','percent','date','decimal'].includes(t.action))return f.type===t.action;
+ if(['bold','center','blue'].includes(t.action))return f[t.action]===true;
+ if(t.action==='series')return state.values[a]===Number(t.start)+t.step*i;
+ if(t.action==='weekdays')return state.values[a]===['Lunes','Martes','Miércoles','Jueves','Viernes'][i];
+ if(t.action==='months')return state.values[a]===['Enero','Febrero','Marzo','Abril','Mayo'][i];
+ if(t.action==='tickets')return state.values[a]==='Pedido '+(i+1);
+ return false;
+ });
+ if(ok){state.solved[state.index]=true;save();progress();setFeedback('✓ ¡Correcto! '+t.why,'good')}
+ else{setFeedback('Todavía falta algo. Revisa el rango y la operación, luego aplica el cambio y comprueba otra vez.','bad')}
+}
+$('lessonList').addEventListener('click',e=>{const b=e.target.closest('[data-lesson]');if(b){state.index=+b.dataset.lesson;showTask()}});
+$('sheet').addEventListener('click',e=>{const cell=e.target.closest('[data-cell]');if(cell){$('rangeField').value=cell.dataset.cell;renderSheet()}});
+$('rangeField').addEventListener('input',renderSheet);
+$('apply').addEventListener('click',apply);$('check').addEventListener('click',check);
+$('hint').addEventListener('click',()=>setFeedback('💡 '+tasks[state.index].help,'info'));
+$('solution').addEventListener('click',()=>{const t=tasks[state.index];setFeedback('Solución orientativa: '+t.help+'\n\n'+t.why,'info')});
+$('prev').addEventListener('click',()=>{state.index=Math.max(0,state.index-1);showTask()});
+$('next').addEventListener('click',()=>{state.index=(state.index+1)%tasks.length;showTask()});
+$('restoreSheet').addEventListener('click',()=>{state.values=clone(base);state.formats={};save();renderSheet();setFeedback('Hoja restaurada. Los retos completados siguen guardados.','info')});
+$('resetAll').addEventListener('click',()=>{if(confirm('¿Reiniciar las 12 actividades y borrar las modificaciones de la hoja?')){state=fresh();showTask()}});
+showTask();
+})();
+</script>
+</body>
+</html>
