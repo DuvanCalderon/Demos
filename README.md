@@ -8,7 +8,7 @@ Laboratorios y simuladores web para **aprender haciendo**: explora conceptos, pr
 
 La página principal incluye búsqueda, filtros por categoría, vistas de tarjetas y lista compacta. Diseñada para computadores y dispositivos móviles, sin instalaciones.
 
-## 📚 Catálogo (17 laboratorios en 8 categorías)
+## 📚 Catálogo (18 laboratorios en 8 categorías)
 
 ### 🇬🇧 English
 
@@ -24,6 +24,7 @@ La página principal incluye búsqueda, filtros por categoría, vistas de tarjet
 | Python Strings Lab — slicing, replace, split | [Abrir ↗](https://duvancalderon.github.io/Demos/Python/Fundamentos/Clase12-Slicing-Replace-Split/) | [Ver carpeta](./Python/Fundamentos/Clase12-Slicing-Replace-Split/) |
 | StringLab — métodos esenciales para strings (18 retos) | [Abrir ↗](https://duvancalderon.github.io/Demos/Python/Fundamentos/StringLab-Metodos-Strings/) | [Ver carpeta](./Python/Fundamentos/StringLab-Metodos-Strings/) |
 | Python NumLab — tipos numéricos y conversiones (18 retos) | [Abrir ↗](https://duvancalderon.github.io/Demos/Python/Fundamentos/NumLab-Conversiones-Numericas/) | [Ver carpeta](./Python/Fundamentos/NumLab-Conversiones-Numericas/) |
+| Python Type Dojo — tipos, booleanos y colecciones (103 retos) | [Abrir ↗](https://duvancalderon.github.io/Demos/Python/Fundamentos/Type-Dojo-Tipos-Datos/) | [Ver carpeta](./Python/Fundamentos/Type-Dojo-Tipos-Datos/) |
 | Truth Lab — booleanos y casting | [Abrir ↗](https://duvancalderon.github.io/Demos/Python/Fundamentos/Clase13-Booleanos-True-False-Casting/) | [Ver carpeta](./Python/Fundamentos/Clase13-Booleanos-True-False-Casting/) |
 | Python Loop Lab — bucles `for` y 15 retos | [Abrir ↗](https://duvancalderon.github.io/Demos/Python/Fundamentos/Bucles-For-Triangulos/) | [Ver carpeta](./Python/Fundamentos/Bucles-For-Triangulos/) |
 
