@@ -200,7 +200,7 @@ function render(){visible(state.tab);stats();renderMissions();renderQuiz();rende
 function selectQuestion(prefix,index){if(prefix==="quiz"){state.quizChoice[state.quiz]=index;renderQuiz()}else{state.imageChoice[state.image]=index;renderImages()}persist()}
 function checkQuestion(prefix,reveal){const quiz=prefix==="quiz",idx=quiz?state.quiz:state.image,items=quiz?quizzes:images,item=items[idx],correct=quiz?item[2]:item[3],answer=quiz?state.quizChoice[idx]:state.imageChoice[idx],feedbackId=prefix+"Feedback";
  if(answer===undefined&&!reveal){feedback(feedbackId,"Elige una respuesta antes de comprobar.","bad");return}
- if(reveal){feedback(feedbackId,"Solución: "+String.fromCharCode(65+correct)+". "+(quiz?item[4]:item[4]),"");return}
+ if(reveal){feedback(feedbackId,"Solución: "+String.fromCharCode(65+correct)+". "+(quiz?item[3]:item[4]),"");return}
  const yes=answer===correct;
  if(quiz){if(yes)state.quizDone[idx]=true}else{if(yes)state.imageDone[idx]=true}
  feedback(feedbackId,(yes?"✓ ¡Correcto! ":"Todavía no. ")+(quiz?item[4]:item[4]),yes?"good":"bad");persist();stats()
@@ -220,7 +220,7 @@ $("quizAnswers").addEventListener("click",e=>{const b=e.target.closest("[data-qu
 $("imageAnswers").addEventListener("click",e=>{const b=e.target.closest("[data-image-answer]");if(b)selectQuestion("image",+b.dataset.imageAnswer)});
 $("quizCheck").addEventListener("click",()=>checkQuestion("quiz",false));$("imageCheck").addEventListener("click",()=>checkQuestion("image",false));
 $("quizSolution").addEventListener("click",()=>checkQuestion("quiz",true));$("imageSolution").addEventListener("click",()=>checkQuestion("image",true));
-$("quizHint").addEventListener("click",()=>feedback("quizFeedback","💡 "+quizzes[state.quiz][5],""));
+$("quizHint").addEventListener("click",()=>feedback("quizFeedback","💡 "+quizzes[state.quiz][4],""));
 $("imageHint").addEventListener("click",()=>feedback("imageFeedback","💡 "+images[state.image][5],""));
 function move(prefix,dir){const quiz=prefix==="quiz",len=quiz?quizzes.length:images.length;const k=quiz?"quiz":"image";state[k]=(state[k]+dir+len)%len;$(prefix+"Feedback").hidden=true;persist();quiz?renderQuiz():renderImages()}
 $("quizNext").addEventListener("click",()=>move("quiz",1));$("quizPrev").addEventListener("click",()=>move("quiz",-1));$("imageNext").addEventListener("click",()=>move("image",1));$("imagePrev").addEventListener("click",()=>move("image",-1));
