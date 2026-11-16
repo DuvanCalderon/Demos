@@ -8,7 +8,7 @@ Laboratorios y simuladores web para **aprender haciendo**: explora conceptos, pr
 
 La página principal incluye búsqueda, filtros por categoría, vistas de tarjetas y lista compacta. Diseñada para computadores y dispositivos móviles, sin instalaciones.
 
-## 📚 Catálogo (14 laboratorios en 8 categorías)
+## 📚 Catálogo (15 laboratorios en 8 categorías)
 
 ### 🇬🇧 English
 
@@ -23,6 +23,7 @@ La página principal incluye búsqueda, filtros por categoría, vistas de tarjet
 |---|---|---|
 | Python Strings Lab — slicing, replace, split | [Abrir ↗](https://duvancalderon.github.io/Demos/Python/Fundamentos/Clase12-Slicing-Replace-Split/) | [Ver carpeta](./Python/Fundamentos/Clase12-Slicing-Replace-Split/) |
 | Truth Lab — booleanos y casting | [Abrir ↗](https://duvancalderon.github.io/Demos/Python/Fundamentos/Clase13-Booleanos-True-False-Casting/) | [Ver carpeta](./Python/Fundamentos/Clase13-Booleanos-True-False-Casting/) |
+| Python Loop Lab — bucles `for` y 15 retos | [Abrir ↗](https://duvancalderon.github.io/Demos/Python/Fundamentos/Bucles-For-Triangulos/) | [Ver carpeta](./Python/Fundamentos/Bucles-For-Triangulos/) |
 
 ### 📊 Excel
 
