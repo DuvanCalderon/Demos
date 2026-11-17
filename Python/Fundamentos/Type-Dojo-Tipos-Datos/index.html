@@ -7,8 +7,8 @@
 <meta name="description" content="Python Type Dojo: aprende tipos de datos, booleanos, listas, tuplas, diccionarios y conjuntos con ejercicios y simuladores offline.">
 <title>Python Type Dojo — Laboratorio interactivo</title>
 <link rel="canonical" href="https://duvancalderon.github.io/Demos/Python/Fundamentos/Type-Dojo-Tipos-Datos/">
-<meta property="og:title" content="Python Type Dojo · 103 retos de tipos, booleanos y colecciones">
-<meta property="og:description" content="Resuelve 103 retos de Python en cinco áreas y experimenta con listas, tuplas, diccionarios y conjuntos.">
+<meta property="og:title" content="Python Type Dojo · 68 retos de tipos, booleanos y colecciones">
+<meta property="og:description" content="Resuelve 68 retos de Python en cinco áreas y experimenta con listas, tuplas, diccionarios y conjuntos.">
 <meta property="og:type" content="website">
 <style>
 :root{--bg:#070e1c;--panel:#0e192d;--panel2:#122039;--stroke:#24334d;--muted:#94a8c5;--text:#edf5ff;--green:#74efc4;--blue:#65afff;--yellow:#ffd479;--red:#ff8d9c;--purple:#c1a1ff;--radius:20px;--shadow:0 22px 65px rgba(1,5,14,.26)}
@@ -55,7 +55,9 @@
 const KEY='python-type-dojo-state-v1';
 const TOPICS={types:{label:'Detective de tipos',icon:'◈',desc:'Identifica int, str, float, bool y más sin dejarte engañar por las comillas.',color:'green'},bool:{label:'Boolean Bootcamp',icon:'⊤',desc:'Domina True, False, and, or, not y valores verdaderos/falsos.',color:'yellow'},collections:{label:'Colecciones',icon:'▦',desc:'Elige entre listas, tuplas, diccionarios y conjuntos según el problema.',color:'purple'},output:{label:'Predice la salida',icon:'⌁',desc:'Lee pequeños fragmentos de Python y anticipa el resultado.',color:'blue'},debug:{label:'Caza errores',icon:'⚑',desc:'Encuentra fallos reales de sintaxis, tipos y mutabilidad.',color:'red'}};
 const Q=[];
-function add(topic,level,kind,prompt,code,options,answer,explanation,h1,h2,accept){Q.push({id:'q'+(Q.length+1),topic,level,kind,prompt,code,options,answer,explanation,hints:[h1,h2],accept:accept||[]});}
+let nextQuestionId=0;
+const retiredQuestionIds=new Set([20,23,28,29,36,38,46,47,48,49,56,57,58,62,63,64,69,70,74,75,78,85,88,89,90,92,93,94,95,96,98,99,100,101,103]);
+function add(topic,level,kind,prompt,code,options,answer,explanation,h1,h2,accept){const id=++nextQuestionId;if(retiredQuestionIds.has(id))return;Q.push({id:'q'+id,topic,level,kind,prompt,code,options,answer,explanation,hints:[h1,h2],accept:accept||[]});}
 // Tipos: literal vs. contenido, diferencia entre tipos numéricos, colecciones y None.
 add('types',1,'choice','¿Qué tipo tiene el valor mostrado?',`edad = 23\nprint(type(edad))`,['int','str','float','bool'],'int','23 es un entero sin comillas. type(edad) devuelve <class \'int\'>.','Pregúntate si hay comillas o punto decimal.','Un número entero en Python usa int.');
 add('types',1,'choice','¿De qué tipo es este dato?',`nombre = "Python"`,['str','int','list','bool'],'str','Las comillas indican una cadena de texto (str).','¿Qué significa que esté entre comillas?','El texto usa str.');
