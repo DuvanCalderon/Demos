@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a1120">
+<meta name="description" content="Cloud Lab: laboratorio interactivo de nube, servidores CPU RAM SSD, despliegue, modelos IaaS PaaS SaaS y retos progresivos.">
+<title>Cloud Lab — Aprende la nube haciendo</title>
+<style>
+:root{color-scheme:dark;--bg:#08101d;--panel:#111e31;--panel2:#17273c;--line:#30445c;--text:#eef8ff;--muted:#9db0c5;--mint:#5be7c0;--blue:#72bafa;--pink:#d7a5ff;--warn:#ffc97d;--bad:#ff969e}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font:15px/1.6 system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(circle at 85% 0%,#143d51 0,transparent 33%),radial-gradient(circle at 0 30%,#1a2342 0,transparent 36%),var(--bg);color:var(--text);min-width:320px}
+a{color:var(--mint)}button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--mint);outline-offset:3px}
+.container{max-width:1160px;margin:auto;padding:0 22px}.top{border-bottom:1px solid var(--line);background:#091522d9;backdrop-filter:blur(15px);position:sticky;top:0;z-index:10}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:68px}.brand{font-weight:800;letter-spacing:-.6px;text-decoration:none;color:var(--text)}.brand b{display:inline-grid;place-items:center;background:var(--mint);color:#08251d;width:34px;height:34px;border-radius:10px;margin-right:9px}.toplinks{display:flex;gap:13px;font-size:13px}.toplinks a{text-decoration:none;color:var(--muted)}
+.hero{padding:75px 0 42px;display:grid;grid-template-columns:1.25fr .75fr;gap:30px;align-items:center}.eyebrow{color:var(--mint);font-size:11px;letter-spacing:2px;font-weight:900;text-transform:uppercase}.hero h1{font-size:clamp(38px,6vw,73px);line-height:1.05;letter-spacing:-3px;margin:14px 0}.hero h1 em{font-style:normal;color:var(--mint)}.lead{color:var(--muted);font-size:18px;max-width:640px}.hero-graphic{border:1px solid #3b6071;min-height:230px;border-radius:26px;background:radial-gradient(circle at center,#1e5c62,#152336 65%);display:grid;place-items:center;position:relative;box-shadow:0 20px 90px #0004}.hero-graphic .cloud{font-size:110px;filter:drop-shadow(0 18px 30px #0009);animation:float 5s ease-in-out infinite}.floatlabel{position:absolute;bottom:23px;color:#d4fff5;font-size:12px;font-weight:700;letter-spacing:1px}@keyframes float{50%{transform:translateY(-9px)}}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 28px}.tab,.btn,.choice,.option{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 15px;border-radius:11px;transition:.2s}.tab:hover,.btn:hover,.choice:hover,.option:hover{border-color:var(--mint);transform:translateY(-1px)}.tab.active,.primary{color:#05231e;border-color:var(--mint);background:var(--mint);font-weight:800}.panel{display:none;animation:fade .28s}.panel.active{display:block}@keyframes fade{from{opacity:.3;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+h2{font-size:clamp(27px,3vw,36px);line-height:1.2;letter-spacing:-1px;margin:8px 0 12px}h3{font-size:19px;line-height:1.3;margin:0 0 10px}.muted{color:var(--muted)}.small{font-size:13px}.sectionintro{margin-bottom:24px;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.card{background:linear-gradient(145deg,#16263a,#101b2c);border:1px solid var(--line);border-radius:18px;padding:22px;min-width:0}.card p:last-child{margin-bottom:0}.emoji{font-size:32px;display:block;margin-bottom:12px}.callout{border:1px solid #326d69;background:#12373465;border-radius:14px;padding:16px;margin:19px 0;color:#d7fff2}.badcallout{border-color:#744d4b;background:#51232460}.accent{color:var(--mint)}.metric{font-size:32px;font-weight:900;letter-spacing:-1.5px}.toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.btn{font-size:13px;font-weight:750}.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}.btn.secondary{background:#1d3045}.btn.danger{border-color:#704f60;color:#ffc9cf;background:#3b2535}.badge{display:inline-block;border:1px solid #3a6e6d;color:#a0ebd9;background:#103c3c;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:800}
+.specrow{display:grid;grid-template-columns:65px 1fr 55px;align-items:center;gap:10px;margin:15px 0}.specrow input{width:100%;accent-color:var(--mint)}.specrow output{text-align:right;font-weight:800}.meter{height:13px;border-radius:100px;background:#25384b;overflow:hidden;margin:7px 0 10px}.meter span{display:block;height:100%;background:linear-gradient(90deg,var(--mint),var(--blue));width:0;transition:width .3s}.meter.danger span{background:linear-gradient(90deg,#e9bd67,#ff7387)}.labels{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;gap:8px}.server{font-size:72px;line-height:1;margin:8px;text-align:center}.serverrow{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.serverbox{background:#0c1c2d;border:1px solid #36536c;border-radius:13px;padding:14px;text-align:center}.serverbox strong{display:block;font-size:22px}
+.switch{display:flex;align-items:center;gap:8px;cursor:pointer}.switch input{accent-color:var(--mint);width:18px;height:18px}.path{display:flex;align-items:center;justify-content:space-around;gap:5px;margin:23px 0;flex-wrap:wrap}.node{border:1px solid #4c6c79;background:#133046;padding:16px 19px;border-radius:14px;text-align:center;font-size:14px;font-weight:800}.arrow{color:var(--mint);font-size:24px}.choice{display:block;text-align:left;width:100%;margin-bottom:10px}.choice.active{border-color:var(--mint);background:#153e40}.decision{min-height:160px}.question{font-size:20px;font-weight:800;line-height:1.35}.option{display:block;width:100%;text-align:left;margin:9px 0;font-weight:600}.option[aria-pressed="true"]{background:#204c51;border-color:var(--mint)}.feedback{border:1px solid #476d75;padding:13px;border-radius:12px;margin:14px 0;background:#163341}.feedback.good{border-color:#3e9879;background:#163e33}.feedback.bad{border-color:#945f5f;background:#412b37}.quizprogress{height:10px;background:#243e50;border-radius:30px;overflow:hidden;margin:12px 0 25px}.quizprogress span{display:block;height:100%;background:var(--mint);transition:.25s}.inlineStats{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0}.inlineStats span{padding:8px 12px;border:1px solid var(--line);border-radius:10px;color:var(--muted);font-size:13px}footer{margin:70px 0 25px;border-top:1px solid var(--line);padding-top:20px;color:var(--muted);font-size:12px}.hidden{display:none!important}
+@media(max-width:800px){.hero{grid-template-columns:1fr}.hero-graphic{min-height:170px}.grid{grid-template-columns:1fr 1fr}}@media(max-width:600px){.container{padding:0 14px}.hero{padding-top:45px}.grid,.two{grid-template-columns:1fr}.toplinks{font-size:11px}.hero-graphic .cloud{font-size:80px}.specrow{grid-template-columns:50px 1fr 48px}.card{padding:17px}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top"><div class="container bar"><a class="brand" href="../../"><b>☁</b> Cloud Lab</a><div class="toplinks"><a href="../../">← Catálogo</a><a href="https://platzi.com/cursos/backend/la-nube/" target="_blank" rel="noopener">Clase de Platzi ↗</a></div></div></header>
+<main class="container">
+<section class="hero"><div><span class="eyebrow">Backend · Laboratorio 09</span><h1>La nube, <em>sin humo.</em></h1><p class="lead">Experimenta con servidores virtuales, diagnostica cuellos de botella, decide cómo desplegar una aplicación y supera retos reales. Todo ocurre en tu navegador.</p><div class="toolbar"><span class="badge">✓ Sin instalaciones</span><span class="badge">⚡ Simulaciones locales</span><span class="badge">🧠 12 retos</span></div></div><div class="hero-graphic" aria-hidden="true"><span class="cloud">☁️</span><span class="floatlabel">CPU · RAM · SSD · CLOUD</span></div></section>
+<nav class="tabs" aria-label="Secciones del laboratorio">
+<button class="tab active" data-tab="conceptos" type="button">📘 Conceptos</button>
+<button class="tab" data-tab="simulador" type="button">🖥️ Servidor virtual</button>
+<button class="tab" data-tab="despliegue" type="button">🚀 Despliegue</button>
+<button class="tab" data-tab="decisiones" type="button">🧭 Elige un servicio</button>
+<button class="tab" data-tab="retos" type="button">🎯 Retos</button>
+</nav>
+<section class="panel active" id="conceptos">
+<span class="eyebrow">01 · Comprende</span><h2>¿Qué es realmente la nube?</h2><p class="sectionintro">Una forma de acceder por Internet a infraestructura y servicios informáticos de terceros. No es magia: son máquinas reales en centros de datos.</p>
+<div class="grid">
+<div class="card"><span class="emoji">🏠</span><h3>Servidor en casa</h3><p>Tu aplicación depende de tu equipo, tu red y la energía eléctrica. Tienes control, pero también responsabilidad operativa.</p></div>
+<div class="card"><span class="emoji">☁️</span><h3>Servidor en la nube</h3><p>Contratas recursos remotos. El proveedor administra la infraestructura física y tú administras lo que corresponda a tu servicio.</p></div>
+<div class="card"><span class="emoji">🌍</span><h3>Acceso desde cualquier lugar</h3><p>Una API desplegada públicamente puede recibir solicitudes desde Internet, siempre que la red, autenticación y permisos lo permitan.</p></div>
+</div>
+<div class="callout"><strong>Analogía Feynman:</strong> comprar un servidor es como comprar tu propia planta eléctrica; contratar capacidad cloud se parece a pagar por usar un servicio energético. El proveedor mantiene gran parte de la infraestructura, pero tú sigues siendo responsable de usarlo bien.</div>
+<h2>Los tres recursos que debes dominar</h2>
+<div class="grid"><div class="card"><span class="emoji">🧠</span><h3>CPU · Procesamiento</h3><p>Ejecuta instrucciones. Si se satura, las solicitudes intensivas en cálculo pueden esperar.</p></div><div class="card"><span class="emoji">📦</span><h3>RAM · Memoria temporal</h3><p>Alberga datos durante la ejecución. Cuando falta, puede haber errores o uso de memoria secundaria.</p></div><div class="card"><span class="emoji">💾</span><h3>SSD · Almacenamiento</h3><p>Conserva archivos y datos persistentes. La capacidad no equivale automáticamente a velocidad.</p></div></div>
+<p class="muted small">También importa la red, la base de datos, la seguridad y la configuración. La nube no garantiza disponibilidad perfecta ni costos cero.</p>
+<button class="btn primary go" data-go="simulador">Abrir simulador →</button>
+</section>
+<section class="panel" id="simulador">
+<span class="eyebrow">02 · Experimenta</span><h2>Tu primer servidor virtual</h2><p class="sectionintro">Ajusta recursos y solicitudes. El modelo es <strong>didáctico</strong>: unidades simuladas, no mediciones reales ni promesas de rendimiento de un proveedor.</p>
+<div class="two"><div class="card"><h3>⚙️ Configuración</h3>
+<label class="specrow" for="cpu"><span>CPU</span><input id="cpu" type="range" min="1" max="16" value="2"><output id="cpuValue">2 vCPU</output></label>
+<label class="specrow" for="ram"><span>RAM</span><input id="ram" type="range" min="1" max="32" value="4"><output id="ramValue">4 GB</output></label>
+<label class="specrow" for="ssd"><span>SSD</span><input id="ssd" type="range" min="20" max="300" step="10" value="40"><output id="ssdValue">40 GB</output></label>
+<label class="specrow" for="traffic"><span>Tráfico</span><input id="traffic" type="range" min="50" max="1000" step="50" value="300"><output id="trafficValue">300 req</output></label>
+<div class="toolbar"><button class="btn secondary" id="lowPreset">Sitio pequeño</button><button class="btn secondary" id="highPreset">Alta demanda</button><button class="btn secondary" id="resetPreset">Restaurar</button></div>
+</div>
+<div class="card"><h3>📊 Diagnóstico en vivo</h3><div class="server" aria-hidden="true">🖥️</div>
+<div class="labels"><span>Carga de CPU</span><strong id="cpuPct">0%</strong></div><div class="meter" id="cpuMeter"><span id="cpuFill"></span></div>
+<div class="labels"><span>Uso de RAM</span><strong id="ramPct">0%</strong></div><div class="meter" id="ramMeter"><span id="ramFill"></span></div>
+<div class="labels"><span>Ocupación del SSD</span><strong id="ssdPct">0%</strong></div><div class="meter" id="ssdMeter"><span id="ssdFill"></span></div>
+<div class="callout" id="diagnosis" role="status">Calculando…</div>
+</div></div>
+<div class="callout"><strong>Cómo pensar como ingeniero:</strong> observa cuál de los recursos se acerca a su límite. Subir el SSD no arregla una CPU saturada. Una aplicación real se diagnostica con métricas, perfiles y pruebas de carga.</div>
+</section>
+<section class="panel" id="despliegue">
+<span class="eyebrow">03 · Simula fallos</span><h2>¿Dónde alojarías tu API?</h2><p class="sectionintro">Selecciona el entorno y provoca fallas. Los comportamientos ilustran dependencias típicas, no todos los escenarios de redundancia posibles.</p>
+<div class="two"><div class="card">
+<h3>🏗️ Ubicación del servidor</h3><div class="toolbar"><button type="button" class="btn primary" id="localMode">🏠 En casa</button><button type="button" class="btn secondary" id="cloudMode">☁️ En la nube</button></div>
+<p class="muted small" id="modeDesc">Tu API depende de la red eléctrica y la conexión de tu casa.</p>
+<label class="switch"><input id="power" type="checkbox" checked> Electricidad del sitio disponible</label><label class="switch"><input id="network" type="checkbox" checked> Conexión del sitio disponible</label><label class="switch"><input id="provider" type="checkbox" checked> Infraestructura del proveedor disponible</label>
+<p class="muted small">La infraestructura del proveedor solo afecta al modo nube. En este modelo se supone un único servidor, sin respaldo ni failover.</p></div>
+<div class="card"><h3>🔀 Ruta de una solicitud</h3><div class="path"><span class="node">📱 Cliente</span><span class="arrow">→</span><span class="node" id="routeName">🏠 Servidor local</span><span class="arrow">→</span><span class="node">🗄️ Datos</span></div><div class="callout" id="availability" role="status"></div>
+<button class="btn secondary" id="resetDeploy">Restablecer escenario</button></div></div>
+</section>
+<section class="panel" id="decisiones">
+<span class="eyebrow">04 · Toma decisiones</span><h2>IaaS, PaaS o SaaS</h2><p class="sectionintro">La pregunta no es cuál tiene el logo más bonito, sino cuánto control y responsabilidad necesitas.</p>
+<div class="grid">
+<div class="card"><span class="emoji">🧱</span><h3>IaaS</h3><p>Infraestructura como servicio: VM, almacenamiento y redes. Más control y más tareas de administración.</p><span class="badge">Ej.: AWS EC2</span></div>
+<div class="card"><span class="emoji">🛠️</span><h3>PaaS</h3><p>Plataforma gestionada para desplegar código. Menos trabajo administrando el sistema operativo.</p><span class="badge">Ej.: Azure App Service</span></div>
+<div class="card"><span class="emoji">📨</span><h3>SaaS</h3><p>Software listo para usar; no desarrollas ni despliegas el producto por tu cuenta.</p><span class="badge">Ej.: Google Drive</span></div>
+</div>
+<div class="card" style="margin-top:17px"><h3>🧭 Consultor cloud — toma una decisión</h3><p>Selecciona un caso y el modelo que recomendarías. Puedes explorar por qué otras elecciones son menos adecuadas.</p>
+<label for="caseSelect" class="small">Necesidad del proyecto</label><select id="caseSelect" class="btn" style="display:block;width:100%;margin:8px 0 17px"><option value="0">Startup: quiero desplegar Node.js rápido sin gestionar el SO</option><option value="1">Empresa: necesito administrar mi VM, sistema operativo y red</option><option value="2">Equipo: solo quiero usar correo y almacenamiento listos</option></select>
+<div class="grid"><button class="choice" type="button" data-model="IaaS">Elegir IaaS</button><button class="choice" type="button" data-model="PaaS">Elegir PaaS</button><button class="choice" type="button" data-model="SaaS">Elegir SaaS</button></div>
+<div id="decisionResult" class="feedback hidden" role="status"></div></div>
+</section>
+<section class="panel" id="retos">
+<span class="eyebrow">05 · Demuestra lo aprendido</span><h2>12 retos para dominar la nube</h2><p class="sectionintro">Tres niveles de dificultad, pistas progresivas, soluciones explicadas y progreso guardado en este navegador. Intenta resolver antes de revelar.</p>
+<div class="inlineStats"><span id="scoreStat">🏆 0 puntos</span><span id="doneStat">✅ 0 / 12 dominados</span><span id="levelStat">🌱 Básico</span></div>
+<div class="quizprogress" role="progressbar" aria-label="Retos dominados" aria-valuemin="0" aria-valuemax="12" aria-valuenow="0" id="quizBar"><span id="quizFill"></span></div>
+<div class="card"><div class="toolbar" style="justify-content:space-between"><span class="badge" id="questionNumber">Reto 1 de 12</span><span class="muted small" id="difficulty">Básico</span></div><p class="question" id="questionText"></p><div id="answers" role="group" aria-label="Opciones de respuesta"></div><div class="toolbar" style="margin-top:18px"><button class="btn primary" id="checkAnswer" type="button">Comprobar</button><button class="btn secondary" id="hintButton" type="button">💡 Pista</button><button class="btn secondary" id="solutionButton" type="button">Mostrar solución</button></div><div id="hintBox" class="feedback hidden"></div><div id="answerFeedback" class="feedback hidden" aria-live="polite"></div><div class="toolbar" style="justify-content:space-between;margin-top:22px"><button class="btn secondary" id="prevQ" type="button">← Anterior</button><button class="btn secondary" id="nextQ" type="button">Siguiente →</button></div></div>
+<div class="toolbar" style="margin-top:16px"><button class="btn danger" id="resetProgress" type="button">Reiniciar progreso</button><span class="muted small">Las soluciones reveladas no otorgan puntos. Puedes repetir cualquier reto.</span></div>
+</section>
+<footer>Cloud Lab · Aprender haciendo. Recursos y cálculos del simulador son conceptuales, no mediciones ni tarifas reales. <a href="../../">Volver a Learning Studio</a>.</footer>
+</main>
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id)};
+function tab(name){document.querySelectorAll(".panel").forEach(function(el){el.classList.toggle("active",el.id===name)});document.querySelectorAll(".tab").forEach(function(b){var on=b.dataset.tab===name;b.classList.toggle("active",on);b.setAttribute("aria-pressed",String(on))});window.scrollTo({top:0,behavior:"smooth"})}
+document.querySelectorAll(".tab").forEach(function(b){b.addEventListener("click",function(){tab(b.dataset.tab)})});
+document.querySelectorAll(".go").forEach(function(b){b.addEventListener("click",function(){tab(b.dataset.go)})});
+var values=["cpu","ram","ssd","traffic"];
+function drawServer(){var c=+$("cpu").value,r=+$("ram").value,s=+$("ssd").value,t=+$("traffic").value;
+$("cpuValue").textContent=c+" vCPU";$("ramValue").textContent=r+" GB";$("ssdValue").textContent=s+" GB";$("trafficValue").textContent=t+" req";
+var loads=[Math.round(t/(c*2.4)),Math.round((2+t/130)/r*100),Math.round((20+t/18)/s*100)];
+["cpu","ram","ssd"].forEach(function(k,i){var val=loads[i];$(k+"Pct").textContent=val+"%";$(k+"Fill").style.width=Math.min(100,val)+"%";$(k+"Meter").classList.toggle("danger",val>90)});
+var idx=loads.indexOf(Math.max.apply(null,loads));var labels=["CPU","RAM","SSD"];var messages=["Reduce operaciones costosas, escala procesamiento o revisa el código.","Optimiza memoria o amplía RAM antes de cargar más trabajo.","Libera espacio o aumenta almacenamiento persistente."];
+$("diagnosis").textContent=Math.max.apply(null,loads)>100?"⚠️ Capacidad excedida: "+labels[idx]+". "+messages[idx]:Math.max.apply(null,loads)>80?"🟠 Cerca del límite: "+labels[idx]+". "+messages[idx]:"✅ Recursos suficientes para la carga simulada. El componente más exigido es "+labels[idx]+"."; }
+values.forEach(function(k){$(k).addEventListener("input",drawServer)});
+function preset(c,r,s,t){$("cpu").value=c;$("ram").value=r;$("ssd").value=s;$("traffic").value=t;drawServer()}
+$("lowPreset").addEventListener("click",function(){preset(2,4,40,100)});
+$("highPreset").addEventListener("click",function(){preset(2,4,40,1000)});
+$("resetPreset").addEventListener("click",function(){preset(2,4,40,300)});drawServer();
+var cloud=false;
+function drawDeploy(){var power=$("power").checked,network=$("network").checked,prov=$("provider").checked;var online=cloud?power&&network&&prov:power&&network;
+$("routeName").textContent=cloud?"☁️ Servidor cloud":"🏠 Servidor local";$("modeDesc").textContent=cloud?"La aplicación depende de electricidad, red e infraestructura del centro de datos contratado.":"Tu API depende de la electricidad y conectividad de la casa.";
+$("availability").className=online?"callout":"callout badcallout";$("availability").textContent=online?"✅ API alcanzable en este escenario. La nube no elimina la necesidad de red y electricidad.":(!power?"❌ Sin electricidad en el sitio del servidor.":!network?"❌ Sin conexión del sitio del servidor.":"❌ Falló la infraestructura del proveedor.");$("localMode").className=cloud?"btn secondary":"btn primary";$("cloudMode").className=cloud?"btn primary":"btn secondary";$("provider").disabled=!cloud;
+}
+$("localMode").addEventListener("click",function(){cloud=false;drawDeploy()});$("cloudMode").addEventListener("click",function(){cloud=true;drawDeploy()});["power","network","provider"].forEach(function(k){$(k).addEventListener("change",drawDeploy)});
+$("resetDeploy").addEventListener("click",function(){cloud=false;["power","network","provider"].forEach(function(k){$(k).checked=true});drawDeploy()});drawDeploy();
+var cases=[{best:"PaaS",why:"Una plataforma gestionada permite desplegar la app sin administrar directamente el sistema operativo. IaaS también es posible, pero aumenta la carga operativa."},{best:"IaaS",why:"Una máquina virtual permite controlar el sistema operativo y buena parte de la configuración. PaaS abstrae estas tareas."},{best:"SaaS",why:"Usar aplicaciones listas evita desarrollar y desplegar software propio. IaaS/PaaS estarían resolviendo un problema distinto."}];
+function decide(model){document.querySelectorAll("[data-model]").forEach(function(b){b.classList.toggle("active",b.dataset.model===model)});var x=cases[+$("caseSelect").value];$("decisionResult").className=model===x.best?"feedback good":"feedback bad";$("decisionResult").textContent=(model===x.best?"✅ Buena elección. ":"💡 Aquí conviene más "+x.best+". ")+x.why}
+document.querySelectorAll("[data-model]").forEach(function(b){b.addEventListener("click",function(){decide(b.dataset.model)})});$("caseSelect").addEventListener("change",function(){$("decisionResult").className="feedback hidden";document.querySelectorAll("[data-model]").forEach(function(b){b.classList.remove("active")})});
+var questions=[
+{l:"Básico",q:"¿Qué describe mejor la nube?",a:["Un recurso informático remoto disponible por red","Un disco duro que no usa electricidad","Una red sin servidores físicos"],ok:0,h:["Piensa en quién es propietario de la infraestructura.","Los datos y el código siguen ejecutándose en máquinas reales."],e:"Cloud computing ofrece acceso bajo demanda a recursos y servicios. Detrás existen centros de datos físicos."},
+{l:"Básico",q:"Si la CPU de tu API está saturada, ¿qué componente está más relacionado con ejecutar instrucciones?",a:["SSD","CPU","RAM"],ok:1,h:["Elige el componente que procesa las operaciones.","SSD guarda datos; RAM mantiene datos temporales."],e:"CPU ejecuta instrucciones. Una CPU saturada requiere diagnóstico, optimización y quizá mayor capacidad."},
+{l:"Básico",q:"¿Qué componente conserva archivos normalmente cuando se corta la energía?",a:["RAM","Memoria caché","SSD"],ok:2,h:["La RAM es volátil.","Piensa en almacenamiento persistente."],e:"El SSD conserva datos sin alimentación; la RAM suele perder su contenido."},
+{l:"Básico",q:"¿Cuál es un proveedor de servicios en la nube?",a:["AWS","HTTP","JSON"],ok:0,h:["HTTP es un protocolo; JSON es un formato.","Busca una empresa de infraestructura cloud."],e:"Amazon Web Services (AWS) ofrece productos de computación, red, almacenamiento y otros."},
+{l:"Intermedio",q:"Quieres ejecutar Node.js en una plataforma donde no administres el sistema operativo. ¿Qué modelo encaja mejor?",a:["IaaS","PaaS","SaaS"],ok:1,h:["No buscas una app ya hecha.","Piensa en una plataforma que reciba tu código y gestione parte del despliegue."],e:"PaaS permite desplegar tu aplicación con menor administración de infraestructura. IaaS también podría servir, pero con más responsabilidad."},
+{l:"Intermedio",q:"Tu servidor tiene CPU 100% y SSD 30%. ¿Cuál NO sería una solución directa al cuello de botella?",a:["Perfilar y optimizar cálculos","Aumentar capacidad de SSD","Considerar más CPU"],ok:1,h:["Identifica el recurso no saturado.","Más espacio de disco no ejecuta más instrucciones."],e:"Aumentar el SSD no soluciona directamente la saturación de procesamiento."},
+{l:"Intermedio",q:"¿Qué riesgo compartido tienen tanto la nube como los servidores locales?",a:["Pueden experimentar interrupciones","Jamás necesitan redes","Siempre son gratuitos"],ok:0,h:["No hay servicio con disponibilidad absoluta.","Considera fallos de infraestructura o conectividad."],e:"Ambos entornos pueden fallar. La resiliencia requiere diseño, redundancia y monitoreo."},
+{l:"Intermedio",q:"Tu equipo solo necesita almacenar documentos y colaborar, sin programar un producto. ¿Qué usarías?",a:["IaaS","PaaS","SaaS"],ok:2,h:["El producto ya existe y solo vas a consumirlo.","Piensa en Google Drive."],e:"SaaS proporciona una aplicación lista para usar."},
+{l:"Avanzado",q:"Tu aplicación falla por falta de memoria aun con CPU libre. ¿Qué harías primero?",a:["Medir consumo y revisar RAM/fugas de memoria","Subir solo el SSD","Cambiar el dominio"],ok:0,h:["El síntoma menciona memoria, no disco.","Antes de escalar, identifica la causa con métricas."],e:"Monitorea RAM, fugas y patrón de carga. Después optimiza o amplía memoria según resultados."},
+{l:"Avanzado",q:"La empresa quiere instalar librerías y configurar el sistema operativo de la VM. ¿Qué modelo suele darle ese control?",a:["SaaS","PaaS","IaaS"],ok:2,h:["Necesita controlar una máquina virtual.","La plataforma gestionada reduce acceso al SO."],e:"IaaS entrega infraestructura virtual donde el cliente administra el SO, software y su configuración."},
+{l:"Avanzado",q:"Una API cloud usa una sola máquina. Si se cae esa máquina, ¿qué puedes concluir?",a:["Nada puede fallar porque está en la nube","Habrá interrupción hasta recuperación si no existe redundancia","El SSD automáticamente reparará la red"],ok:1,h:["La nube no implica automáticamente alta disponibilidad.","Una máquina sin respaldo representa un punto único de falla."],e:"La nube no añade por sí sola failover. Múltiples instancias, balanceo, salud y diseño de datos aportan resiliencia."},
+{l:"Avanzado",q:"Tu backend necesita escalar. ¿Cuál estrategia demuestra mejor criterio técnico?",a:["Duplicar recursos sin medir","Aumentar SSD siempre","Medir cuellos de botella, optimizar y escalar según demanda"],ok:2,h:["Escalar no es adivinar.","Busca primero evidencia del cuello de botella."],e:"Medición y pruebas ayudan a decidir entre optimizar, escalar verticalmente o repartir carga horizontalmente."}
+];
+var key="cloud-lab-progress-v1",saved={done:{},revealed:{}},qidx=0,selected=-1,hints=0;
+try{var raw=JSON.parse(localStorage.getItem(key)||"null");if(raw&&typeof raw==="object"){saved.done=raw.done||{};saved.revealed=raw.revealed||{}}}catch(err){}
+function persist(){try{localStorage.setItem(key,JSON.stringify(saved))}catch(err){}}
+function stats(){var done=Object.keys(saved.done).filter(function(k){return saved.done[k]}).length;$("scoreStat").textContent="🏆 "+done*10+" puntos";$("doneStat").textContent="✅ "+done+" / "+questions.length+" dominados";$("levelStat").textContent="🌱 "+questions[qidx].l;$("quizFill").style.width=(done/questions.length*100)+"%";$("quizBar").setAttribute("aria-valuenow",done)}
+function renderQ(){var q=questions[qidx];selected=-1;hints=0;$("questionNumber").textContent="Reto "+(qidx+1)+" de "+questions.length;$("difficulty").textContent=q.l;$("questionText").textContent=q.q;$("hintBox").className="feedback hidden";$("answerFeedback").className="feedback hidden";$("hintButton").disabled=false;$("answers").replaceChildren();
+q.a.forEach(function(a,i){var b=document.createElement("button");b.type="button";b.className="option";b.textContent=String.fromCharCode(65+i)+". "+a;b.setAttribute("aria-pressed","false");b.addEventListener("click",function(){selected=i;document.querySelectorAll("#answers .option").forEach(function(o,j){o.setAttribute("aria-pressed",String(i===j))})});$("answers").appendChild(b)});
+$("prevQ").disabled=qidx===0;$("nextQ").disabled=qidx===questions.length-1;$("checkAnswer").disabled=!!saved.done[qidx]||!!saved.revealed[qidx];if(saved.done[qidx])showFeedback("✅ Ya dominaste este reto. Puedes revisar la solución o navegar.","good");else if(saved.revealed[qidx])showFeedback("📘 Ya revelaste la solución. Usa el botón «Mostrar solución» para repasarla.","");
+stats()}
+function showFeedback(msg,kind){$("answerFeedback").className="feedback "+kind;$("answerFeedback").textContent=msg}
+$("checkAnswer").addEventListener("click",function(){if(selected<0){showFeedback("Selecciona una opción antes de comprobar.","bad");return}var q=questions[qidx];if(selected===q.ok){saved.done[qidx]=true;persist();showFeedback("✅ ¡Correcto! "+q.e,"good");$("checkAnswer").disabled=true;stats()}else{showFeedback("❌ No es esa. Revisa los conceptos o utiliza una pista. Puedes intentarlo de nuevo.","bad")}});
+$("hintButton").addEventListener("click",function(){var q=questions[qidx];if(hints<q.h.length){hints++;$("hintBox").className="feedback";$("hintBox").textContent="💡 Pista "+hints+"/"+q.h.length+": "+q.h[hints-1]}if(hints>=q.h.length)$("hintButton").disabled=true});
+$("solutionButton").addEventListener("click",function(){var q=questions[qidx];if(!saved.done[qidx]){saved.revealed[qidx]=true;persist()}showFeedback("📘 Respuesta: "+q.a[q.ok]+". "+q.e, "");$("checkAnswer").disabled=true});
+$("prevQ").addEventListener("click",function(){if(qidx>0){qidx--;renderQ()}});$("nextQ").addEventListener("click",function(){if(qidx<questions.length-1){qidx++;renderQ()}});
+$("resetProgress").addEventListener("click",function(){if(!confirm("¿Reiniciar todas las respuestas y puntos?"))return;saved={done:{},revealed:{}};qidx=0;persist();renderQ()});
+renderQ();
+})();
+</script>
+</body>
+</html>
