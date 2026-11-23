@@ -15,7 +15,7 @@ header{position:sticky;top:0;z-index:30;background:#091021e6;backdrop-filter:blu
 .layout{display:grid;grid-template-columns:minmax(0,1.63fr) minmax(315px,.9fr);gap:17px;align-items:start}.panel{border-radius:20px;border:1px solid #ffffff23;background:linear-gradient(145deg,#17263e,#111d32);overflow:hidden;box-shadow:0 18px 54px #0003}.pad{padding:20px}.heading{display:flex;gap:14px;align-items:start;justify-content:space-between;flex-wrap:wrap}.heading h2{font-size:20px;margin:0;letter-spacing:-.5px}.sub{margin:3px 0 0;color:var(--muted);font-size:12px}.pill{font-size:10px;color:var(--mint);border:1px solid #5bbfa461;background:#1d3a3c;padding:6px 10px;border-radius:99px}
 .stage{position:relative;border-radius:16px;overflow:hidden;margin-top:15px;min-height:590px;background:radial-gradient(circle at 50% 25%,#344b68,#111c30)}
 .fallback{position:relative;min-height:590px;display:flex;align-items:center;justify-content:center;padding:14px 12px 65px}
-.portrait-holder{position:relative;width:min(100%,510px);aspect-ratio:960/974;border-radius:16px;overflow:hidden;box-shadow:0 20px 45px #070b1980;background:#3a2e30}
+.portrait-holder{position:relative;width:min(100%,390px);aspect-ratio:196/229;border-radius:16px;overflow:hidden;box-shadow:0 20px 45px #070b1980;background:#3a2e30}
 .portrait-holder img{display:block;width:100%;height:100%;object-fit:cover}
 #skinOverlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
 .pin2d{position:absolute;width:20px;height:20px;transform:translate(-50%,-50%);border-radius:50%;border:2px solid #fff;background:#9c85e9b9;box-shadow:0 0 0 3px #17172e80;padding:0;min-height:0;z-index:5}.pin2d:hover,.pin2d:focus-visible{background:#f3b254}.pin2d.selected{background:#f2b35a}.pin2d.matched{background:#56cf9c}.pin2d.hint{background:#ffe25e;box-shadow:0 0 0 6px #f5d45c70}.pin2d[hidden]{display:none}
@@ -48,8 +48,8 @@ header{position:sticky;top:0;z-index:30;background:#091021e6;backdrop-filter:blu
 <div class="stage" id="stage">
 <div class="fallback" id="fallback">
  <div class="portrait-holder" id="portraitHolder">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/One_dimple.JPG" alt="Real frontal photo of a woman with dark hair, open eyes and a dimple" id="facePhoto" decoding="async">
-  <canvas id="skinOverlay" width="960" height="974" aria-hidden="true"></canvas>
+  <img src="./face-photo.webp" alt="Real portrait photo supplied for this English facial-vocabulary laboratory" id="facePhoto" width="196" height="229" decoding="async" fetchpriority="high">
+  <canvas id="skinOverlay" width="196" height="229" aria-hidden="true"></canvas>
   <div id="pins2d"></div>
  </div>
 </div>
@@ -59,15 +59,11 @@ header{position:sticky;top:0;z-index:30;background:#091021e6;backdrop-filter:blu
 <button class="btn secondary" id="toggleMarkers" type="button">◉ Hide markers</button>
 <span class="view-badge" id="viewBadge">Real photograph · Interactive 2D</span>
 </div>
-<div class="notice"><b>Real photograph:</b> “One dimple” by Michelle Kathleen Fraser, public domain (CC0 1.0).
-Some features, including the ears, are partially obscured; marker positions are approximate educational locations.
-Skin sliders add illustrations over the photo rather than physically changing the person.
-<a href="https://commons.wikimedia.org/wiki/File:One_dimple.JPG" target="_blank" rel="noopener noreferrer">Photo source and license</a>.
-</div>
+<div class="notice"><b>Your photograph is now the 2D reference.</b> The portrait is stored in this demo as <code>face-photo.webp</code> and cropped to focus on the face, while keeping the hairstyle and ears visible. All 20 learning markers have been repositioned. Skin details that are not naturally visible in the photo (such as moles, freckles and wrinkles) use illustrative learning markers and overlay effects, not real skin measurements.</div>
 </div>
 <aside class="panel pad">
 <div id="status" class="status" role="status" aria-live="polite"><strong>Ready to explore.</strong> Select any feature to learn its name and meaning.</div>
-<section id="explorePanel"><div class="info-kicker" id="wordType">Choose a feature</div><h2 class="word-title" id="wordTitle">What can you find?</h2><p class="definition" id="wordDefinition">Use the markers on the model or the vocabulary cards below. Try a side view to understand where ears, temples, and the jaw are located.</p><p class="example" id="wordExample">“She raised an eyebrow.”</p><div class="controls"><button type="button" id="pronounce" class="btn primary">▶ Pronounce</button><button type="button" id="nextWord" class="btn secondary">Next undiscovered →</button></div><p class="smallnote">English speech uses your browser's voice engine, when available.</p></section>
+<section id="explorePanel"><div class="info-kicker" id="wordType">Choose a feature</div><h2 class="word-title" id="wordTitle">What can you find?</h2><p class="definition" id="wordDefinition">Use the markers on the photo or choose a vocabulary card below. All terms are in English; some skin characteristics are illustrated examples.</p><p class="example" id="wordExample">“She raised an eyebrow.”</p><div class="controls"><button type="button" id="pronounce" class="btn primary">▶ Pronounce</button><button type="button" id="nextWord" class="btn secondary">Next undiscovered →</button></div><p class="smallnote">English speech uses your browser's voice engine, when available.</p></section>
 <section id="labelPanel" class="hide">
 <div class="heading"><h2>Drag &amp; drop labels</h2><span id="labelCount" class="pill">0 / 20</span></div>
 <p class="smallnote">Select a word, then click its correct marker — or drag the word onto the marker. A wrong match does not count.</p>
