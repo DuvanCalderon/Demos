@@ -12,3 +12,5 @@
 .canvas-key #quick-power{gap:4px;font:600 10px var(--sans);border-left:1px solid var(--line);padding-left:10px}.canvas-key #options{margin-left:1px}.quick-controls{display:flex;gap:6px;flex-wrap:wrap;margin:15px 0}.quick-controls button{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:7px;padding:7px;background:white;font-size:12px}.quick-controls button small,.quick-controls button strong{display:block;text-align:left}.quick-controls button small{font-size:10px;font-weight:500}#quick-message{min-height:1.5em}
 @media(max-width:440px){.canvas-key{font-size:9px;padding-left:8px;gap:4px}.canvas-key #quick-power{font-size:9px;padding-left:4px}.canvas-key #options{padding:3px;min-width:23px}}
 .idea{width:100%;margin:0 0 10px;font-size:11px;color:#cee6af}.idea summary{cursor:pointer;font-weight:600}.idea p{color:#e1eada;font-size:12px;line-height:1.4;margin:6px 0}.ins-body>.part-status{padding-top:3px}
+
+.mark.hover-target{outline:2px solid #273c31;outline-offset:2px}.mark.bad.hover-target{background:#ffbd91;color:#483019;border-color:#98552f}

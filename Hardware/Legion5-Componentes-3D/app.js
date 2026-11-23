@@ -277,8 +277,10 @@
       if(!dragId){ui.selected=t.id;savedTarget=null;dragId=t.id;renderPiece();buildMarkers();stage.classList.add('dragging');}
       const overTray=inside(tray,e.clientX,e.clientY),overStage=inside(stage,e.clientX,e.clientY);
       tray.classList.toggle('over',overTray);
+      const socket=overStage?view.slotAt(e.clientX,e.clientY):null;
       if(overStage)view.drag(dragId,e.clientX,e.clientY);
-      const ghost=$('#drag-ghost');ghost.hidden=false;ghost.textContent=B.parts[dragId].short+(overTray?' → Bandeja':'');ghost.style.left=e.clientX+'px';ghost.style.top=e.clientY+'px';
+      for(const marker of markers)marker.el.classList.toggle('hover-target',marker.slot&&marker.id===socket);
+      const ghost=$('#drag-ghost');ghost.hidden=false;ghost.textContent=B.parts[dragId].short+(overTray?' → Bandeja':socket?' → '+B.slots[socket].name:'');ghost.style.left=e.clientX+'px';ghost.style.top=e.clientY+'px';
     }else if(ui.view==='2d'){view.pan(e.clientX-t.lastX,e.clientY-t.lastY);}
     t.lastX=e.clientX;t.lastY=e.clientY;
   }
