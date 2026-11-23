@@ -8,7 +8,7 @@ Laboratorios y simuladores web para **aprender haciendo**: explora conceptos, pr
 
 La página principal incluye búsqueda, filtros por categoría, vistas de tarjetas y lista compacta. Diseñada para computadores y dispositivos móviles, sin instalaciones.
 
-## 📚 Catálogo (26 laboratorios en 8 categorías)
+## 📚 Catálogo (35 laboratorios en 10 categorías)
 
 ### 🇬🇧 English
 
@@ -16,6 +16,7 @@ La página principal incluye búsqueda, filtros por categoría, vistas de tarjet
 |---|---|---|
 | WordBloom — English vocabulary | [Abrir ↗](https://duvancalderon.github.io/Demos/English/) | [Ver carpeta](./English/) |
 | Body Atlas — Interactive 2D + 3D | [Abrir ↗](https://duvancalderon.github.io/Demos/English/Body-Parts-Lab/) | [Ver carpeta](./English/Body-Parts-Lab/) |
+| WordArc — Interactive Vocabulary Lab (11 palabras) | [Abrir ↗](https://duvancalderon.github.io/Demos/English/WordArc-Lab/) | [Ver carpeta](./English/WordArc-Lab/) |
 
 ### 🐍 Python
 
