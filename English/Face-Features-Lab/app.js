@@ -47,6 +47,8 @@ let pins3d=new Map(),models=[],ready3d=false,using3d=false,photoReady=false,rend
 let scanBasePositions=null,scanFaceTargets={},skinLayers={},skinMaterial=null,scanNormalMap=null;
 let portraitActive=false,portraitFocus=0,portraitUpdater=null;
 let portraitModel=null;
+let loadGeneration=0,activeObjectURL=null,modelFaceScale=1,modelOrbitDistance=.75;
+let modelHostDescription='Female example (online)';
 const PORTRAIT_REFERENCE="https://studio.tripo3d.ai/3d-model/a-high-detail-portrait-of-a-woman-with-long-dark-brown-hair-tan-skin-6a2b7cf8-4071-46d4-9c5a-d293d00af1dd";
 const PORTRAIT_MODEL_URL="https://memoriesrohit.github.io/avatar-studio/models/priya_casual.glb";
 
@@ -437,9 +439,9 @@ function view(position){
  if(!ready3d){status('2D mode is active.','3D orbit views need WebGL and access to the Three.js CDN.');return}
  set2D(false);
  if(portraitActive){
-  const distance=Math.max(.53,Math.hypot(position[0],position[2]));
+  const distance=Math.max(controls.minDistance*1.3,Math.hypot(position[0],position[2]));
   camera.position.set(position[0]/Math.max(.01,Math.hypot(position[0],position[2]))*distance,
-    portraitFocus+.013, position[2]/Math.max(.01,Math.hypot(position[0],position[2]))*distance);
+    portraitFocus, position[2]/Math.max(.01,Math.hypot(position[0],position[2]))*distance);
   controls.target.set(0,portraitFocus,0);
  }else{camera.position.set(...position);controls.target.set(0,-.08,0);}
  controls.update();
@@ -455,8 +457,16 @@ function pick3d(clientX,clientY){
 }
 
 
-async function init3D(){
+async function init3D(customURL=null){
+ const generation=++loadGeneration;
  try{
+  if(controls){controls.dispose();controls=null;}
+  if(renderer){
+   renderer.dispose();
+   $('canvas3d').replaceChildren();
+  }
+  ready3d=false;using3d=false;portraitActive=false;portraitUpdater=null;
+  pins3d=new Map();skinLayers={};portraitModel=null;
   const [T,orbit,loaderModule]=await Promise.all([
    import('three'),import('three/addons/controls/OrbitControls.js'),
    import('three/addons/loaders/GLTFLoader.js')
@@ -482,12 +492,14 @@ async function init3D(){
   const loader=new loaderModule.GLTFLoader();
   loader.setCrossOrigin('anonymous');
   let gltf,portraitError;
-  for(const modelURL of [PORTRAIT_MODEL_URL,
-    'https://raw.githubusercontent.com/memoriesrohit/avatar-studio/main/models/priya_casual.glb']){
+  const sources=customURL?[customURL]:[PORTRAIT_MODEL_URL,
+    'https://raw.githubusercontent.com/memoriesrohit/avatar-studio/main/models/priya_casual.glb'];
+  for(const modelURL of sources){
    try{gltf=await loader.loadAsync(modelURL);break}
-   catch(error){portraitError=error;console.warn('Portrait source unavailable:',modelURL,error)}
+   catch(error){portraitError=error;console.warn('Model unavailable:',modelURL,error)}
   }
-  if(!gltf)throw portraitError||new Error('Portrait GLB cannot be loaded');
+  if(generation!==loadGeneration)return;
+  if(!gltf)throw portraitError||new Error('The GLB could not be loaded');
   const avatar=gltf.scene;
   portraitModel=avatar;scene.add(avatar);
   avatar.updateMatrixWorld(true);
@@ -507,11 +519,13 @@ async function init3D(){
    if(/Hair|Eyelash|Eyebrow/i.test(label)){hairSurfaces.push(o);}
    if(/Body|Skin|Face|Head/i.test(label)){faceSurfaces.push(o);}
    if(/Hair|Eyelash|Eyebrow/i.test(label)){
+    // Preserve the model's own transparency and cutout textures. Forcing
+    // every hair material to opaque previously caused solid hair sheets.
     const mats=Array.isArray(o.material)?o.material:[o.material];
     for(const m of mats){
      if(!m)continue;
-     m.side=T.DoubleSide;m.transparent=false;m.alphaTest=.35;
-     m.depthWrite=true;m.needsUpdate=true;
+     m.side=T.DoubleSide;
+     m.needsUpdate=true;
     }
    }
   });
@@ -523,11 +537,24 @@ async function init3D(){
   const eyeMeshes=allMeshes.filter(o=>/^Eyes/i.test(o.name||o.parent?.name||''));
   const eyesBox=new T.Box3();
   if(eyeMeshes.length)for(const e of eyeMeshes)eyesBox.expandByObject(e);
-  const bonePosition=new T.Vector3();
-  if(headBone)headBone.getWorldPosition(bonePosition);
-  portraitFocus=eyesBox.isEmpty()?bonePosition.y+.045:eyesBox.getCenter(new T.Vector3()).y-.038;
-  if(!Number.isFinite(portraitFocus)||portraitFocus<.5||portraitFocus>2.6)portraitFocus=1.53;
-  camera.position.set(.055,portraitFocus+.015,.78);
+  const bodyBox=new T.Box3().setFromObject(avatar);
+  if(bodyBox.isEmpty())throw new Error('The GLB has no visible geometry');
+  const bodySize=bodyBox.getSize(new T.Vector3());
+  const eyePos=new T.Vector3(),headPos=new T.Vector3();
+  if(!eyesBox.isEmpty())eyesBox.getCenter(eyePos);
+  if(headBone)headBone.getWorldPosition(headPos);
+  const isBody=headBone!==undefined||bodySize.y>bodySize.x*1.9;
+  const boxCenter=bodyBox.getCenter(new T.Vector3());
+  portraitFocus=!eyesBox.isEmpty()?eyePos.y:
+     headBone?headPos.y+bodySize.y*.04:
+     isBody?bodyBox.max.y-bodySize.y*.115:boxCenter.y;
+  const faceWidth=isBody?Math.min(bodySize.x*.26,bodySize.y*.18):bodySize.x*.49;
+  modelFaceScale=Math.max(.25,Math.min(45,faceWidth/.11));
+  modelOrbitDistance=Math.max(faceWidth*5.8,.58*modelFaceScale);
+  controls.minDistance=Math.max(faceWidth*1.9,.20*modelFaceScale);
+  controls.maxDistance=Math.max(modelOrbitDistance*5,2*modelFaceScale);
+  camera.far=Math.max(30,bodySize.length()*6);camera.updateProjectionMatrix();
+  camera.position.set(0,portraitFocus+.03*modelFaceScale,modelOrbitDistance);
   controls.target.set(0,portraitFocus,0);controls.update();
   headGroup=new T.Group();scene.add(headGroup);
   raycaster=new T.Raycaster();
@@ -543,19 +570,22 @@ async function init3D(){
    pore:[.068,-.095],dimple:[.067,-.116]
   };
   function surfaceHit(x,y,includeHair=false){
-   const ray=new T.Raycaster(new T.Vector3(x,y,1.5),new T.Vector3(0,0,-1),0,4);
+   const originZ=bodyBox.max.z+Math.max(.35,.4*modelFaceScale);
+   const ray=new T.Raycaster(new T.Vector3(x,y,originZ),
+    new T.Vector3(0,0,-1),0,Math.max(bodySize.z*3,4*modelFaceScale));
    const targets=includeHair?[...hairSurfaces,...surfaceTargets]:surfaceTargets;
    return ray.intersectObjects(targets,false)[0]||null;
   }
   for(const w of ITEMS){
-   const [x,dy]=coords[w.id]||[0,0],y=portraitFocus+dy;
+   const [px,dy]=coords[w.id]||[0,0];
+   const x=px*modelFaceScale,y=portraitFocus+dy*modelFaceScale;
    const hit=surfaceHit(x,y,w.id==='hair'||w.id==='eyebrow'||w.id==='eyelash');
-   const pin=new T.Mesh(new T.SphereGeometry(.009,16,12),
+   const pin=new T.Mesh(new T.SphereGeometry(.009*modelFaceScale,16,12),
     new T.MeshStandardMaterial({color:w.group==='skin'?0xf7a7ca:0xbda8ff,
-      roughness:.35,metalness:.05,depthTest:false,depthWrite:false,emissive:0x131123}));
+      roughness:.35,metalness:.05,depthTest:true,depthWrite:false,emissive:0x131123}));
    pin.userData.feature=w.id;
    pin.renderOrder=50;
-   const z=hit?hit.point.z+.012:.115;
+   const z=hit?hit.point.z+.012*modelFaceScale:bodyBox.max.z+.02*modelFaceScale;
    pin.position.set(x,y,z);
    headGroup.add(pin);pins3d.set(w.id,pin);
   }
@@ -564,25 +594,25 @@ async function init3D(){
   const freckles=new T.Group(),pores=new T.Group(),wrinkles=new T.Group();
   const rnd=seedRand(134791);
   for(let i=0;i<140;i++){
-   const left=i%2?-1:1,x=left*(.035+rnd()*.053),y=portraitFocus-.026-rnd()*.073;
+   const left=i%2?-1:1,x=left*(.035+rnd()*.053)*modelFaceScale,y=portraitFocus-(.026+rnd()*.073)*modelFaceScale;
    const h=surfaceHit(x,y);if(!h)continue;
-   const dot=new T.Mesh(new T.CircleGeometry(.0018+rnd()*.0015,8),
+   const dot=new T.Mesh(new T.CircleGeometry((.0018+rnd()*.0015)*modelFaceScale,8),
      new T.MeshBasicMaterial({color:0x79503b,side:T.DoubleSide,transparent:true,opacity:.53,depthWrite:false}));
-   dot.position.copy(h.point).add(new T.Vector3(0,0,.002));
+   dot.position.copy(h.point).add(new T.Vector3(0,0,.002*modelFaceScale));
    freckles.add(dot);
   }
   for(let i=0;i<180;i++){
-   const side=i%2?-1:1,x=side*(.025+rnd()*.069),y=portraitFocus-.012-rnd()*.102;
+   const side=i%2?-1:1,x=side*(.025+rnd()*.069)*modelFaceScale,y=portraitFocus-(.012+rnd()*.102)*modelFaceScale;
    const h=surfaceHit(x,y);if(!h)continue;
-   const dot=new T.Mesh(new T.CircleGeometry(.00065+rnd()*.0003,6),
+   const dot=new T.Mesh(new T.CircleGeometry((.00065+rnd()*.0003)*modelFaceScale,6),
      new T.MeshBasicMaterial({color:0x795b50,side:T.DoubleSide,transparent:true,opacity:.28,depthWrite:false}));
-   dot.position.copy(h.point).add(new T.Vector3(0,0,.0015));pores.add(dot);
+   dot.position.copy(h.point).add(new T.Vector3(0,0,.0015*modelFaceScale));pores.add(dot);
   }
   for(const side of [-1,1])for(let j=0;j<3;j++){
    const points=[];
    for(let k=0;k<9;k++){
-    const t=k/8,x=side*(.067+t*.028),y=portraitFocus+.009-j*.006+Math.sin(t*Math.PI)*.003;
-    const h=surfaceHit(x,y);if(h)points.push(h.point.clone().add(new T.Vector3(0,0,.0025)));
+    const t=k/8,x=side*(.067+t*.028)*modelFaceScale,y=portraitFocus+(.009-j*.006+Math.sin(t*Math.PI)*.003)*modelFaceScale;
+    const h=surfaceHit(x,y);if(h)points.push(h.point.clone().add(new T.Vector3(0,0,.0025*modelFaceScale)));
    }
    if(points.length<2)continue;
    const line=new T.Line(new T.BufferGeometry().setFromPoints(points),
@@ -641,9 +671,11 @@ async function init3D(){
    if(dist>9)return;
    const id=pickedAt(e);if(id)hitFeature(id);
   });
+  if(generation!==loadGeneration)return;
   ready3d=true;set2D(false);refreshPins();resize3D();
   let previous=0;
   function frame(t){
+   if(generation!==loadGeneration)return;
    requestAnimationFrame(frame);
    if(!using3d||t-previous<14)return;
    previous=t;animateBlink(t);controls.update();renderer.render(scene,camera);
@@ -651,15 +683,16 @@ async function init3D(){
   requestAnimationFrame(frame);
   if('ResizeObserver' in window)new ResizeObserver(resize3D).observe($('canvas3d'));
   window.addEventListener('resize',resize3D);
-  $('stageLoading').textContent='Approximate female portrait · Rocketbox GLB';
-  status('Female 3D portrait loaded.',
-   'A licensed female character approximates the reference description. This is not the original Tripo geometry.','ok');
+  $('stageLoading').textContent=customURL?'Your GLB · Imported successfully':'Female sample GLB · Imported successfully';
+  status(customURL?'Your 3D model loaded.':'Female sample loaded.',
+   customURL?'The model was read locally, without uploading it to a server.':'This is a licensed example, not the Tripo model. You can import your own GLB.','ok');
  }catch(err){
-  console.error('Female 3D portrait failed to load; keeping the 2D lab usable.',err);
+  if(generation!==loadGeneration)return;
+  console.error('3D model failed to load; keeping the 2D lab usable.',err);
   ready3d=false;portraitActive=false;set2D(true);
   $('stageLoading').textContent='2D mode · 3D portrait unavailable';
   status('2D mode available.',
-   'The female GLB could not load. Check Internet, WebGL and model-host availability.');
+   'The model could not load. Use a self-contained GLB or check Internet/WebGL, then retry.');
  }
 }
 
@@ -669,6 +702,28 @@ function resize3D(){
  if(!w||!h)return;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false);
 }
 function bindEvents(){
+ $('modelUpload').addEventListener('change',async event=>{
+  const file=event.target.files?.[0];
+  if(!file)return;
+  event.target.value='';
+  if(!/\.glb$/i.test(file.name)){
+   status('Unsupported model type.','Please choose a .glb file that includes its own textures.','bad');return;
+  }
+  if(file.size>120*1024*1024){
+   status('This model is too large.','Choose a GLB under 120 MB for reasonable browser performance.','bad');return;
+  }
+  const previous=activeObjectURL;
+  activeObjectURL=URL.createObjectURL(file);
+  $('stageLoading').textContent='Importing '+file.name+'…';
+  status('Loading your model.','This runs inside your browser. No file is uploaded to a server.');
+  await init3D(activeObjectURL);
+  if(previous)URL.revokeObjectURL(previous);
+ });
+ $('sampleModel').addEventListener('click',async()=>{
+  if(activeObjectURL){URL.revokeObjectURL(activeObjectURL);activeObjectURL=null;}
+  await init3D();
+ });
+
  document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
  document.querySelectorAll('.groupbtn').forEach(b=>b.addEventListener('click',()=>{
   group=b.dataset.group;selectedWord=null;
@@ -711,9 +766,9 @@ function bindEvents(){
   const hint=$('missionHintText');hint.textContent=MISSIONS[state.mission].hint;hint.classList.remove('hide');
   status('Hint shown.','You still need to perform the objective.');
  });
- $('frontView').addEventListener('click',()=>view([0,portraitFocus,.80]));
- $('sideView').addEventListener('click',()=>view([.80,portraitFocus,.0]));
- $('backView').addEventListener('click',()=>view([0,portraitFocus,-.80]));
+ $('frontView').addEventListener('click',()=>view([0,portraitFocus,modelOrbitDistance]));
+ $('sideView').addEventListener('click',()=>view([modelOrbitDistance,portraitFocus,0]));
+ $('backView').addEventListener('click',()=>view([0,portraitFocus,-modelOrbitDistance]));
  $('resetCamera').addEventListener('click',()=>{if(ready3d){view([0,.1,5.65]);controls.reset();view([0,.1,5.65])}else status('2D view centered.','The photo is displayed at its original scale.')});
  $('toggleMarkers').addEventListener('click',()=>{
   markersVisible=!markersVisible;
