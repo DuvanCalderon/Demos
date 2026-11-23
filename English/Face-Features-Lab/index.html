@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0a1221">
-<meta name="description" content="Face Features Lab: manipulate a photo-based 3D face, label facial features, experiment with skin details, and learn 20 English words.">
+<meta name="description" content="Face Features Lab: explore an authentic high-detail scanned human head in 3D, label 20 English facial terms, and experiment with educational skin details.">
 <title>Face Features Lab | English Vocabulary</title>
 <style>
 :root{color-scheme:dark;--bg:#0a1121;--surface:#14223a;--surface2:#1d304c;--line:#384966;--text:#f6f8ff;--muted:#aebed4;--mint:#86e8ca;--violet:#ad9cff;--pink:#f4a2b9}
@@ -31,7 +31,7 @@ header{position:sticky;top:0;z-index:30;background:#091021e6;backdrop-filter:blu
 <body>
 <header><div class="wrap"><div class="brand"><span class="brand-icon">◉</span><span>FACE FEATURES <span style="color:var(--mint)">LAB</span></span></div><a href="../../">← Demos — Learning Studio</a></div></header>
 <main class="wrap">
-<div class="hero"><div><div class="eyebrow">Interactive English · People &amp; Appearance</div><h1>Explore the face.<br><em>Master every detail.</em></h1><p>Rotate a photograph-inspired 3D head, discover facial features, drag vocabulary labels, and experiment with skin details. Practice 20 English words.</p></div><div class="stat"><strong id="statFound">0 / 20</strong><small>Words discovered</small></div></div>
+<div class="hero"><div><div class="eyebrow">Interactive English · People &amp; Appearance</div><h1>Explore the face.<br><em>Master every detail.</em></h1><p>Rotate a high-fidelity 3D human head scan with real anatomical geometry, inspect skin microdetails, label features, and complete English vocabulary missions.</p></div><div class="stat"><strong id="statFound">0 / 20</strong><small>Words discovered</small></div></div>
 <nav class="tabs" role="tablist" aria-label="Laboratory modes">
 <button class="tab" data-mode="explore" role="tab" aria-selected="true">◉ Explore</button>
 <button class="tab" data-mode="label" role="tab" aria-selected="false">↗ Label challenge</button>
@@ -43,7 +43,7 @@ header{position:sticky;top:0;z-index:30;background:#091021e6;backdrop-filter:blu
 <div class="stage" id="stage">
 <div id="canvas3d" aria-label="Interactive 3D face model"></div>
 <div class="fallback" id="fallback"><div class="portrait-holder" id="portraitHolder"><img src="./face-reference.jpg" alt="Front-view reference photograph of a face" id="facePhoto"><div id="pins2d"></div></div></div>
-<div class="stage-loading" id="stageLoading">2D ready · Loading 3D...</div>
+<div class="stage-loading" id="stageLoading">2D ready · Loading high-detail 3D scan...</div>
 <div class="stage-tip" id="stageTip">Drag to rotate · Scroll or pinch to zoom · Click the pins to explore.</div>
 </div>
 <div class="toolbar">
@@ -54,7 +54,7 @@ header{position:sticky;top:0;z-index:30;background:#091021e6;backdrop-filter:blu
 <button class="btn secondary" id="toggle2d" type="button">▣ Switch to 2D</button>
 <span class="view-badge" id="viewBadge">2D fallback</span>
 </div>
-<div class="notice">The visible face is based on your supplied photograph. Front-face surface relief and hidden angles are <b>educational approximations</b>, not an exact 3D scan. The adjustable skin details are illustrative, not biological predictions.</div>
+<div class="notice">The <b>3D model is a real human head scan</b> by Lee Perry-Smith (CC BY 3.0), with genuine facial geometry, color, normal and specular maps. The reference image is used <b>only in the optional 2D mode</b>. This scan depicts a bald adult with closed eyes; the skin sliders are educational visualizations, not medical or aging predictions. <a href="./assets/LeePerrySmith_License.txt" target="_blank" rel="noopener noreferrer">Model license</a>.</div>
 </div>
 <aside class="panel pad">
 <div id="status" class="status" role="status" aria-live="polite"><strong>Ready to explore.</strong> Select any feature to learn its name and meaning.</div>
@@ -71,7 +71,7 @@ header{position:sticky;top:0;z-index:30;background:#091021e6;backdrop-filter:blu
 <div class="setting"><label for="freckles">Freckles <output id="frecklesValue">0%</output></label><input type="range" id="freckles" min="0" max="100" value="0"><p>Small pigment spots. Increasing the slider reveals more freckles.</p></div>
 <div class="setting"><label for="wrinkles">Wrinkles <output id="wrinklesValue">0%</output></label><input type="range" id="wrinkles" min="0" max="100" value="0"><p>Illustrated fine lines near the outer corners of the eyes.</p></div>
 <div class="setting"><label for="pores">Pores <output id="poresValue">0%</output></label><input type="range" id="pores" min="0" max="100" value="0"><p>Magnified for visibility; real pores are typically much smaller.</p></div>
-<div class="setting"><label for="dimples">Dimples <output id="dimplesValue">0%</output></label><input type="range" id="dimples" min="0" max="100" value="0"><p>An illustrated cheek indentation that also changes the mesh depth.</p></div>
+<div class="setting"><label for="dimples">Dimples <output id="dimplesValue">0%</output></label><input type="range" id="dimples" min="0" max="100" value="0"><p>An illustrated cheek indentation that also changes the scanned mesh depth.</p></div>
 <div class="controls"><button class="btn secondary" id="presetClear">Clear details</button><button class="btn primary" id="presetAll">Compare all</button><button class="btn secondary" id="presetSmile">Smile / dimples</button></div></section>
 <section id="missionPanel" class="hide"><div class="mission"><div class="count" id="missionCount">Mission 1 / 5</div><h3 id="missionTitle">Find the nose</h3><p id="missionDescription">Find and click the nose on the model.</p><div id="missionHintText" class="hint hide"></div><div class="controls"><button class="btn secondary" id="missionHint">💡 Hint</button><button class="btn secondary" id="missionCheck">Check objective</button><button class="btn primary" id="missionNext" disabled>Next mission →</button></div><div class="meter"><div id="missionMeter"></div></div></div><p class="smallnote">Completing a mission requires the correct action. Opening a hint never earns a point.</p></section>
 <div class="controls"><button class="btn secondary" id="audioToggle">🔊 Voice on</button><button class="btn danger" id="resetAll">↺ Reset all progress</button></div>
@@ -79,7 +79,7 @@ header{position:sticky;top:0;z-index:30;background:#091021e6;backdrop-filter:blu
 </section>
 <section class="glossary"><div class="heading"><div><h2>Vocabulary atlas</h2><p class="sub">20 English words · 16 face parts + 4 skin features · Click to inspect any word.</p></div><span class="pill" id="allFound">0 discovered</span></div><div id="glossaryGrid" class="glossary-grid"></div></section>
 </main>
-<footer><div class="wrap">Face Features Lab · A browser-based educational visual model · Three.js + Canvas textures + JavaScript · Works in 2D without WebGL or CDN access.</div></footer>
+<footer><div class="wrap">Face Features Lab · CC BY 3.0 head scan by Lee Perry-Smith / Infinite Realities · Three.js + WebGL + JavaScript · 2D vocabulary fallback available.</div></footer>
 <script src="./app.js" type="module"></script>
 </body>
 </html>
