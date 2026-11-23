@@ -481,7 +481,13 @@ async function init3D(){
   $('stageLoading').textContent='Loading female portrait (approximate Tripo reference)…';
   const loader=new loaderModule.GLTFLoader();
   loader.setCrossOrigin('anonymous');
-  const gltf=await loader.loadAsync(PORTRAIT_MODEL_URL);
+  let gltf,portraitError;
+  for(const modelURL of [PORTRAIT_MODEL_URL,
+    'https://raw.githubusercontent.com/memoriesrohit/avatar-studio/main/models/priya_casual.glb']){
+   try{gltf=await loader.loadAsync(modelURL);break}
+   catch(error){portraitError=error;console.warn('Portrait source unavailable:',modelURL,error)}
+  }
+  if(!gltf)throw portraitError||new Error('Portrait GLB cannot be loaded');
   const avatar=gltf.scene;
   portraitModel=avatar;scene.add(avatar);
   avatar.updateMatrixWorld(true);
@@ -490,7 +496,14 @@ async function init3D(){
   avatar.traverse(o=>{
    if(!o.isMesh)return;
    allMeshes.push(o);
-   const label=(o.name||o.parent?.name||'');
+   const own=o.name||'';
+   const label=/^(mesh_\\d+|_\\d+)$/.test(own)?(o.parent?.name||own):own;
+   o.frustumCulled=false;
+   // Rocketbox exports a formal outfit, original outfit, and modular clothing
+   // together. Only the original outfit should be visible in this close-up.
+   const outfit=['Outfit_formal','Skin_formal','Top_shirt','Skin_shirt',
+     'Top_tee','Skin_tee','Trousers','Shoes'];
+   if(outfit.includes(label))o.visible=false;
    if(/Hair|Eyelash|Eyebrow/i.test(label)){hairSurfaces.push(o);}
    if(/Body|Skin|Face|Head/i.test(label)){faceSurfaces.push(o);}
    if(/Hair|Eyelash|Eyebrow/i.test(label)){
@@ -578,6 +591,20 @@ async function init3D(){
   }
   scene.add(freckles,pores,wrinkles);
   const faceMorphs=allMeshes.filter(m=>m.morphTargetDictionary&&m.morphTargetInfluences);
+  // Preserve a neutral expression while allowing gentle human-like blinking.
+  let nextBlink=0,blinkStart=-10;
+  function animateBlink(time){
+   if(time>=nextBlink){blinkStart=time;nextBlink=time+2600+Math.random()*3000}
+   const elapsed=time-blinkStart;
+   const amount=elapsed>=0&&elapsed<=180?Math.sin(Math.PI*elapsed/180):0;
+   for(const mesh of faceMorphs){
+    for(const name of ['eyeBlinkLeft','eyeBlinkRight']){
+     const i=mesh.morphTargetDictionary[name];
+     if(i!==undefined)mesh.morphTargetInfluences[i]=amount;
+    }
+   }
+  }
+
   portraitUpdater=values=>{
    freckles.children.forEach((o,i)=>o.visible=i<Math.round(values.freckles/100*freckles.children.length));
    pores.children.forEach((o,i)=>o.visible=i<Math.round(values.pores/100*pores.children.length));
@@ -619,7 +646,7 @@ async function init3D(){
   function frame(t){
    requestAnimationFrame(frame);
    if(!using3d||t-previous<14)return;
-   previous=t;controls.update();renderer.render(scene,camera);
+   previous=t;animateBlink(t);controls.update();renderer.render(scene,camera);
   }
   requestAnimationFrame(frame);
   if('ResizeObserver' in window)new ResizeObserver(resize3D).observe($('canvas3d'));
