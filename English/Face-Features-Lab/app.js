@@ -253,18 +253,24 @@ function scanXY(w){
  return {x:(px-318)*.017, y:(380-py)*.014};
 }
 function scanHit(x,y){
- if(!THREE||!faceMesh)return null;
- const origin=new THREE.Vector3(x,y,8);
- const cast=new THREE.Raycaster(origin,new THREE.Vector3(0,0,-1),0,16);
+ if(!THREE||!faceMesh||!headGroup)return null;
+ // Raycaster operates in *world* coordinates; our scanned head is scaled to
+ // 41%, so world/local conversion is essential for correct marker placement.
+ headGroup.updateMatrixWorld(true);
+ const origin=headGroup.localToWorld(new THREE.Vector3(x,y,8));
+ const destination=headGroup.localToWorld(new THREE.Vector3(x,y,6));
+ const direction=destination.sub(origin).normalize();
+ const cast=new THREE.Raycaster(origin,direction,0,16);
  const hit=cast.intersectObject(faceMesh,false)[0];
- return hit||null;
+ if(!hit)return null;
+ return {...hit,point:headGroup.worldToLocal(hit.point.clone())};
 }
 function placeAnchor(id){
  const w=BY_ID[id],p=pins3d.get(id);
  if(!p||!w)return;
  const xy=scanXY(w),hit=scanHit(xy.x,xy.y);
  if(hit){
-  const normal=hit.face.normal.clone().transformDirection(faceMesh.matrixWorld).normalize();
+  const normal=hit.face.normal.clone().normalize();
   p.position.copy(hit.point).addScaledVector(normal,.14);
   scanFaceTargets[id]=hit.point.clone();
  }else {
