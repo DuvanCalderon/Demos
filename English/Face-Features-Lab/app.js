@@ -40,6 +40,7 @@ state.voice=saved.voice!==false;
 for(const k of Object.keys(state.settings))state.settings[k]=Math.max(0,Math.min(100,Number(saved.settings?.[k])||0));
 const persist=()=>{try{localStorage.setItem(STORE,JSON.stringify(state))}catch{}};
 let mode='explore',group='face',selectedWord=null,selectedPin=null,hintedId=null;
+let markersVisible=true;
 let lastAction={id:null,serial:0},serial=0,missionEntrySerial=0;
 let THREE=null,scene=null,camera=null,renderer=null,controls=null,headGroup=null,faceMesh=null,photoTexture=null,material=null,raycaster=null;
 let pins3d=new Map(),models=[],ready3d=false,using3d=false,photoReady=false,renderRequested=false;
@@ -86,13 +87,13 @@ function setHint(id){hintedId=id;refreshPins();if(id)status('Look for the highli
 function featureVisible(id){return mode!=='label'||BY_ID[id].group===group}
 function refreshPins(){
  for(const b of document.querySelectorAll('.pin2d')){
-  const id=b.dataset.id;b.hidden=!featureVisible(id);
+  const id=b.dataset.id;b.hidden=!(featureVisible(id)&&(markersVisible||mode==='label'||mode==='missions'));
   b.classList.toggle('selected',selectedPin===id);
   b.classList.toggle('matched',state.matched.includes(id));
   b.classList.toggle('hint',hintedId===id);
  }
  for(const [id,p] of pins3d){
-  p.visible=featureVisible(id);
+  p.visible=featureVisible(id)&&(markersVisible||mode==='label'||mode==='missions');
   const mat=p.material;
   mat.color.set(hintedId===id?0xffdc57:selectedPin===id?0xffb561:state.matched.includes(id)?0x71e6b8:BY_ID[id].group==='skin'?0xf7a7ca:0xbda8ff);
   mat.emissive.set(hintedId===id?0xa16d0a:0x131123);
@@ -617,6 +618,13 @@ function bindEvents(){
  $('sideView').addEventListener('click',()=>view([7.2,.12,.2]));
  $('backView').addEventListener('click',()=>view([0,.12,-7.2]));
  $('resetCamera').addEventListener('click',()=>{if(ready3d){view([0,.1,5.65]);controls.reset();view([0,.1,5.65])}else status('2D view centered.','The photo is displayed at its original scale.')});
+ $('toggleMarkers').addEventListener('click',()=>{
+  markersVisible=!markersVisible;
+  $('toggleMarkers').textContent=markersVisible?'◉ Hide markers':'◌ Show markers';
+  refreshPins();
+  status(markersVisible?'Markers visible.':'Markers hidden.',
+    'Label Challenge and Missions always keep markers visible so you can still complete tasks.');
+ });
  $('toggle2d').addEventListener('click',()=>{
   if(!ready3d){set2D(true);status('3D is unavailable.','Use a browser with WebGL and an Internet connection for Three.js.');return}
   set2D(using3d);
