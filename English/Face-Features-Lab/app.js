@@ -42,11 +42,13 @@ let mode='explore',group='face',selectedWord=null,selectedPin=null,hintedId=null
 let markersVisible=true;
 let lastAction={id:null,serial:0},serial=0,missionEntrySerial=0;
 const PHOTO_MARKERS={
- hair:[.57,.064],skin:[.42,.56],eyebrow:[.47,.354],eyelash:[.485,.456],
- ear:[.891,.477],nose:[.633,.557],mole:[.697,.747],lip:[.631,.693],
- chin:[.636,.817],forehead:[.635,.238],temple:[.869,.342],eye:[.743,.432],
- cheek:[.765,.564],nostril:[.600,.604],mouth:[.641,.669],jaw:[.822,.758],
- wrinkle:[.838,.455],freckle:[.49,.54],pore:[.713,.563],dimple:[.438,.661]
+  // Proportional coordinates on the face-focused crop of the uploaded photo.
+  // These positions are instructional; skin marks are simulated when absent.
+  hair:[.50,.065],skin:[.33,.54],eyebrow:[.336,.35],eyelash:[.337,.43],
+  ear:[.82,.44],nose:[.50,.53],mole:[.67,.60],lip:[.49,.683],
+  chin:[.50,.81],forehead:[.50,.24],temple:[.78,.34],eye:[.612,.415],
+  cheek:[.70,.55],nostril:[.47,.56],mouth:[.53,.613],jaw:[.675,.70],
+  wrinkle:[.72,.43],freckle:[.29,.57],pore:[.66,.58],dimple:[.31,.63]
 };
 const canvas=document.getElementById('skinOverlay');
 const paint=canvas.getContext('2d');
@@ -197,38 +199,46 @@ function create2DPins(){
 }
 function random(seed){let t=seed|0;return()=>{t=(Math.imul(t,1664525)+1013904223)|0;return (t>>>0)/4294967296}}
 function drawDetails(){
- const s=state.settings,W=960,H=974;
- canvas.width=W;canvas.height=H;paint.clearRect(0,0,W,H);
- const freckles=random(2174);
- for(let i=0;i<s.freckles*2;i++){
-  const left=i%2?1:-1,x=(left<0?470:750)+(freckles()-.5)*132;
-  const y=485+freckles()*120;
-  paint.fillStyle='rgba(100,57,37,'+(.15+freckles()*.38)+')';
-  paint.beginPath();paint.ellipse(x,y,1.4+freckles()*2.4,1+freckles()*2.3,0,0,Math.PI*2);paint.fill();
- }
- const wrinkles=s.wrinkles/100;paint.lineWidth=2.1;
- for(const side of [-1,1])for(let k=0;k<4;k++){
-  const x=side<0?392:820,y=438+k*14;
-  paint.strokeStyle='rgba(85,54,49,'+(wrinkles*(.25+k*.075))+')';
-  paint.beginPath();paint.moveTo(x,y);
-  paint.quadraticCurveTo(x+side*30,y-14,x+side*(47+k*7),y+2);paint.stroke();
- }
- const pores=random(853);
- for(let i=0;i<s.pores*6.5;i++){
-  const side=i%2?-1:1,x=(side<0?500:731)+(pores()-.5)*125;
-  const y=493+pores()*146;
-  paint.fillStyle='rgba(74,52,50,'+(.12+pores()*.27)+')';
-  paint.beginPath();paint.arc(x,y,.55+pores()*1.15,0,Math.PI*2);paint.fill();
- }
- const dimples=s.dimples/100;
- if(dimples){
-  for(const [cx,cy] of [[425,641],[776,653]]){
-   const g=paint.createRadialGradient(cx,cy,3,cx,cy,36);
-   g.addColorStop(0,'rgba(90,44,49,'+(dimples*.38)+')');
-   g.addColorStop(1,'rgba(90,44,49,0)');
-   paint.fillStyle=g;paint.beginPath();paint.arc(cx,cy,38,0,Math.PI*2);paint.fill();
+  // All drawing uses the same 196x229 crop coordinate system as the markers.
+  const W=196,H=229,s=state.settings;
+  canvas.width=W;canvas.height=H;
+  paint.clearRect(0,0,W,H);
+  const rand=random(2174);
+  // Illustrative freckle clusters on both cheeks.
+  for(let i=0;i<Math.round(s.freckles*1.25);i++){
+    const side=i%2?-1:1,cx=side<0?61:138;
+    const x=cx+(rand()-.5)*25,y=125+(rand()-.5)*24;
+    paint.fillStyle='rgba(105,60,46,'+(.16+rand()*.32)+')';
+    paint.beginPath();paint.ellipse(x,y,.48+rand()*.65,.42+rand()*.62,0,0,Math.PI*2);paint.fill();
   }
- }
+  // Magnified teaching lines near the outer eye corners.
+  const wrinkleAmount=s.wrinkles/100;
+  paint.lineWidth=.55;
+  for(const side of [-1,1])for(let j=0;j<3;j++){
+    const x=side<0?61:143,y=98+j*3;
+    paint.strokeStyle='rgba(106,65,65,'+(wrinkleAmount*(.25+j*.08))+')';
+    paint.beginPath();paint.moveTo(x,y);
+    paint.quadraticCurveTo(x+side*7,y-3,x+side*(10+j*2),y+1);
+    paint.stroke();
+  }
+  const pores=random(853);
+  for(let i=0;i<Math.round(s.pores*4);i++){
+    const side=i%2?-1:1,cx=side<0?71:131;
+    const x=cx+(pores()-.5)*27,y=124+(pores()-.5)*29;
+    paint.fillStyle='rgba(80,48,44,'+(.11+pores()*.20)+')';
+    paint.beginPath();paint.arc(x,y,.20+pores()*.34,0,Math.PI*2);paint.fill();
+  }
+  // A soft dimple shadow; the photographed person's anatomy is unchanged.
+  const dimples=s.dimples/100;
+  if(dimples){
+    for(const [x,y] of [[60,145],[133,145]]){
+      const gradient=paint.createRadialGradient(x,y,0,x,y,10);
+      gradient.addColorStop(0,'rgba(85,39,46,'+(dimples*.30)+')');
+      gradient.addColorStop(1,'rgba(85,39,46,0)');
+      paint.fillStyle=gradient;
+      paint.beginPath();paint.arc(x,y,10,0,Math.PI*2);paint.fill();
+    }
+  }
 }
 function sliderChange(e){
  const id=e.currentTarget.id;state.settings[id]=Number(e.currentTarget.value);
