@@ -1,15 +1,15 @@
 window.createLegionModel = function createLegionModel(canvas,changed,onLoss){
   const T=window.THREE,B=window.LegionBench;
   const context=canvas.getContext('webgl2',{alpha:true,antialias:true,powerPreference:'low-power'})||canvas.getContext('webgl',{alpha:true,antialias:true,powerPreference:'low-power'});
-  if(!context||!T||!window.LegionOrbitControls)throw Error('WebGL no disponible');
-  const renderer=new T.WebGLRenderer({canvas,context,alpha:true,antialias:true});
+  if(!T||!window.LegionOrbitControls)throw Error('Motor 3D no disponible');
+  const renderer=context?new T.WebGLRenderer({canvas,context,alpha:true,antialias:true}):window.createLegionSoftwareRenderer(canvas);
   renderer.setClearColor(0,0);renderer.outputColorSpace=T.SRGBColorSpace;
   const scene=new T.Scene(),camera=new T.OrthographicCamera(-8,8,5,-5,.1,120);
   const controls=new window.LegionOrbitControls(camera,canvas);controls.enableDamping=false;
   controls.minZoom=.55;controls.maxZoom=3.4;controls.maxPolarAngle=Math.PI*.92;controls.rotateSpeed=.8;
   controls.touches.ONE=T.TOUCH.ROTATE;controls.touches.TWO=T.TOUCH.DOLLY_PAN;
   const bench=new T.Group();scene.add(bench);
-  const materials=new Map(),cube=new T.BoxGeometry(1,1,1),disc=new T.CylinderGeometry(1,1,1,40);
+  const materials=new Map(),cube=new T.BoxGeometry(1,1,1),disc=new T.CylinderGeometry(1,1,1,renderer.software?24:40);
   const vec=(x,y,z)=>new T.Vector3(x,y,z);
   function mat(color,metal=.12,rough=.62){
     const key=[color,metal,rough].join();if(!materials.has(key))materials.set(key,new T.MeshStandardMaterial({color,metalness:metal,roughness:rough}));return materials.get(key);
@@ -19,12 +19,13 @@ window.createLegionModel = function createLegionModel(canvas,changed,onLoss){
   function box(parent,w,h,d,x,y,z,m){const a=mesh(parent,cube,m,x,y,z);a.scale.set(w,h,d);return a;}
   function cylinder(parent,r,h,x,y,z,m){const a=mesh(parent,disc,m,x,y,z);a.scale.set(r,h,r);return a;}
   function flatShape(pts,h,bevel=.025){
+    if(renderer.software)bevel=0;
     const shape=new T.Shape();pts.forEach(([x,z],i)=>i?shape.lineTo(x,-z):shape.moveTo(x,-z));shape.closePath();
     const g=new T.ExtrudeGeometry(shape,{depth:h,bevelEnabled:bevel>0,bevelSegments:2,steps:1,bevelSize:bevel,bevelThickness:bevel,curveSegments:5});g.rotateX(-Math.PI/2);return g;
   }
   function rounded(w,d,r,h){
     const s=new T.Shape(),x=-w/2,y=-d/2;s.moveTo(x+r,y);s.lineTo(x+w-r,y);s.quadraticCurveTo(x+w,y,x+w,y+r);s.lineTo(x+w,y+d-r);s.quadraticCurveTo(x+w,y+d,x+w-r,y+d);s.lineTo(x+r,y+d);s.quadraticCurveTo(x,y+d,x,y+d-r);s.lineTo(x,y+r);s.quadraticCurveTo(x,y,x+r,y);
-    const g=new T.ExtrudeGeometry(s,{depth:h,bevelEnabled:true,bevelSize:.035,bevelThickness:.03,bevelSegments:2,curveSegments:5});g.rotateX(-Math.PI/2);return g;
+    const g=new T.ExtrudeGeometry(s,{depth:h,bevelEnabled:!renderer.software,bevelSize:.035,bevelThickness:.03,bevelSegments:2,curveSegments:5});g.rotateX(-Math.PI/2);return g;
   }
   function slab(o,w,h,d,r,x,y,z,m){return mesh(o,rounded(w,d,r,h),m,x,y,z);}
   function tube(o,points,r,m){const curve=new T.CatmullRomCurve3(points.map(p=>vec(...p)));return mesh(o,new T.TubeGeometry(curve,Math.max(9,points.length*5),r,7,false),m);}
@@ -189,7 +190,7 @@ window.createLegionModel = function createLegionModel(canvas,changed,onLoss){
     }
   }
   batch(bench);
-  let s,ui,enabled=false,frame=0,priorTime=0,dragging=null;
+  let s,ui,enabled=false,frame=0,priorTime=0,dragging=null,explodedFrame=false;
   const probe=new T.Raycaster(),ndc=new T.Vector2(),ground=new T.Plane(vec(0,1,0),-.44),pt=new T.Vector3();
   const ringMat=new T.LineBasicMaterial({color:0xb8eb56,depthTest:false,transparent:true,opacity:.98});
   const outline=new T.LineLoop(new T.BufferGeometry(),ringMat);outline.renderOrder=8;scene.add(outline);outline.visible=false;
@@ -215,10 +216,11 @@ window.createLegionModel = function createLegionModel(canvas,changed,onLoss){
   }
   function draw(time){
     frame=0;if(!enabled||!s||document.hidden)return;
+    if(renderer.software&&s.on&&!ui.paused&&time-priorTime<80){schedule();return;}
     if(s.on&&!ui.paused){
       const delta=priorTime?Math.min((time-priorTime)/1000,.06):0;rotors[0].rotation.y+=delta*5;rotors[1].rotation.y-=delta*5;
     }
-    priorTime=time;shadowMesh.visible=camera.position.y>0;
+    priorTime=time;shadowMesh.visible=camera.position.y>0;if(camera.position.y<.25)outline.visible=false;else if(!dragging&&B.spot(s,ui.selected))outline.visible=(s.open||ui.explode)&&(!['cpu','gpu'].includes(ui.selected)||ui.explode);
     renderer.render(scene,camera);changed();
     if(s.on&&!ui.paused)schedule();
   }
@@ -228,7 +230,7 @@ window.createLegionModel = function createLegionModel(canvas,changed,onLoss){
   }
   function resize(){
     const r=canvas.getBoundingClientRect();if(!r.width||!r.height)return;
-    const aspect=r.width/r.height,h=Math.max(8.7,14.55/aspect);
+    const aspect=r.width/r.height,h=Math.max(ui?.explode?12.3:10.25,14.65/aspect);
     camera.left=-h*aspect/2;camera.right=-camera.left;camera.top=h/2;camera.bottom=-h/2;
     camera.updateProjectionMatrix();renderer.setSize(r.width,r.height,false);schedule();
   }
@@ -237,6 +239,7 @@ window.createLegionModel = function createLegionModel(canvas,changed,onLoss){
     ndc.set((cx-r.left)/r.width*2-1,-(cy-r.top)/r.height*2+1);camera.updateMatrixWorld();probe.setFromCamera(ndc,camera);return true;
   }
   function project(x,y,z){
+    camera.updateMatrixWorld();
     const v=vec(x,y,z).project(camera),r=canvas.getBoundingClientRect();return {x:(v.x+1)*r.width/2,y:(1-v.y)*r.height/2};
   }
   controls.addEventListener('change',schedule);
@@ -244,8 +247,10 @@ window.createLegionModel = function createLegionModel(canvas,changed,onLoss){
   document.addEventListener('visibilitychange',()=>{priorTime=0;schedule();});
   home();
   return {
+    software:!!renderer.software,
     setState(state,settings){
       s=state;ui=settings;dragging=null;
+      if(explodedFrame!==ui.explode){explodedFrame=ui.explode;resize();}
       const ratio=Math.min(window.devicePixelRatio||1,ui.low?1:1.65);if(renderer.getPixelRatio()!==ratio)renderer.setPixelRatio(ratio);
       position();schedule();
     },
@@ -264,7 +269,7 @@ window.createLegionModel = function createLegionModel(canvas,changed,onLoss){
       return null;
     },
     projectPart(id){
-      const p=B.spot(s,id);if(!p||(!s.open&&!ui.explode)||(!ui.explode&&['cpu','gpu'].includes(id)))return null;
+      const p=B.spot(s,id);if(camera.position.y<.25||!p||(!s.open&&!ui.explode)||(!ui.explode&&['cpu','gpu'].includes(id)))return null;
       const y=id==='thermal'?thermal.position.y+.78:(objects[id]?.position.y??.30)+(id==='battery'?.31:.20);
       return project(p.x,y,p.z);
     },

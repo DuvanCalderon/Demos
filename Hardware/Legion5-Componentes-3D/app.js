@@ -73,11 +73,14 @@
     }
     ui.view=which==='3d'&&v3&&!unavailable?'3d':'2d';
     view=ui.view==='3d'?v3:v2;
-    el3.hidden=ui.view!=='3d';el2.hidden=ui.view==='3d';view.active(true);
+    el3.hidden=ui.view!=='3d';el2.toggleAttribute('hidden',ui.view==='3d');view.active(true);
     $('#v3').disabled=unavailable;$('#v3').setAttribute('aria-pressed',String(ui.view==='3d'));$('#v2').setAttribute('aria-pressed',String(ui.view==='2d'));
-    $('#view-name').textContent=ui.view==='3d'?'Perspectiva':'Vista superior';
+    $('#view-name').textContent=ui.view==='3d'?(v3.software?'Perspectiva · 3D ligero':'Perspectiva'):'Vista superior';
     $('#gesture-help').textContent=ui.view==='3d'?'Gira desde el fondo · Rueda o pellizco para acercar':'Arrastra módulos · Usa + y − para el zoom';
-    $('#gl-notice').hidden=!unavailable;if(unavailable)$('#gl-notice').textContent='WebGL no está disponible. El plano 2D conserva las piezas, los encajes y todas las pruebas.';
+    const lightView=ui.view==='3d'&&v3?.software;
+    $('#gl-notice').hidden=!unavailable&&!lightView;
+    if(unavailable)$('#gl-notice').textContent='Se activó el plano 2D. Conserva las piezas, los encajes y todas las pruebas.';
+    else if(lightView)$('#gl-notice').textContent='WebGL no está disponible. El modo 3D ligero dibuja el mismo montaje con Canvas.';
     render(save);view.resize();
   }
   const options=Object.entries(B.slots).map(([id,p])=>`<option value="${id}">${p.name}</option>`).join('');

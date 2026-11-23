@@ -9,7 +9,7 @@ Banco de diagnóstico interactivo para el Lenovo Legion 5 15ARH05H, tipo 82B1, c
 3. Apaga el equipo, abre la cubierta y desconecta la batería. Arrastra el HDD de la bandeja a SATA. Puedes hacer la misma maniobra con **Destino** e **Instalar en el destino**.
 4. Compara con la retirada del SSD o de ambos módulos de RAM. Examina la placa y las capas térmicas usando **Despiece**.
 
-El fondo gira con un dedo o con el botón izquierdo. Rueda y pellizco controlan el zoom, y el botón derecho o dos dedos desplazan la cámara. Con foco en la escena, usa flechas, +, − y C. El plano 2D, el inventario y los botones permiten practicar las mismas reglas sin WebGL.
+El fondo gira con un dedo o con el botón izquierdo. Rueda y pellizco controlan el zoom, y el botón derecho o dos dedos desplazan la cámara. Con foco en la escena, usa flechas, +, − y C. Cuando WebGL no está disponible, un rasterizador Canvas dibuja las mismas mallas y usa la misma cámara en 3D ligero. El plano 2D, el inventario y los botones permiten practicar las mismas reglas sin WebGL.
 
 Cada modo guarda su montaje en el navegador. Práctica guiada compara dos arranques con el HDD fuera y dentro. Las cuatro misiones piden obtener resultados observables. Las pistas y las soluciones explicadas no otorgan crédito. Repetir un caso conserva las misiones acreditadas. Reiniciar laboratorio borra los datos de esta aplicación tras confirmación.
 
@@ -27,6 +27,7 @@ Cada modo guarda su montaje en el navegador. Práctica guiada compara dos arranq
 | `index.html`, `styles.css` | Interfaz y diseño adaptativo |
 | `engine.js` | Estado, ranuras, reglas de servicio, arranque y objetivos |
 | `model.js` | Escena Three.js, piezas, raycasting y cámara |
+| `canvas-renderer.js` | Renderizador 3D ligero para navegadores sin WebGL |
 | `graphics.js` | Plano SVG manipulable, iconografía y fichas técnicas |
 | `app.js` | Controles de puntero y teclado, progreso, vistas y accesibilidad |
 | `vendor/` | Three.js r160 y OrbitControls incluidos, con licencia MIT |
