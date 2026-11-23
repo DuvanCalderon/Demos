@@ -45,6 +45,11 @@ let lastAction={id:null,serial:0},serial=0,missionEntrySerial=0;
 let THREE=null,scene=null,camera=null,renderer=null,controls=null,headGroup=null,faceMesh=null,photoTexture=null,material=null,raycaster=null;
 let pins3d=new Map(),models=[],ready3d=false,using3d=false,photoReady=false,renderRequested=false;
 let scanBasePositions=null,scanFaceTargets={},skinLayers={},skinMaterial=null,scanNormalMap=null;
+let portraitActive=false,portraitFocus=0,portraitUpdater=null;
+let portraitModel=null;
+const PORTRAIT_REFERENCE="https://studio.tripo3d.ai/3d-model/a-high-detail-portrait-of-a-woman-with-long-dark-brown-hair-tan-skin-6a2b7cf8-4071-46d4-9c5a-d293d00af1dd";
+const PORTRAIT_MODEL_URL="https://memoriesrohit.github.io/avatar-studio/models/priya_casual.glb";
+
 const SCAN_ASSET='./assets/';
 const texCanvas=document.createElement('canvas');texCanvas.width=420;texCanvas.height=578;const paint=texCanvas.getContext('2d',{willReadFrequently:true});
 const photo=new Image();photo.src='./face-reference.jpg';
@@ -244,7 +249,7 @@ function drawDetails(){
  }
  paint.putImageData(data,0,0);
  $('facePhoto').src=texCanvas.toDataURL('image/png');
- if(faceMesh)updateSkinDetails();
+ if(faceMesh||portraitActive)updateSkinDetails();
 }
 
 /* Surface coordinates are in the imported scan's native space. The model is a
@@ -362,6 +367,8 @@ function makeSkinLayers(){
  updateSkinDetails();
 }
 function updateSkinDetails(){
+ if(portraitActive){portraitUpdater?.(state.settings);return;}
+
  if(!faceMesh)return;
  const s=state.settings;
  if(skinLayers.freckles){
@@ -429,7 +436,13 @@ function set2D(on){
 function view(position){
  if(!ready3d){status('2D mode is active.','3D orbit views need WebGL and access to the Three.js CDN.');return}
  set2D(false);
- camera.position.set(...position);controls.target.set(0,-.08,0);controls.update();
+ if(portraitActive){
+  const distance=Math.max(.53,Math.hypot(position[0],position[2]));
+  camera.position.set(position[0]/Math.max(.01,Math.hypot(position[0],position[2]))*distance,
+    portraitFocus+.013, position[2]/Math.max(.01,Math.hypot(position[0],position[2]))*distance);
+  controls.target.set(0,portraitFocus,0);
+ }else{camera.position.set(...position);controls.target.set(0,-.08,0);}
+ controls.update();
 }
 function pick3d(clientX,clientY){
  if(!using3d||!renderer||!camera)return null;
@@ -441,128 +454,185 @@ function pick3d(clientX,clientY){
  return hits[0]?.object.userData.feature||null;
 }
 
+
 async function init3D(){
  try{
   const [T,orbit,loaderModule]=await Promise.all([
-   import('three'),
-   import('three/addons/controls/OrbitControls.js'),
+   import('three'),import('three/addons/controls/OrbitControls.js'),
    import('three/addons/loaders/GLTFLoader.js')
   ]);
   THREE=T;
-  const host=$('canvas3d');
   renderer=new T.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});
   renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
   renderer.outputColorSpace=T.SRGBColorSpace;
-  renderer.toneMapping=T.ACESFilmicToneMapping;
-  renderer.toneMappingExposure=1.18;
-  host.append(renderer.domElement);
-  scene=new T.Scene();
-  scene.fog=new T.FogExp2(0x19283f,.035);
-  camera=new T.PerspectiveCamera(36,1,.1,60);
-  camera.position.set(0,.12,7.2);
+  renderer.toneMapping=T.NeutralToneMapping;
+  renderer.toneMappingExposure=1.06;
+  $('canvas3d').append(renderer.domElement);
+  scene=new T.Scene();scene.fog=new T.FogExp2(0x162136,.03);
+  camera=new T.PerspectiveCamera(32,1,.012,30);
   controls=new orbit.OrbitControls(camera,renderer.domElement);
-  controls.enableDamping=true;controls.dampingFactor=.07;
-  controls.target.set(0,-.08,0);
-  controls.minDistance=3.5;controls.maxDistance=12;controls.enablePan=true;
-  controls.maxPolarAngle=Math.PI-.04;controls.minPolarAngle=.04;
-  scene.add(new T.HemisphereLight(0xdce6ff,0x484155,1.25));
-  const key=new T.DirectionalLight(0xffe6ce,3.5);
-  key.position.set(-3,5,6);scene.add(key);
-  const fill=new T.DirectionalLight(0xe2f0ff,1.4);
-  fill.position.set(4,1,4);scene.add(fill);
-  const rim=new T.DirectionalLight(0xb9c4ff,2.4);
-  rim.position.set(2.5,4,-5);scene.add(rim);
-  const bounce=new T.DirectionalLight(0xffd9c6,.52);
-  bounce.position.set(0,-3,4);scene.add(bounce);
-  headGroup=new T.Group();
-  headGroup.scale.setScalar(.41);
-  headGroup.position.y=-.07;scene.add(headGroup);
-  const textureLoader=new T.TextureLoader();
-  const loadTexture=url=>new Promise((resolve,reject)=>textureLoader.load(url,resolve,undefined,reject));
-  $('stageLoading').textContent='Loading scanned face and skin maps…';
+  controls.enableDamping=true;controls.dampingFactor=.075;
+  controls.enablePan=true;controls.minDistance=.35;controls.maxDistance=1.9;
+  controls.minPolarAngle=.04;controls.maxPolarAngle=Math.PI-.04;
+  scene.add(new T.HemisphereLight(0xf0f6ff,0x75665c,1.9));
+  const key=new T.DirectionalLight(0xffebda,2.6);key.position.set(-1.8,3,2.5);scene.add(key);
+  const fill=new T.DirectionalLight(0xd8e7ff,.95);fill.position.set(2.5,1.2,2);scene.add(fill);
+  const rim=new T.DirectionalLight(0xb8bcff,2.1);rim.position.set(1,2,-2.4);scene.add(rim);
+  $('stageLoading').textContent='Loading female portrait (approximate Tripo reference)…';
   const loader=new loaderModule.GLTFLoader();
-  const modelP=new Promise((resolve,reject)=>loader.load(SCAN_ASSET+'LeePerrySmith.glb',resolve,undefined,reject));
-  const [gltf,diffuse,specular,normal]=await Promise.all([
-   modelP,
-   loadTexture(SCAN_ASSET+'Map-COL.jpg'),
-   loadTexture(SCAN_ASSET+'Map-SPEC.jpg'),
-   loadTexture(SCAN_ASSET+'normal-map.jpg')
-  ]);
-  diffuse.colorSpace=T.SRGBColorSpace;
-  specular.colorSpace=T.SRGBColorSpace;
-  diffuse.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),8);
-  normal.anisotropy=diffuse.anisotropy;
-  skinMaterial=new T.MeshPhongMaterial({
-   color:0xf3edeb,
-   map:diffuse,
-   normalMap:normal,
-   normalScale:new T.Vector2(.9,.9),
-   specularMap:specular,
-   specular:0x393333,
-   shininess:28
+  loader.setCrossOrigin('anonymous');
+  const gltf=await loader.loadAsync(PORTRAIT_MODEL_URL);
+  const avatar=gltf.scene;
+  portraitModel=avatar;scene.add(avatar);
+  avatar.updateMatrixWorld(true);
+  const allMeshes=[];
+  const faceSurfaces=[], hairSurfaces=[];
+  avatar.traverse(o=>{
+   if(!o.isMesh)return;
+   allMeshes.push(o);
+   const label=(o.name||o.parent?.name||'');
+   if(/Hair|Eyelash|Eyebrow/i.test(label)){hairSurfaces.push(o);}
+   if(/Body|Skin|Face|Head/i.test(label)){faceSurfaces.push(o);}
+   if(/Hair|Eyelash|Eyebrow/i.test(label)){
+    const mats=Array.isArray(o.material)?o.material:[o.material];
+    for(const m of mats){
+     if(!m)continue;
+     m.side=T.DoubleSide;m.transparent=false;m.alphaTest=.35;
+     m.depthWrite=true;m.needsUpdate=true;
+    }
+   }
   });
-  const scan=gltf.scene.getObjectByName('LeePerrySmith')||
-   gltf.scene.getObjectByProperty('type','Mesh');
-  if(!scan?.geometry)throw new Error('Scanned face geometry not found in GLB.');
-  faceMesh=new T.Mesh(scan.geometry.clone(),skinMaterial);
-  faceMesh.name='Licensed realistic face scan';
-  faceMesh.geometry.computeVertexNormals();
-  faceMesh.geometry.computeBoundingSphere();
-  scanBasePositions=faceMesh.geometry.attributes.position.array.slice();
-  headGroup.add(faceMesh);
+  if(!allMeshes.length)throw new Error('The portrait GLB has no usable meshes.');
+  const surfaceTargets=faceSurfaces.length?faceSurfaces:allMeshes;
+  // This is a licensed Rocketbox avatar used as an approximate match. The
+  // Tripo preview link did not provide a downloadable GLB or mesh geometry.
+  const headBone=avatar.getObjectByName('mixamorigHead');
+  const eyeMeshes=allMeshes.filter(o=>/^Eyes/i.test(o.name||o.parent?.name||''));
+  const eyesBox=new T.Box3();
+  if(eyeMeshes.length)for(const e of eyeMeshes)eyesBox.expandByObject(e);
+  const bonePosition=new T.Vector3();
+  if(headBone)headBone.getWorldPosition(bonePosition);
+  portraitFocus=eyesBox.isEmpty()?bonePosition.y+.045:eyesBox.getCenter(new T.Vector3()).y-.038;
+  if(!Number.isFinite(portraitFocus)||portraitFocus<.5||portraitFocus>2.6)portraitFocus=1.53;
+  camera.position.set(.055,portraitFocus+.015,.78);
+  controls.target.set(0,portraitFocus,0);controls.update();
+  headGroup=new T.Group();scene.add(headGroup);
   raycaster=new T.Raycaster();
-  headGroup.updateMatrixWorld(true);
+  // Stable, normalized facial landmarks around the eye midpoint. All
+  // hotspots are raycast onto actual skin geometry, not a flat image.
+  const coords={
+   hair:[0,.145],skin:[-.067,.055],eyebrow:[-.046,.038],
+   eyelash:[-.049,.012],ear:[.103,-.010],nose:[-.001,-.043],
+   mole:[-.063,-.091],lip:[0,-.111],chin:[0,-.168],
+   forehead:[0,.092],temple:[.083,.037],eye:[.042,.006],
+   cheek:[.068,-.067],nostril:[-.018,-.072],mouth:[0,-.124],
+   jaw:[.078,-.146],wrinkle:[.082,.003],freckle:[-.073,-.064],
+   pore:[.068,-.095],dimple:[.067,-.116]
+  };
+  function surfaceHit(x,y,includeHair=false){
+   const ray=new T.Raycaster(new T.Vector3(x,y,1.5),new T.Vector3(0,0,-1),0,4);
+   const targets=includeHair?[...hairSurfaces,...surfaceTargets]:surfaceTargets;
+   return ray.intersectObjects(targets,false)[0]||null;
+  }
   for(const w of ITEMS){
-   const marker=new T.Mesh(
-    new T.SphereGeometry(.145,18,12),
-    new T.MeshStandardMaterial({
-     color:w.group==='skin'?0xf7a7ca:0xbda8ff,
-     roughness:.4,metalness:.08,emissive:0x131123,
-     transparent:true,opacity:.93,depthTest:true
-    })
-   );
-   marker.name='Vocabulary marker: '+w.name;
-   marker.userData.feature=w.id;
-   headGroup.add(marker);
-   pins3d.set(w.id,marker);
+   const [x,dy]=coords[w.id]||[0,0],y=portraitFocus+dy;
+   const hit=surfaceHit(x,y,w.id==='hair'||w.id==='eyebrow'||w.id==='eyelash');
+   const pin=new T.Mesh(new T.SphereGeometry(.009,16,12),
+    new T.MeshStandardMaterial({color:w.group==='skin'?0xf7a7ca:0xbda8ff,
+      roughness:.35,metalness:.05,depthTest:false,depthWrite:false,emissive:0x131123}));
+   pin.userData.feature=w.id;
+   pin.renderOrder=50;
+   const z=hit?hit.point.z+.012:.115;
+   pin.position.set(x,y,z);
+   headGroup.add(pin);pins3d.set(w.id,pin);
   }
-  for(const w of ITEMS)placeAnchor(w.id);
-  makeSkinLayers();
-  updateSkinDetails();
-  let pointerDown=null;
-  renderer.domElement.addEventListener('pointerdown',e=>{
-   pointerDown={x:e.clientX,y:e.clientY};
-  });
+  // Skin study effects. These are 3D visual cues and facial blendshapes,
+  // not scientific skin simulations.
+  const freckles=new T.Group(),pores=new T.Group(),wrinkles=new T.Group();
+  const rnd=seedRand(134791);
+  for(let i=0;i<140;i++){
+   const left=i%2?-1:1,x=left*(.035+rnd()*.053),y=portraitFocus-.026-rnd()*.073;
+   const h=surfaceHit(x,y);if(!h)continue;
+   const dot=new T.Mesh(new T.CircleGeometry(.0018+rnd()*.0015,8),
+     new T.MeshBasicMaterial({color:0x79503b,side:T.DoubleSide,transparent:true,opacity:.53,depthWrite:false}));
+   dot.position.copy(h.point).add(new T.Vector3(0,0,.002));
+   freckles.add(dot);
+  }
+  for(let i=0;i<180;i++){
+   const side=i%2?-1:1,x=side*(.025+rnd()*.069),y=portraitFocus-.012-rnd()*.102;
+   const h=surfaceHit(x,y);if(!h)continue;
+   const dot=new T.Mesh(new T.CircleGeometry(.00065+rnd()*.0003,6),
+     new T.MeshBasicMaterial({color:0x795b50,side:T.DoubleSide,transparent:true,opacity:.28,depthWrite:false}));
+   dot.position.copy(h.point).add(new T.Vector3(0,0,.0015));pores.add(dot);
+  }
+  for(const side of [-1,1])for(let j=0;j<3;j++){
+   const points=[];
+   for(let k=0;k<9;k++){
+    const t=k/8,x=side*(.067+t*.028),y=portraitFocus+.009-j*.006+Math.sin(t*Math.PI)*.003;
+    const h=surfaceHit(x,y);if(h)points.push(h.point.clone().add(new T.Vector3(0,0,.0025)));
+   }
+   if(points.length<2)continue;
+   const line=new T.Line(new T.BufferGeometry().setFromPoints(points),
+    new T.LineBasicMaterial({color:0x876054,transparent:true,opacity:.30,depthWrite:false}));
+   wrinkles.add(line);
+  }
+  scene.add(freckles,pores,wrinkles);
+  const faceMorphs=allMeshes.filter(m=>m.morphTargetDictionary&&m.morphTargetInfluences);
+  portraitUpdater=values=>{
+   freckles.children.forEach((o,i)=>o.visible=i<Math.round(values.freckles/100*freckles.children.length));
+   pores.children.forEach((o,i)=>o.visible=i<Math.round(values.pores/100*pores.children.length));
+   wrinkles.visible=values.wrinkles>0;
+   wrinkles.children.forEach(o=>o.material.opacity=.05+values.wrinkles/100*.5);
+   for(const mesh of faceMorphs){
+    for(const [name,value] of [
+     ['mouthSmileLeft',values.dimples/100*.55],
+     ['mouthSmileRight',values.dimples/100*.55],
+     ['cheekSquintLeft',values.dimples/100*.25],
+     ['cheekSquintRight',values.dimples/100*.25]
+    ]){
+     const index=mesh.morphTargetDictionary[name];
+     if(index!==undefined)mesh.morphTargetInfluences[index]=value;
+    }
+   }
+  };
+  portraitActive=true;
+  portraitUpdater(state.settings);
+  function pickedAt(e){
+   const rect=renderer.domElement.getBoundingClientRect();
+   const ndc=new T.Vector2((e.clientX-rect.left)/rect.width*2-1,
+    -(e.clientY-rect.top)/rect.height*2+1);
+   raycaster.setFromCamera(ndc,camera);
+   const hits=raycaster.intersectObjects([...pins3d.values()].filter(m=>m.visible),false);
+   return hits[0]?.object.userData.feature||null;
+  }
+  let down=null;
+  renderer.domElement.addEventListener('pointerdown',e=>{down={x:e.clientX,y:e.clientY}});
+  renderer.domElement.addEventListener('pointercancel',()=>{down=null});
   renderer.domElement.addEventListener('pointerup',e=>{
-   if(!pointerDown)return;
-   const d=Math.hypot(e.clientX-pointerDown.x,e.clientY-pointerDown.y);
-   pointerDown=null;if(d>8)return;
-   const id=pick3d(e.clientX,e.clientY);
-   if(id)hitFeature(id);
+   if(!down)return;
+   const dist=Math.hypot(e.clientX-down.x,e.clientY-down.y);down=null;
+   if(dist>9)return;
+   const id=pickedAt(e);if(id)hitFeature(id);
   });
-  renderer.domElement.addEventListener('pointercancel',()=>pointerDown=null);
   ready3d=true;set2D(false);refreshPins();resize3D();
-  let lastFrame=0;
-  function animate(timestamp){
-   requestAnimationFrame(animate);
-   if(!using3d)return;
-   // Cap redraw rate on weaker devices while keeping orbit controls responsive.
-   if(timestamp-lastFrame<14)return;
-   lastFrame=timestamp;
-   controls.update();renderer.render(scene,camera);
+  let previous=0;
+  function frame(t){
+   requestAnimationFrame(frame);
+   if(!using3d||t-previous<14)return;
+   previous=t;controls.update();renderer.render(scene,camera);
   }
-  requestAnimationFrame(animate);
-  if('ResizeObserver' in window)new ResizeObserver(resize3D).observe(host);
+  requestAnimationFrame(frame);
+  if('ResizeObserver' in window)new ResizeObserver(resize3D).observe($('canvas3d'));
   window.addEventListener('resize',resize3D);
-  $('stageLoading').textContent='Real scanned 3D head · Rotate / zoom / inspect';
-  status('High-fidelity 3D scan loaded.',
-   'This is a sculpted, textured human head: facial anatomy, skin texture and relief are actual 3D assets.','ok');
+  $('stageLoading').textContent='Approximate female portrait · Rocketbox GLB';
+  status('Female 3D portrait loaded.',
+   'A licensed female character approximates the reference description. This is not the original Tripo geometry.','ok');
  }catch(err){
-  console.error('3D scan or WebGL failed; 2D activities remain available.',err);
-  ready3d=false;set2D(true);
-  $('stageLoading').textContent='2D learning available · 3D assets could not load';
-  status('2D learning mode ready.',
-   '3D could not load. Check Internet, WebGL or the browser console; exercises still work.');
+  console.error('Female 3D portrait failed to load; keeping the 2D lab usable.',err);
+  ready3d=false;portraitActive=false;set2D(true);
+  $('stageLoading').textContent='2D mode · 3D portrait unavailable';
+  status('2D mode available.',
+   'The female GLB could not load. Check Internet, WebGL and model-host availability.');
  }
 }
 
@@ -614,9 +684,9 @@ function bindEvents(){
   const hint=$('missionHintText');hint.textContent=MISSIONS[state.mission].hint;hint.classList.remove('hide');
   status('Hint shown.','You still need to perform the objective.');
  });
- $('frontView').addEventListener('click',()=>view([0,.12,7.2]));
- $('sideView').addEventListener('click',()=>view([7.2,.12,.2]));
- $('backView').addEventListener('click',()=>view([0,.12,-7.2]));
+ $('frontView').addEventListener('click',()=>view([0,portraitFocus,.80]));
+ $('sideView').addEventListener('click',()=>view([.80,portraitFocus,.0]));
+ $('backView').addEventListener('click',()=>view([0,portraitFocus,-.80]));
  $('resetCamera').addEventListener('click',()=>{if(ready3d){view([0,.1,5.65]);controls.reset();view([0,.1,5.65])}else status('2D view centered.','The photo is displayed at its original scale.')});
  $('toggleMarkers').addEventListener('click',()=>{
   markersVisible=!markersVisible;
