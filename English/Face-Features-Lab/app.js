@@ -461,6 +461,22 @@ async function init3D(customURL=null){
  const generation=++loadGeneration;
  try{
   if(controls){controls.dispose();controls=null;}
+  // Free previous GLB geometry/textures when users import several models.
+  if(scene){
+   const geometries=new Set(),materials=new Set(),textures=new Set();
+   scene.traverse(o=>{
+    if(o.geometry)geometries.add(o.geometry);
+    for(const m of (Array.isArray(o.material)?o.material:o.material?[o.material]:[])){
+     materials.add(m);
+     for(const key of Object.keys(m)){
+      const t=m[key];if(t?.isTexture)textures.add(t);
+     }
+    }
+   });
+   for(const x of geometries)x.dispose();
+   for(const x of materials)x.dispose();
+   for(const x of textures)x.dispose();
+  }
   if(renderer){
    renderer.dispose();
    $('canvas3d').replaceChildren();
@@ -702,6 +718,7 @@ function resize3D(){
  if(!w||!h)return;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false);
 }
 function bindEvents(){
+ $('browseModel').addEventListener('click',()=>$('modelUpload').click());
  $('modelUpload').addEventListener('change',async event=>{
   const file=event.target.files?.[0];
   if(!file)return;
