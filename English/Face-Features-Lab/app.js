@@ -497,7 +497,7 @@ async function init3D(){
    if(!o.isMesh)return;
    allMeshes.push(o);
    const own=o.name||'';
-   const label=/^(mesh_\\d+|_\\d+)$/.test(own)?(o.parent?.name||own):own;
+   const label=/^(mesh_\d+|_\d+)$/.test(own)?(o.parent?.name||own):own;
    o.frustumCulled=false;
    // Rocketbox exports a formal outfit, original outfit, and modular clothing
    // together. Only the original outfit should be visible in this close-up.
