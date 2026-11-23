@@ -1,40 +1,48 @@
-# Face Features Lab — Interactive English Vocabulary
+# Face Features Lab — High-Fidelity 3D English Vocabulary
 
-**Live laboratory:** https://duvancalderon.github.io/Demos/English/Face-Features-Lab/
+**Open the live lab:** https://duvancalderon.github.io/Demos/English/Face-Features-Lab/
 
 **Main catalog:** https://duvancalderon.github.io/Demos/
 
-## What you can do
+## What's new: Real scanned human head, not a photograph on a plane
 
-- **Explore:** inspect 20 face and skin words using direct selection on the model. Each word includes an English definition, example, and optional browser speech.
-- **Label challenge:** drag a word onto its matching marker or select a word and click its matching marker. Wrong choices never count as correct.
-- **Skin studio:** independently control the visibility of freckles, wrinkles, pores, and dimples. The face texture changes in real time; dimples additionally alter the curved mesh geometry.
-- **Missions:** complete five tasks that check actual selection, labeling, and slider state. Hints do not earn credit.
-- **View controls:** front, side, back, center, orbit rotation, zoom, and a functional 2D alternative.
-- **Progress:** saved in the current browser using localStorage, with an explicit reset action.
+The original experimental 3D face used a flattened photograph mapped onto curved procedural geometry. That approach has now been replaced with the **Lee Perry-Smith / Infinite Realities photogrammetry head scan**, a real human-head mesh with three native surface maps:
 
-The entire interface and learning material are in English.
+- `assets/LeePerrySmith.glb`: a proper sculpted head with anatomical facial geometry (9,279 vertices and 17,684 triangles).
+- `assets/Map-COL.jpg`: diffuse / skin-color texture.
+- `assets/normal-map.jpg`: real skin relief / normal map.
+- `assets/Map-SPEC.jpg`: skin specular-response map.
+- `assets/LeePerrySmith_License.txt`: original Creative Commons Attribution 3.0 Unported license.
 
-## Files
+These resources are hosted **inside the Demos repository**. The head scan has bald hair and closed eyes; it is not the person from the uploaded picture. This is a deliberate trade-off in favor of an actual scanned human face instead of a pasted photograph or a plastic-looking procedural character.
 
-- `index.html` — interface, responsive styling, Three.js import map.
-- `app.js` — vocabulary, label logic, interactions, state, missions, photo-texture rendering, 3D scene and fallback.
-- `face-reference.jpg` — optimized frontal photographic texture derived from the image supplied in the chat.
+### Model attribution and license
 
-## Architecture and limits
+**“Infinite, 3D Head Scan” by Lee Perry-Smith / Infinite Realities**, licensed under **Creative Commons Attribution 3.0 Unported (CC BY 3.0)**. Based on a work at www.triplegangers.com. Source: [three.js LeePerrySmith model files, revision r169](https://github.com/mrdoob/three.js/tree/r169/examples/models/gltf/LeePerrySmith).
 
-The 3D scene uses Three.js 0.160.1 from jsDelivr. An Internet connection and WebGL are required for its 3D view. The lab's 2D mode is designed to remain usable without either. No installation or build step is required.
+Source credits and license are also presented in the application UI.
 
-The front face is photo-based, projected onto a procedurally curved grid with simplified nose, cheeks and lips. The rest of the head, hair, bun, ears and neck are approximations based on the frontal image — **not an accurate 3D scan of the person**. The skin-detail sliders are illustrative visual tools, not biological, medical, aging or physical simulations. The original example image has callout lines; some may remain in the compressed reference texture.
+## Interactive learning modes
 
-## Vocabulary
+1. **Explore**: select markers attached to the 3D face and hear English vocabulary words.
+2. **Label challenge**: click or drag an English label onto the correct location. Wrong matches do not count.
+3. **Skin studio**: change freckles, wrinkles and pore emphasis with separate procedural overlays; the dimple control locally deforms vertices of the **scanned 3D geometry**. Effects are educational and not medical or scientific predictions.
+4. **Missions**: five challenges with actual state-based success checks and optional hints.
 
-Hair, skin, eyebrow, eyelash, ear, nose, mole, lip, chin, forehead, temple, eye, cheek, nostril, mouth, jaw, wrinkle, freckle, pore, dimple.
+The lab includes 20 vocabulary terms. Camera controls include 360° orbital rotation, zoom, side/back views, center reset and a 2D mode. The 2D mode uses the original diagram photo **as a reference image only**, not as a 3D texture. Progress persists through browser localStorage.
 
-## Verification scope
+## Implementation
 
-Checked: JavaScript syntax parsing, all JavaScript-referenced HTML element IDs, no duplicate HTML IDs, 20 word entries, and repository paths and files. Live 3D rendering, real-device drag and drop, mobile responsiveness and actual GitHub Pages deployment were **not** confirmed through a browser session. Check those interactively in Chrome or Edge once the Pages deployment updates.
+- `index.html`: responsive HTML/CSS interface and Three.js import map.
+- `app.js`: 3D glTF loading, model rigging and markers, raycasting, texture materials, real mesh deformation, procedural skin overlays, exercises and progress logic.
+- `face-reference.jpg`: 2D reference only.
+- `assets/`: licensed 3D scan and native texture maps.
 
-## Credits
+**Requirements:** WebGL + Internet for Three.js scripts. Model and texture assets are local relative URLs and work with GitHub Pages. A fully functional 2D mode remains available if WebGL or the library fails. No installation or build process is needed.
 
-Based on a user-provided educational reference photograph. No external 3D assets or third-party images are used. Three.js is distributed through its own CDN and retains its original project license.
+**Real versus simplified:** head geometry and base skin maps are from a real scan. Facial-feature marker coordinates are manually calibrated educational locations. Adjustable freckles, wrinkles and pores are procedurally drawn cues; dimple deformation is a simplified geometric effect, not a medically or mechanically validated facial simulation.
+
+## Validation notes
+
+Code syntax, model GLB metadata, all relative model asset paths, all 20 vocabulary landmark coordinates, and the catalog entry were checked in this update. Browser-based visual 3D validation and actual mouse/touch/WebGL rendering have not been confirmed by an interactive browser session. The GitHub Pages site may take a short time to update following a commit.
+
