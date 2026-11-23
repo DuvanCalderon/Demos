@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#162323">
+<meta name="description" content="Desmonta y diagnostica los componentes de un Lenovo Legion 5 en un banco interactivo 3D con plano 2D, práctica guiada y cuatro misiones.">
+<title>Anatomía del Legion 5 · Learning Studio</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%23e8ff79'/%3E%3Cpath d='m8 16 12-7 12 7-12 7zm0 7 12 7 12-7' fill='none' stroke='%23142222' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="./styles.css">
+<script defer src="./vendor/three.min.js"></script>
+<script defer src="./vendor/OrbitControls.js"></script>
+<script defer src="./engine.js"></script>
+<script defer src="./graphics.js"></script>
+<script defer src="./model.js"></script>
+<script defer src="./app.js"></script>
+</head>
+<body>
+<header class="mast"><div class="wrap mast-inner">
+  <a class="brand" href="../../" aria-label="Volver al catálogo Learning Studio"><span class="brand-mark" data-icon="layers"></span>Learning Studio</a><span class="mast-slash">/</span><span class="brand-section">Hardware</span>
+  <button class="mast-help" id="help"><span data-icon="book"></span><span>Guía del banco</span></button>
+</div></header>
+<main class="wrap">
+  <section class="intro">
+    <div><div class="eyebrow"><i></i> Laboratorio de hardware</div><h1>Anatomía del Legion 5<span>.</span></h1><p>Desmonta sus componentes y descubre qué necesita tu portátil para arrancar.</p></div>
+    <div class="machine"><span class="machine-logo" data-icon="laptop"></span><div><strong>Lenovo Legion 5</strong><small>15ARH05H / MT 82B1</small></div></div>
+  </section>
+  <div class="tab-row"><nav class="modes" aria-label="Modo de práctica">
+    <button data-mode="free" aria-pressed="true"><span data-icon="compass"></span>Explorar</button>
+    <button data-mode="guide" aria-pressed="false"><span data-icon="route"></span>Práctica guiada</button>
+    <button data-mode="missions" aria-pressed="false"><span data-icon="flag"></span>Misiones</button>
+  </nav><button class="score" id="score"><span data-icon="award"></span><span id="score-value">0 / 4</span> <span>misiones</span></button></div>
+  <section id="task-panel" hidden aria-label="Objetivo de práctica">
+    <div class="task-controls"><label id="case-label" hidden>Caso <select id="case-select"></select></label><strong id="task-title"></strong><span id="task-progress" class="tag"></span></div>
+    <p id="task-body"></p><div class="task-actions"><button id="hint"><span data-icon="bulb"></span>Pista</button><button id="solution">Ver solución</button><button id="repeat"><span data-icon="reset"></span>Repetir caso</button></div>
+    <p id="hint-readout" class="hint" hidden></p>
+  </section>
+  <div class="work-grid">
+    <section class="workspace" aria-labelledby="bench-title">
+      <div class="work-head"><div class="section-title"><span class="status-dot"></span><h2 id="bench-title">Banco de trabajo</h2></div>
+        <div class="switch" aria-label="Vista"><button id="v3" aria-pressed="true"><span data-icon="cube"></span>3D</button><button id="v2" aria-pressed="false"><span data-icon="plan"></span>Plano 2D</button></div></div>
+      <div class="stage" id="stage">
+        <canvas id="canvas3" tabindex="0" aria-label="Modelo 3D. Usa las flechas para girar, más y menos para el zoom y la tecla C para centrar."></canvas>
+        <svg id="plan" tabindex="0" aria-label="Plano interactivo del interior del portátil" hidden></svg>
+        <div id="markers" aria-hidden="true"></div>
+        <div class="stage-caption"><span class="live-dot"></span><span id="view-name">Perspectiva</span></div>
+        <div class="stage-tools">
+          <button class="icon-btn" id="home" title="Centrar vista" aria-label="Centrar vista"><span data-icon="focus"></span></button>
+          <button class="icon-btn" id="zoom-in" title="Acercar" aria-label="Acercar"><span data-icon="plus"></span></button>
+          <button class="icon-btn" id="zoom-out" title="Alejar" aria-label="Alejar"><span data-icon="minus"></span></button>
+        </div>
+        <div class="view-pills"><button id="explode" aria-pressed="false" title="Separar las capas para inspeccionar el interior"><span data-icon="layers"></span>Despiece</button><button id="labels" aria-pressed="true"><span data-icon="tag"></span>Etiquetas</button></div>
+      </div>
+      <p id="gl-notice" class="gl-notice" hidden></p>
+      <div class="tray" id="tray"><span class="tray-icon" data-icon="tray"></span><div class="tray-text"><strong>Bandeja de piezas</strong><small id="tray-caption">Arrastra aquí un módulo para extraerlo.</small></div><div id="tray-parts"></div></div>
+      <div class="canvas-key"><span data-icon="mouse"></span><span id="gesture-help">Arrastra el fondo para girar · Rueda para acercar</span><button id="quick-power" title="Controles de alimentación"><span data-icon="power"></span><span>Alimentación</span></button><button id="options" aria-label="Ajustes de vista" title="Ajustes de vista"><span data-icon="settings"></span></button></div>
+    </section>
+    <aside class="inspector" aria-labelledby="ins-title">
+      <div class="ins-head"><span class="eyebrow"><i></i> Inspector de pieza</span><span id="ins-count"></span></div>
+      <div class="specimen"><svg viewBox="0 0 320 104" aria-hidden="true" id="specimen"></svg></div>
+      <div class="ins-body"><div class="ins-class" id="ins-class"></div><h2 id="ins-title"></h2><div class="spec" id="ins-spec"></div><p id="ins-desc"></p>
+        <details class="idea"><summary>Qué probar con esta pieza</summary><p id="ins-experiment"></p></details>
+        <div class="part-status"><span id="state-dot"></span><span id="ins-status"></span></div>
+        <label id="slot-choice" hidden>Destino<select id="slot-select"></select></label>
+        <button class="primary" id="piece-action"></button>
+      </div>
+    </aside>
+  </div>
+  <div id="feedback" class="feedback" role="status" aria-live="polite"><span data-icon="info"></span><span id="message">Mesa preparada. Selecciona una pieza o arrastra un módulo a la bandeja.</span></div>
+  <section class="inventory" aria-labelledby="inv-title"><div class="line-title"><h2 id="inv-title">Componentes</h2><span>10 piezas para explorar</span></div><div class="inventory-list" id="inventory"></div></section>
+  <div class="bottom-grid">
+    <section class="panel power-panel"><div class="section-title"><span class="panel-icon" data-icon="power"></span><h2>Alimentación y arranque</h2></div>
+      <div id="service-controls"><button data-service="cover"></button><button data-service="battery"></button><button data-service="ac"></button></div>
+      <div class="boot-area"><button id="boot" class="boot"></button><div><strong id="boot-title"></strong><p id="boot-report" aria-live="polite"></p></div></div>
+    </section>
+    <section class="panel load-panel"><div class="section-title"><span class="panel-icon" data-icon="activity"></span><h2>Prueba de memoria</h2></div>
+      <div class="metrics"><div><strong id="ram-total"></strong><small>RAM instalada</small></div><div><strong id="channels"></strong><small>Canales activos al arrancar</small></div><div><strong id="disks"></strong><small>Unidades instaladas</small></div></div>
+      <label for="load">Memoria que pide tu aplicación <output id="load-value" for="load"></output></label><input id="load" type="range" min="2" max="24" step="1"><p id="load-report"></p>
+    </section>
+  </div>
+  <details class="sources" id="sources"><summary><span data-icon="book"></span> Modelo, referencias y seguridad</summary>
+    <p>La captura de Información del sistema identifica el Legion 5 15ARH05H (82B1) con Ryzen 7 4800H. La mesa representa la variante con SSD M.2 de sistema y HDD SATA de datos. Los dos módulos iguales de 8 GB, la batería de 60 Wh y la asignación del sistema al SSD son decisiones de este escenario. La capacidad real de RAM y batería, el modelo de GPU y el montaje de tu unidad requieren verificación física o su número de configuración.</p>
+    <p>Las piezas y sus encajes son modelos originales a escala aproximada. La vista didáctica descubre RAM y SSD y agrupa blindajes, tornillos, clips, cable SATA y antenas con cada maniobra. Despiece separa capas solo para observar. El banco aplica reglas de compatibilidad, energía, POST y arranque. El ventilador se anima sin calcular temperaturas, RPM, consumo ni rendimiento.</p>
+    <p>Para intervenir el equipo real, apágalo, desenchufa el adaptador y sigue el manual de servicio y sus precauciones antiestáticas. Desconecta la batería por el cuerpo del conector. Si está hinchada, evita presionarla o perforarla y solicita servicio técnico.</p>
+    <ul><li><a href="https://psref.lenovo.com/syspool/Sys/PDF/Legion/Lenovo_Legion_5_15ARH05H/Lenovo_Legion_5_15ARH05H_Spec.pdf" target="_blank" rel="noopener">Lenovo PSREF · memoria, almacenamiento y variantes ↗</a></li>
+    <li><a href="https://pcsupport.lenovo.com/us/en/products/laptops-and-netbooks/legion-series/legion-5-15arh05h/82b1/document-userguide/doc_userguide" target="_blank" rel="noopener">Lenovo · manual de mantenimiento del tipo 82B1 ↗</a></li>
+    <li><a href="https://support.lenovo.com/us/en/solutions/ht510415" target="_blank" rel="noopener">Lenovo · vídeos de desmontaje y sustitución de piezas ↗</a></li>
+    <li><a href="https://www.amd.com/es/support/downloads/drivers.html/processors/ryzen/ryzen-4000-series/amd-ryzen-7-4800h.html" target="_blank" rel="noopener">AMD · especificaciones del Ryzen 7 4800H ↗</a></li>
+    <li><a href="https://laptopmedia.com/highlights/inside-lenovo-legion-5-15-disassembly-and-upgrade-options/" target="_blank" rel="noopener">LaptopMedia · disposición interior de la familia Legion 5 de 15″ ↗</a></li></ul>
+  </details>
+</main>
+<footer class="wrap"><a href="../../">← Volver a Demos</a><a id="download" href="./legion5-lab.zip" download>Descargar laboratorio (.zip)</a><span id="save-status"></span><button id="reset-all">Reiniciar laboratorio</button></footer>
+<dialog id="dialog" aria-labelledby="dialog-title"><div class="dialog-head"><h2 id="dialog-title"></h2><button id="close-dialog" class="icon-btn" aria-label="Cerrar"><span data-icon="close"></span></button></div><div id="dialog-body"></div></dialog>
+<div id="drag-ghost" hidden></div>
+</body></html>
