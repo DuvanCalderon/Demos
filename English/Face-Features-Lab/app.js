@@ -248,9 +248,20 @@ function drawDetails(){
 
 /* Surface coordinates are in the imported scan's native space. The model is a
    real, closed-head scan, not a billboard or a photograph projected onto a plane. */
+// Calibrated against the actual scan triangles. Using the original diagram's
+// pixel positions here would place several labels off the face or in mid-air.
+const SCAN_LANDMARKS={
+ hair:[0,2.9],skin:[-.88,1.75],eyebrow:[-.87,1.0],
+ eyelash:[-.82,.70],ear:[1.35,1.30],nose:[0,-.34],
+ mole:[-.80,-.93],lip:[-.08,-1.15],chin:[0,-1.93],
+ forehead:[0,1.95],temple:[1.25,1.55],eye:[.76,.67],
+ cheek:[.82,-.20],nostril:[-.24,-.70],mouth:[0,-1.40],
+ jaw:[1.01,-1.68],wrinkle:[1.08,.80],freckle:[-.79,-.36],
+ pore:[.79,-.65],dimple:[.80,-1.29]
+};
 function scanXY(w){
- const px=w.xy[0],py=w.xy[1];
- return {x:(px-318)*.017, y:(380-py)*.014};
+ const [x,y]=SCAN_LANDMARKS[w.id]||[0,0];
+ return {x,y};
 }
 function scanHit(x,y){
  if(!THREE||!faceMesh||!headGroup)return null;
@@ -316,8 +327,8 @@ function makeSkinLayers(){
   let done=0,tries=0;
   while(done<n&&tries++<n*12){
    const side=rnd()<.5?-1:1;
-   const x=side*(1.05+rnd()*.85);
-   const y=isPore?-.85+rnd()*1.40:-.42+rnd()*1.20;
+   const x=side*(.57+rnd()*.70);
+   const y=isPore?-.75+rnd()*1.10:-.47+rnd()*.83;
    const hit=scanHit(x,y);
    if(!hit)continue;
    const worldNormal=hit.face.normal.clone().normalize();
@@ -338,7 +349,7 @@ function makeSkinLayers(){
    const pts=[];
    for(let k=0;k<=13;k++){
     const t=k/13,x=side*(1.52+t*(.48+j*.08));
-    const y=.67-j*.15+Math.sin(t*Math.PI)*.085;
+    const y=.70-j*.11+Math.sin(t*Math.PI)*.055;
     const hit=scanHit(x,y);
     if(hit)pts.push(hit.point.clone().add(hit.face.normal.clone().multiplyScalar(.029)));
    }
