@@ -24,7 +24,7 @@ const failures=[];
 const vc=new VirtualConsole();
 vc.on('jsdomError',e=>failures.push(e.message));
 let downloads=0,prints=0;
-const dom=new JSDOM(html,{url:'https://duvancalderon.github.io/Demos/Proyectos-de-ingenieria/Modelo-Canvas-Lab/',runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:vc,beforeParse(win){win.scrollTo=function(){};win.confirm=function(){return true};win.print=function(){prints++};win.URL.createObjectURL=function(){return 'blob:canvas-test'};win.URL.revokeObjectURL=function(){};win.HTMLAnchorElement.prototype.click=function(){downloads++}}});
+const dom=new JSDOM(html,{url:'https://duvancalderon.github.io/Demos/Proyectos-de-ingenieria/Modelo-Canvas-Lab/',runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:vc,beforeParse(win){win.scrollTo=function(){};win.HTMLElement.prototype.scrollIntoView=function(){};win.confirm=function(){return true};win.print=function(){prints++};win.URL.createObjectURL=function(){return 'blob:canvas-test'};win.URL.revokeObjectURL=function(){};win.HTMLAnchorElement.prototype.click=function(){downloads++}}});
 const d=dom.window.document;
 const click=q=>{const el=d.querySelector(q);assert.ok(el,'No se encontró: '+q);el.click();return el};
 const txt=q=>{const el=d.querySelector(q);assert.ok(el);return el.textContent.trim()};

@@ -26,4 +26,5 @@ jobs:
         run: node tests/canvas-lab.test.cjs
 
       - name: Exercise Flujo de Fondos Lab
+        if: success() || failure()
         run: node tests/flujo-lab.test.cjs
