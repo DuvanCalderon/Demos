@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101729">
+<meta name="description" content="Canvas Lab: laboratorio interactivo de modelo de negocios con lienzo editable, ejercicios, simulaciones y retos de ingeniería.">
+<title>Canvas Lab · Laboratorio de modelos de negocio</title>
+<style>
+:root{--bg:#0c1222;--panel:#131d32;--panel2:#18243b;--ink:#ecf3ff;--muted:#a7b6cb;--line:#2c3c55;--mint:#56dbc0;--violet:#b3a1ff;--amber:#ffcf87;--danger:#ff9696;--rad:17px;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);background:radial-gradient(ellipse 850px 400px at 70% -100px,#26385c 0,transparent 75%),var(--bg);min-width:320px}
+button,input,select,textarea{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #c8baff;outline-offset:3px}a{color:#c9c0ff}button:disabled{cursor:not-allowed;opacity:.45}strong{font-weight:750}
+.wrap{width:min(1220px,calc(100% - 40px));margin:auto}
+header{position:sticky;top:0;z-index:10;background:#0c1424e8;backdrop-filter:blur(18px);border-bottom:1px solid #2e3b52}
+.top{height:72px;display:flex;gap:18px;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);font-weight:820;font-size:18px;letter-spacing:-.5px}.brand-mark{width:41px;height:41px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(150deg,#79ebc9,#6f79ee);color:#09152a}
+.small{font-size:12px;color:var(--muted)}
+.head-actions{display:flex;align-items:center;gap:12px}
+.pill{border-radius:999px;background:#233a45;color:#a3f4e0;padding:6px 12px;font-size:11px;font-weight:800;letter-spacing:.6px}
+.tabs{display:flex;gap:5px;overflow-x:auto;padding:0 0 9px;scrollbar-width:thin}.tab{white-space:nowrap;border:1px solid transparent;background:transparent;color:#aebbd1;border-radius:10px;padding:10px 17px;font-weight:690}.tab.active{background:#283452;color:white;border-color:#465274}.tab:hover{color:white}
+.hero{display:flex;align-items:end;justify-content:space-between;gap:30px;padding:50px 0 31px}.hero h1{font-size:clamp(36px,4.8vw,65px);line-height:1.05;letter-spacing:-2.5px;margin:14px 0 15px}.hero h1 span{color:var(--mint)}.hero p{color:#aabbd2;max-width:650px;margin:0;font-size:16px}.eyebrow{font-size:12px;letter-spacing:2px;font-weight:850;color:#b9b0ff}
+.hero-graphic{width:160px;height:135px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;transform:rotate(-7deg);flex-shrink:0}.hero-graphic i{border-radius:6px;background:#465b88;border:1px solid #7186b2}.hero-graphic i:nth-child(3n+1){background:#255a63}.hero-graphic i:nth-child(3n+2){background:#6b5275}.hero-graphic i:nth-child(4){grid-row:span 2}
+.progressline{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:0 0 25px;color:var(--muted);font-size:12px}.meter{height:8px;width:180px;max-width:35vw;background:#263249;border-radius:99px;overflow:hidden}.meter>div{height:100%;width:0;background:linear-gradient(90deg,#64eac2,#9a8ff9);transition:width .35s}
+main{padding-bottom:80px}.view{display:none;animation:show .22s ease}.view.active{display:block}@keyframes show{from{opacity:.4;transform:translateY(8px)}to{opacity:1;transform:none}}
+.panel{border:1px solid var(--line);border-radius:var(--rad);background:linear-gradient(150deg,#162137,#101a2d);padding:24px}.panel h2{margin:0 0 8px;font-size:24px;letter-spacing:-.6px}.panel h3{margin:0 0 10px;font-size:18px}.muted{color:var(--muted)}.overline{font-size:11px;letter-spacing:1.7px;color:var(--mint);font-weight:850;text-transform:uppercase}
+.btn{border:1px solid #485a74;border-radius:10px;background:#25334c;color:#f4f7ff;padding:10px 15px;font-size:13px;font-weight:720;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:41px;text-decoration:none}.btn:hover{background:#33425e}.primary{background:var(--mint);color:#07172a;border-color:var(--mint)}.primary:hover{background:#8af2d7}.danger{border-color:#674657;background:#3c2637;color:#ffd0d0}.secondary{background:transparent}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:17px 0}
+.notice{border-left:3px solid var(--mint);padding:12px 15px;background:#19303d;border-radius:0 9px 9px 0;color:#cdebe3;font-size:13px}
+.two{display:grid;grid-template-columns:1.4fr .8fr;gap:18px;align-items:start}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.canvas{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));grid-template-rows:180px 180px 170px;gap:8px;max-width:100%}
+.block{border:1px solid #354761;border-radius:12px;padding:14px 11px;overflow:auto;background:#1b2940;color:#eaf1ff;text-align:left;transition:.17s;position:relative}
+.block:hover{border-color:#97e9d1;transform:translateY(-2px)}.block:focus-visible{outline-offset:0}.block.selected{border-color:var(--mint);box-shadow:inset 0 0 0 1px var(--mint)}
+.block b{display:block;font-size:12px;line-height:1.25;position:relative;padding-right:10px}.block small{display:block;font-size:11px;color:#a5bad0;line-height:1.48;margin-top:10px}
+.block .number{font-size:10px;color:#91e0da;display:block;margin-bottom:5px;font-weight:800}
+.block[data-id="partners"]{grid-column:1;grid-row:1 / 3}
+.block[data-id="activities"]{grid-column:2;grid-row:1}
+.block[data-id="resources"]{grid-column:2;grid-row:2}
+.block[data-id="value"]{grid-column:3;grid-row:1 / 3;background:#27374d}
+.block[data-id="relationships"]{grid-column:4;grid-row:1}
+.block[data-id="channels"]{grid-column:4;grid-row:2}
+.block[data-id="segments"]{grid-column:5;grid-row:1 / 3}
+.block[data-id="costs"]{grid-column:1 / 4;grid-row:3;background:#302b41}
+.block[data-id="revenue"]{grid-column:4 / 6;grid-row:3;background:#203b3c}
+.block[data-id="value"] b{color:#bcebdc}.block[data-id="costs"] b{color:#f4c2e0}.block[data-id="revenue"] b{color:#a0f3cf}
+.definition{min-height:270px}.definition p{font-size:14px}.definition .question{font-size:17px;color:#f0e4bb;font-weight:700}.note{font-size:12px;color:#a1b2c8}
+.section-grid{display:grid;grid-template-columns:1fr 1fr;gap:17px}.tile{background:#1b2940;border:1px solid #32415b;padding:17px;border-radius:13px}
+.tile h3{font-size:15px;margin:0 0 7px}.tile p{margin:0;font-size:13px;color:#b6c5d9}
+label{font-size:12px;color:#b5c4d8;font-weight:730;display:block;margin-bottom:6px}
+select,textarea,input[type=number],input[type=text]{width:100%;background:#0f192b;border:1px solid #41516b;color:white;border-radius:9px;padding:10px 12px}
+textarea{resize:vertical;min-height:126px}
+.builder{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.builder .field{background:#162239;border-radius:13px;border:1px solid #34445e;padding:17px}
+.field label{font-size:14px;color:#f4f6ff}.field small{color:#95a8c0;display:block;margin-bottom:9px}.field textarea{min-height:130px}
+.builder .field[data-id="value"]{border-color:#347d76}.builder .field[data-id="revenue"]{border-color:#347d76}
+.callout{padding:15px 16px;background:#252744;border:1px solid #505381;color:#dddafa;border-radius:12px;font-size:13px}
+.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.choice{padding:12px;border-radius:10px;border:1px solid #40516d;background:#1b2a42;color:white;text-align:left;font-size:12px;min-height:56px}.choice:hover{border-color:#b9abef}.choice[aria-pressed=true]{border-color:var(--mint);background:#22444b}
+.feedback{margin-top:14px;min-height:45px;border-radius:10px;border:1px solid #43516d;background:#18283e;padding:12px;color:#dbebfa;font-size:13px}.feedback:empty{display:none}.feedback.good{border-color:#468a71;background:#173b35;color:#c1f4df}.feedback.bad{border-color:#935f65;background:#3b252e;color:#ffd9df}
+.scorebox{display:flex;gap:22px;flex-wrap:wrap}.scorebox div{border:1px solid #35455f;background:#172339;border-radius:12px;padding:12px 18px}.scorebox strong{display:block;font-size:26px;color:#b8f5e3}
+.question-title{font-size:22px;line-height:1.42;margin:16px 0 22px;max-width:780px}.level-buttons{display:flex;gap:9px;flex-wrap:wrap}.level-buttons button.active{border-color:var(--mint);color:#c9fff0}
+.sim-controls{display:grid;grid-template-columns:1fr 1fr;gap:20px}.sim-controls label{display:flex;justify-content:space-between;gap:12px}.sim-controls input[type=range]{width:100%;accent-color:#64e4c4}
+.metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.metric{border:1px solid #384c67;background:#1b2b42;border-radius:12px;padding:19px}.metric span{display:block;color:#9eafc4;font-size:12px}.metric strong{font-size:clamp(18px,2.2vw,26px);letter-spacing:-.5px}
+.switch{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:#bfcce1}.switch input{accent-color:var(--mint)}
+.footer{font-size:12px;color:#9baec4;text-align:center;border-top:1px solid #29384e;padding:24px}
+@media(max-width:980px){.two{grid-template-columns:1fr}.canvas{grid-template-rows:155px 155px 155px}.builder{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:680px){.wrap{width:min(100% - 25px,1220px)}.head-actions .pill{display:none}.hero{padding-top:29px}.hero-graphic{display:none}.hero h1{font-size:42px}.panel{padding:17px}.canvas{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;grid-auto-rows:minmax(120px,auto)}.block{grid-row:auto!important;grid-column:auto!important}.block[data-id="value"],.block[data-id="costs"],.block[data-id="revenue"]{grid-column:span 2!important}.choice-grid,.builder,.three,.section-grid,.sim-controls,.metric-grid{grid-template-columns:1fr}.scorebox{gap:7px}.scorebox div{flex:1}.top{height:65px}.tab{font-size:12px;padding:9px 11px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media print{header,.tabs,.toolbar,.hero-graphic,button,.progressline,.footer{display:none!important}body{background:white;color:black}.view{display:none!important}#construir{display:block!important}.panel,.field{background:white!important;color:black!important}.field label{color:black!important}textarea{border:1px solid #ccc!important;color:black!important}}
+</style>
+</head>
+<body>
+<header>
+ <div class="wrap top"><a class="brand" href="https://duvancalderon.github.io/Demos/"><span class="brand-mark">▦</span> Canvas Lab</a><div class="head-actions"><span class="pill">APRENDE HACIENDO</span><label class="switch"><input type="checkbox" id="sound"> 🔊 Sonido</label></div></div>
+ <nav class="wrap tabs" aria-label="Secciones del laboratorio">
+  <button class="tab active" data-view="explorar" aria-selected="true">01 · Explorar</button>
+  <button class="tab" data-view="construir" aria-selected="false">02 · Construir</button>
+  <button class="tab" data-view="practicar" aria-selected="false">03 · Practicar</button>
+  <button class="tab" data-view="simular" aria-selected="false">04 · Simular</button>
+  <button class="tab" data-view="recursos" aria-selected="false">05 · Recursos</button>
+ </nav>
+</header>
+<div class="wrap">
+ <section class="hero"><div><span class="eyebrow">ESTRUCTURACIÓN Y EVALUACIÓN DE PROYECTOS</span><h1>Diseña negocios.<br><span>Entiende el valor.</span></h1><p>Los 9 bloques del Modelo Canvas no son nueve definiciones para memorizar. Son nueve decisiones que conectan clientes, solución, operación y dinero. Aquí las vas a tomar tú.</p></div><div class="hero-graphic" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></section>
+ <div class="progressline"><strong>Tu avance</strong><div class="meter"><div id="total-progress"></div></div><span id="progress-label">0 retos correctos</span><span id="saved-label" style="margin-left:auto">Guardado en este navegador</span></div>
+ <main>
+  <section id="explorar" class="view active" aria-label="Explorar Canvas">
+   <div class="two">
+    <div class="panel"><div class="overline">Mapa interactivo</div><h2>El lienzo de los 9 bloques</h2><p class="muted">Selecciona cualquier bloque. Están ubicados como en las diapositivas 5 y 6 de clase.</p><div id="canvas-map" class="canvas" aria-label="Nueve bloques del Canvas"></div></div>
+    <aside class="panel definition" aria-live="polite"><div class="overline">Aprende con Feynman</div><h2 id="def-title">Propuesta de valor</h2><p id="def-desc"></p><p class="question" id="def-question"></p><p><strong>Ejemplo:</strong> <span id="def-example"></span></p><p class="note"><strong>Trampa frecuente:</strong> <span id="def-trap"></span></p><button id="to-builder" class="btn primary">Aplicarlo en mi Canvas →</button></aside>
+   </div>
+   <div class="section-grid" style="margin-top:18px">
+    <div class="panel"><div class="overline">Idea esencial</div><h2>Crear · Proporcionar · Captar</h2><p class="muted">El Canvas muestra cómo una organización <strong>crea valor</strong> para alguien, <strong>lo entrega</strong> y <strong>obtiene recursos</strong> para sostenerse. No es una garantía de éxito: es un mapa de hipótesis que debes comprobar.</p></div>
+    <div class="panel"><div class="overline">Canvas versus Lean Canvas</div><h2>¿Cuál conviene usar?</h2><p class="muted">El Business Model Canvas describe cómo funciona el negocio; Lean Canvas, según las diapositivas 8 y 9, adapta el lienzo para comenzar por el <strong>problema</strong>, la solución, las métricas y la ventaja especial.</p><button class="btn" id="show-lean">Ver los 9 bloques Lean</button><div id="lean-list" class="notice" style="display:none;margin-top:14px">1. Segmentos · 2. Problema · 3. Propuesta de valor · 4. Solución · 5. Canales · 6. Ingresos · 7. Costos · 8. Ventaja especial · 9. Métricas clave.</div></div>
+   </div>
+  </section>
+  <section id="construir" class="view" aria-label="Construir Canvas">
+   <div class="panel"><div class="overline">Taller de creación</div><h2>Construye tu propio modelo de negocio</h2><p class="muted">Escribe ideas concretas en cada uno de los nueve bloques. Puedes usar un ejemplo inicial, editarlo, guardarlo automáticamente y exportar tu trabajo.</p>
+    <div class="toolbar"><button class="btn" id="load-helmet">🪖 Ejemplo CentriHelmet</button><button class="btn" id="load-cafe">☕ Ejemplo cafetería</button><button class="btn" id="export-json">↓ Exportar JSON</button><button class="btn" id="print-model">⎙ Imprimir / PDF</button><label for="import-file" class="btn" style="margin:0;color:white">↑ Importar JSON</label><input id="import-file" type="file" accept="application/json,.json" hidden><button class="btn danger" id="clear-model">Vaciar lienzo</button></div>
+    <div class="progressline"><span><strong id="builder-count">0/9</strong> bloques con contenido</span><div class="meter"><div id="builder-progress"></div></div></div>
+    <div id="builder-grid" class="builder"></div><div class="feedback" id="builder-feedback" aria-live="polite"></div>
+    <div class="notice" style="margin-top:20px">Consejo: redacta hipótesis comprobables. «A los motociclistas les interesa ahorrar tiempo» es una hipótesis; una encuesta o una prueba de ventas puede ayudar a validarla.</div>
+   </div>
+  </section>
+  <section id="practicar" class="view" aria-label="Ejercicios">
+   <div class="panel"><div class="overline">Entrenamiento activo</div><h2>¿A qué bloque pertenece?</h2><p class="muted">Clasifica situaciones reales, de las más sencillas a las más tramposas. Primero intenta responder; luego usa pistas o revela la solución.</p>
+    <div class="toolbar level-buttons" id="level-buttons"><button class="btn active" data-level="0">Básico</button><button class="btn" data-level="1">Intermedio</button><button class="btn" data-level="2">Avanzado</button></div>
+    <div class="scorebox"><div><span class="small">Aciertos únicos</span><strong id="quiz-score">0</strong></div><div><span class="small">Resueltos</span><strong id="quiz-done">0 / 15</strong></div><div><span class="small">Intentos del reto</span><strong id="quiz-attempts">0</strong></div></div>
+    <div class="callout" style="margin-top:22px"><span id="quiz-counter">Reto 1 de 5</span> · <span id="quiz-difficulty">Básico</span></div>
+    <p id="quiz-question" class="question-title"></p><div id="quiz-choices" class="choice-grid" role="group" aria-label="Seleccionar bloque Canvas"></div>
+    <div class="toolbar"><button class="btn" id="quiz-check">Comprobar respuesta</button><button class="btn secondary" id="quiz-hint">💡 Pista</button><button class="btn secondary" id="quiz-solution">Ver solución</button><button class="btn primary" id="quiz-next">Siguiente reto →</button><button class="btn danger" id="quiz-reset">Reiniciar retos</button></div><div id="quiz-feedback" class="feedback" role="status" aria-live="polite"></div>
+   </div>
+  </section>
+  <section id="simular" class="view" aria-label="Simulador">
+   <div class="panel"><div class="overline">Simulador de decisiones</div><h2>¿Cómo gana dinero un modelo de negocio?</h2><p class="muted">Experimenta con un modelo por transacción, suscripción o freemium. Cambia clientes, precio y costos para entender ingresos, costos y punto de equilibrio. Son <strong>escenarios didácticos inventados</strong>, no proyecciones verificadas de mercado.</p>
+    <div class="toolbar"><label for="sim-type" style="align-self:center;margin:0">Modelo</label><select id="sim-type" style="max-width:260px"><option value="transaction">Cobro por transacción</option><option value="subscription">Suscripción</option><option value="freemium">Freemium</option></select><button class="btn" id="sim-reset">Restablecer escenario</button></div><div id="sim-context" class="callout"></div>
+    <div class="sim-controls" style="margin-top:23px">
+      <div class="tile"><label>Usuarios potenciales al mes <strong id="sim-users-val"></strong></label><input id="sim-users" type="range" min="100" max="5000" step="100" value="1500"></div>
+      <div class="tile"><label>Porcentaje que paga <strong id="sim-conversion-val"></strong></label><input id="sim-conversion" type="range" min="1" max="100" step="1" value="25"></div>
+      <div class="tile"><label>Precio por pago (COP) <strong id="sim-price-val"></strong></label><input id="sim-price" type="range" min="1000" max="100000" step="1000" value="12000"></div>
+      <div class="tile"><label>Costo variable por cliente que paga <strong id="sim-variable-val"></strong></label><input id="sim-variable" type="range" min="0" max="70000" step="1000" value="4000"></div>
+      <div class="tile"><label>Costos fijos mensuales <strong id="sim-fixed-val"></strong></label><input id="sim-fixed" type="range" min="0" max="15000000" step="100000" value="2200000"></div>
+      <div class="tile"><label>Pagos por cliente al mes <strong id="sim-frequency-val"></strong></label><input id="sim-frequency" type="range" min="1" max="8" step="1" value="1"></div>
+    </div>
+    <div class="metric-grid" style="margin-top:18px">
+      <div class="metric"><span>Ingresos mensuales</span><strong id="m-revenue">—</strong></div>
+      <div class="metric"><span>Costos totales mensuales</span><strong id="m-costs">—</strong></div>
+      <div class="metric"><span>Resultado operativo estimado</span><strong id="m-profit">—</strong></div>
+    </div>
+    <div id="sim-feedback" class="notice" style="margin-top:16px"></div>
+    <p class="note">Cálculo simplificado sin impuestos, inversión inicial ni financiación. Usuarios de pago = usuarios potenciales × tasa de conversión (redondeado hacia abajo). Ingresos = clientes de pago × frecuencia × precio. Costos = fijos + clientes de pago × frecuencia × costo variable. El punto de equilibrio se estima con margen unitario positivo.</p>
+   </div>
+   <div class="section-grid" style="margin-top:17px">
+    <div class="panel"><h3>Más modelos de las diapositivas</h3><p class="muted">Retailer (minorista), fabricante, freemium, publicidad, franquicias, razor and blades, distribuidor y suscripción. Un modelo puede combinar varias fuentes de ingresos.</p></div>
+    <div class="panel"><h3>La trampa de la simulación</h3><p class="muted">Un resultado operativo positivo no prueba que una empresa sea viable: todavía falta validar la demanda, la inversión, la operación, los aspectos legales y los riesgos.</p></div>
+   </div>
+  </section>
+  <section id="recursos" class="view" aria-label="Recursos de clase">
+   <div class="panel"><div class="overline">Material original</div><h2>PDF de la clase: Modelo Canvas</h2><p class="muted">Universidad Nacional de Colombia · Facultad de Minas · Laura Marcela Londoño Vásquez, Ph.D. · 13 páginas. Conceptos, preguntas del lienzo, ejemplo de Airbnb, Lean Canvas y modelos de negocio.</p>
+    <div class="toolbar"><a class="btn primary" id="pdf-download" href="https://duvancalderon.github.io/Demos/Proyectos-de-ingenieria/Modelo-Canvas-Lab/Modelo-Canvas.pdf" download="Modelo-Canvas.pdf">↓ Descargar PDF original</a><a class="btn" href="https://github.com/DuvanCalderon/Demos" target="_blank" rel="noopener">Repositorio GitHub ↗</a></div>
+    <p class="note" id="pdf-note">El botón ofrece el PDF de clase cuando el archivo está publicado junto al laboratorio.</p>
+   </div>
+   <div class="section-grid" style="margin-top:16px"><div class="panel"><h3>Checklist antes de invertir</h3><p class="muted">¿Quién es el cliente? ¿Qué problema resuelves? ¿Por qué pagarían? ¿Cómo entregas la solución? ¿Qué socios, tareas y recursos necesitas? ¿De dónde salen ingresos y costos?</p></div><div class="panel"><h3>Fuentes del contenido</h3><p class="muted">Diapositivas de Modelo Canvas de la asignatura Estructuración y Evaluación de Proyectos en Ingeniería, págs. 3–12. Autores citados por la clase: Alexander Osterwalder e Yves Pigneur, <em>Generación de modelos de negocio</em>.</p></div></div>
+   <div class="toolbar"><button class="btn danger" id="reset-all">Borrar TODO el progreso local</button></div><p class="note">Tus respuestas y el Canvas se guardan únicamente en el almacenamiento local de este navegador. No se envían a servidores.</p>
+  </section>
+ </main>
+</div>
+<footer class="footer">Canvas Lab · Universidad Nacional de Colombia — material educativo adaptado con ejercicios interactivos · <a href="https://duvancalderon.github.io/Demos/">Volver al catálogo</a></footer>
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id)};
+var blocks=[
+{id:'partners',num:8,name:'Aliados clave',short:'Proveedores, socios, alianzas estratégicas.',desc:'Son las personas y organizaciones externas que ayudan al negocio a funcionar. No todo proveedor es un empleado.',q:'¿Con quién necesitamos colaborar?',ex:'Un parqueadero aliado que instala una estación de servicio.',trap:'No confundir un aliado externo con un recurso humano contratado.'},
+{id:'activities',num:7,name:'Actividades clave',short:'Acciones indispensables del negocio.',desc:'Es lo que la empresa debe HACER para entregar su propuesta de valor. Son verbos, procesos y tareas.',q:'¿Qué tenemos que hacer muy bien?',ex:'Mantener, limpiar y supervisar las máquinas.',trap:'Tener una máquina es recurso; operarla y mantenerla es actividad.'},
+{id:'resources',num:6,name:'Recursos clave',short:'Activos físicos, humanos, intelectuales y económicos.',desc:'Es lo que necesitas TENER para que el modelo funcione: equipos, dinero, personas, tecnología o información.',q:'¿Con qué contamos para operar?',ex:'Cabinas, sensores, software y capital.',trap:'Desarrollar software es actividad; el software disponible es un recurso.'},
+{id:'value',num:2,name:'Propuesta de valor',short:'Solución que aporta beneficios al cliente.',desc:'Explica qué problema resuelves y por qué tu solución vale la pena. No es una lista de funciones.',q:'¿Qué problema solucionamos y qué nos hace diferentes?',ex:'Sanitizar el casco en 7–10 minutos, en el lugar de parqueo.',trap:'«Usamos sensores» es característica; «ahorras tiempo» expresa valor.'},
+{id:'relationships',num:4,name:'Relaciones con clientes',short:'Tipo de atención y vínculo que se mantiene.',desc:'Describe cómo consigues, atiendes y mantienes la relación con las personas durante su experiencia.',q:'¿Cómo nos relacionamos con ellas?',ex:'Asistencia por WhatsApp y recompensas por recurrencia.',trap:'La app puede ser un canal; el soporte que ocurre en ella es una relación.'},
+{id:'channels',num:3,name:'Canales de distribución',short:'Cómo se comunica y entrega la propuesta.',desc:'Son los medios por los que las personas conocen, adquieren o reciben el producto y el servicio.',q:'¿Cómo llega la solución al cliente?',ex:'Estación en parqueaderos y señalización física.',trap:'Confundir por dónde llega el servicio con cómo se atiende al cliente.'},
+{id:'segments',num:1,name:'Segmentos de clientes',short:'Grupos a los que la empresa quiere servir.',desc:'Identifica grupos concretos de personas o entidades con necesidades semejantes. No basta con decir «todo el mundo».',q:'¿Para quién creamos valor?',ex:'Motociclistas urbanos que usan el casco diariamente.',trap:'Definir segmentos demasiado amplios o sin necesidades identificables.'},
+{id:'costs',num:9,name:'Estructura de costos',short:'Desembolsos necesarios para operar.',desc:'Recoge los gastos más relevantes del modelo, tanto fijos como variables: equipos, personal, servicios, mantenimiento.',q:'¿En qué se nos va el dinero?',ex:'Insumos sanitizantes, arrendamiento y electricidad.',trap:'Costo no es lo mismo que precio de venta.'},
+{id:'revenue',num:5,name:'Fuentes de ingresos',short:'Dinero que entra y forma en que se cobra.',desc:'Indica por qué, cuánto y de qué forma pagan los distintos clientes; puede incluir ventas, suscripciones o comisiones.',q:'¿Por qué y cómo nos pagan?',ex:'Pago por cada ciclo de sanitización del casco.',trap:'No confundir ingresos por ventas con ganancias netas.'}
+];
+var byId=Object.fromEntries(blocks.map(function(b){return [b.id,b]}));
+var order=['partners','activities','resources','value','relationships','channels','segments','costs','revenue'];
+var storage='canvas-lab-unal-v1';
+var state={model:{},solved:{},attempts:0,level:0,index:0};
+try{var saved=JSON.parse(localStorage.getItem(storage)||'null');if(saved&&typeof saved==='object'){state.model=saved.model||{};state.solved=saved.solved||{};state.attempts=Number(saved.attempts)||0;state.level=Number(saved.level)||0;state.index=Number(saved.index)||0}}catch(e){}
+function save(){try{localStorage.setItem(storage,JSON.stringify(state));$('saved-label').textContent='✓ Guardado localmente'}catch(e){$('saved-label').textContent='Sin almacenamiento disponible'}}
+function clip(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function sound(ok){if(!$('sound').checked)return;try{var C=window.AudioContext||window.webkitAudioContext;if(!C)return;var c=new C(),o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=ok?660:220;g.gain.setValueAtTime(.05,c.currentTime);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+.16);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.16);o.onended=function(){c.close()}}catch(e){}}
+function route(name){document.querySelectorAll('.tab').forEach(function(el){var active=el.dataset.view===name;el.classList.toggle('active',active);el.setAttribute('aria-selected',active?'true':'false')});document.querySelectorAll('.view').forEach(function(el){el.classList.toggle('active',el.id===name)});window.scrollTo({top:0,behavior:'smooth'})}
+document.querySelectorAll('.tab').forEach(function(el){el.addEventListener('click',function(){route(el.dataset.view)})});
+var selectedBlock='value';
+function renderMap(){var holder=$('canvas-map');holder.innerHTML='';order.forEach(function(id){var b=byId[id],bt=document.createElement('button');bt.type='button';bt.className='block'+(selectedBlock===id?' selected':'');bt.dataset.id=id;bt.innerHTML='<span class="number">0'+b.num+'</span><b>'+clip(b.name)+'</b><small>'+clip(b.short)+'</small>';bt.addEventListener('click',function(){selectedBlock=id;renderMap();renderDefinition()});holder.appendChild(bt)})}
+function renderDefinition(){var b=byId[selectedBlock];$('def-title').textContent=b.name;$('def-desc').textContent=b.desc;$('def-question').textContent=b.q;$('def-example').textContent=b.ex;$('def-trap').textContent=b.trap}
+$('to-builder').addEventListener('click',function(){route('construir');var field=document.querySelector('[data-field="'+selectedBlock+'"]');if(field){field.focus();field.scrollIntoView({behavior:'smooth',block:'center'})}});
+$('show-lean').addEventListener('click',function(){$('lean-list').style.display=$('lean-list').style.display==='none'?'block':'none';$('show-lean').textContent=$('lean-list').style.display==='none'?'Ver los 9 bloques Lean':'Ocultar los bloques Lean'});
+function renderBuilder(){var holder=$('builder-grid');holder.innerHTML='';blocks.slice().sort(function(a,b){return a.num-b.num}).forEach(function(b){var div=document.createElement('div');div.className='field';div.dataset.id=b.id;div.innerHTML='<label for="field-'+b.id+'">'+b.num+'. '+clip(b.name)+'</label><small>'+clip(b.q)+'</small><textarea data-field="'+b.id+'" id="field-'+b.id+'" placeholder="Escribe una hipótesis concreta…"></textarea>';holder.appendChild(div);div.querySelector('textarea').value=state.model[b.id]||'';div.querySelector('textarea').addEventListener('input',function(e){state.model[b.id]=e.target.value;save();updateBuilder()})});updateBuilder()}
+function updateBuilder(){var n=blocks.filter(function(b){return (state.model[b.id]||'').trim().length>0}).length;$('builder-count').textContent=n+'/9';$('builder-progress').style.width=Math.round(n/9*100)+'%';updateProgress()}
+function status(s,good){var el=$('builder-feedback');el.textContent=s;el.className='feedback'+(good?' good':'')}
+var sampleHelmet={segments:'Motociclistas frecuentes en Medellín que quieren higiene de casco sin largas esperas.',value:'Sanitizar, centrifugar y secar cascos mediante una estación de autoservicio en pocos minutos.',channels:'Estaciones en parqueaderos y alianzas con establecimientos; avisos en el punto.',relationships:'Autoservicio, instrucciones claras, soporte remoto y atención de incidentes.',revenue:'Cobro por ciclo de servicio. Hipótesis de tarifa: $10.000–$15.000 COP.',resources:'Estaciones automáticas, energía, insumos, software y personal de mantenimiento.',activities:'Reposición de insumos, control de funcionamiento, limpieza y mantenimiento técnico.',partners:'Administradores de parqueaderos, proveedores de componentes e insumos, pasarelas de pago.',costs:'Compra e instalación de estaciones, insumos por ciclo, electricidad, soporte, mantenimiento y arriendo.'};
+var sampleCafe={segments:'Estudiantes y trabajadores cercanos que buscan café rápido y buen precio.',value:'Café recién preparado para llevar, con servicio veloz y opciones económicas.',channels:'Local junto a la universidad y pedidos por WhatsApp.',relationships:'Tarjeta de fidelización y atención directa en el mostrador.',revenue:'Venta de bebidas, snacks y combos.',resources:'Máquina de espresso, granos de café, personal, inventario y local.',activities:'Preparar bebidas, comprar insumos, atender y limpiar equipos.',partners:'Tostadores de café, proveedores de leche y panadería.',costs:'Arriendo, salarios, servicios, granos, vasos y mantenimiento.'};
+function loadSample(data,label){if(blocks.some(function(b){return (state.model[b.id]||'').trim()} )&&!confirm('Esto reemplazará los nueve bloques actuales. ¿Continuar?'))return;state.model=Object.assign({},data);save();renderBuilder();status('Ejemplo '+label+' cargado. Puedes editar cada bloque.',true);sound(true)}
+$('load-helmet').addEventListener('click',function(){loadSample(sampleHelmet,'CentriHelmet')});
+$('load-cafe').addEventListener('click',function(){loadSample(sampleCafe,'cafetería')});
+$('clear-model').addEventListener('click',function(){if(!confirm('¿Vaciar los 9 bloques de tu Canvas?'))return;state.model={};save();renderBuilder();status('Lienzo vaciado.',true)});
+function download(name,text,type){var blob=new Blob([text],{type:type||'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000)}
+$('export-json').addEventListener('click',function(){download('modelo-canvas.json',JSON.stringify({version:1,canvas:state.model},null,2),'application/json');status('Archivo JSON descargado.',true)});
+$('import-file').addEventListener('change',function(e){var file=e.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(){try{var v=JSON.parse(reader.result);var data=v.canvas||v;if(!data||typeof data!=='object'||Array.isArray(data))throw Error('Formato no válido');var clean={};blocks.forEach(function(b){if(typeof data[b.id]==='string')clean[b.id]=data[b.id].slice(0,20000)});if(!Object.keys(clean).length)throw Error('No hay bloques reconocidos');state.model=clean;save();renderBuilder();status('Modelo importado correctamente.',true)}catch(err){status('No se pudo importar: '+err.message,false)}};reader.readAsText(file);e.target.value=''});
+$('print-model').addEventListener('click',function(){window.print()});
+var quiz=[
+[{t:'Una empresa vende a motociclistas que usan su casco todos los días.',a:'segments',h:'Piensa en PARA QUIÉN existe la solución.',e:'El grupo atendido se registra en segmentos de clientes.'},
+{t:'La empresa promete desinfectar el casco rápidamente y sin largos desplazamientos.',a:'value',h:'Piensa en el beneficio que recibe quien paga.',e:'La promesa de beneficio y el problema que se resuelve conforman la propuesta de valor.'},
+{t:'El cliente paga $12.000 por cada ciclo de limpieza.',a:'revenue',h:'¿Dinero que entra o que sale?',e:'Un cobro por servicio es una fuente de ingresos.'},
+{t:'La empresa alquila un espacio en un parqueadero y paga electricidad.',a:'costs',h:'Son desembolsos para que el negocio funcione.',e:'Arriendo y electricidad forman parte de la estructura de costos.'},
+{t:'La empresa tiene una cabina, motores y sensores disponibles.',a:'resources',h:'¿Qué tiene la empresa?',e:'Son activos físicos y tecnológicos: recursos clave.'}],
+[{t:'Un fabricante de cabinas acepta producir las estaciones a cambio de un contrato estable.',a:'partners',h:'Es otra organización que participa en el modelo.',e:'Un fabricante externo que colabora es un aliado clave.'},
+{t:'Los operarios hacen mantenimiento preventivo y reponen desinfectante semanalmente.',a:'activities',h:'Los verbos indican tareas esenciales.',e:'Hacer mantenimiento y reponer insumos son actividades clave.'},
+{t:'El usuario encuentra la estación en el parqueadero de su universidad.',a:'channels',h:'¿Por dónde accede el cliente al servicio?',e:'El punto de acceso y entrega forma parte de los canales.'},
+{t:'Si la máquina falla, una persona atiende por chat y gestiona un reembolso.',a:'relationships',h:'¿Por dónde se entrega o cómo se atiende?',e:'La atención posventa y la asistencia son relaciones con clientes.'},
+{t:'Un servicio digital ofrece funciones gratuitas y cobra por funciones avanzadas.',a:'revenue',h:'Pregunta qué bloque explica el cobro y su origen.',e:'Freemium es un modelo; en este caso, el cobro por funciones premium integra fuentes de ingresos.'}],
+[{t:'Una startup afirma «todos los colombianos son nuestros clientes». ¿Qué bloque necesita precisión?',a:'segments',h:'Un segmento debe representar un grupo identificable.',e:'Se debe precisar quién tiene el problema, en vez de afirmar que todo el mundo es cliente.'},
+{t:'El equipo escribe «usar publicidad en Instagram» para explicar cómo llegará la oferta al usuario.',a:'channels',h:'No está hablando del valor ni de la atención posterior.',e:'Instagram se usa como canal de comunicación y captación.'},
+{t:'Una empresa desarrolla el algoritmo de recomendaciones que necesita para funcionar. ¿Cómo clasificas «desarrollar el algoritmo»?',a:'activities',h:'Fíjate en desarrollar, no en el algoritmo ya creado.',e:'Desarrollar es una actividad. Una vez disponible, el algoritmo puede ser un recurso intelectual.'},
+{t:'La firma es dueña de una base de datos única que permite personalizar su producto. ¿Qué es esa base?',a:'resources',h:'¿Es algo que se hace o un activo que se posee?',e:'La base de datos es un recurso intelectual; usarla sería una actividad.'},
+{t:'Una plataforma cobra una comisión a los anfitriones por cada reserva cerrada.',a:'revenue',h:'Las comisiones son una forma de capturar valor.',e:'Las comisiones por transacción son una fuente de ingresos, como en el ejemplo de Airbnb.'}]
+];
+var quizPick=null,quizHints=0,quizLocked=false,quizAttempts=0;
+function current(){state.level=Math.min(2,Math.max(0,state.level));state.index=Math.min(4,Math.max(0,state.index));return quiz[state.level][state.index]}
+function quizKey(){return state.level+'-'+state.index}
+function updateProgress(){var solved=Object.keys(state.solved).length;$('quiz-score').textContent=solved;$('quiz-done').textContent=solved+' / 15';$('total-progress').style.width=(solved/15*100)+'%';$('progress-label').textContent=solved+' de 15 retos correctos'}
+function paintQuiz(){var q=current(),key=quizKey();quizPick=null;quizHints=0;quizAttempts=0;quizLocked=false;$('quiz-question').textContent=q.t;$('quiz-feedback').textContent=state.solved[key]?'Ya resolviste este reto correctamente. Puedes repetirlo para practicar.':'';$('quiz-feedback').className='feedback'+(state.solved[key]?' good':'');$('quiz-counter').textContent='Reto '+(state.index+1)+' de 5';$('quiz-difficulty').textContent=['Básico','Intermedio','Avanzado'][state.level];$('quiz-attempts').textContent='0';$('quiz-choices').innerHTML='';blocks.slice().sort(function(a,b){return a.num-b.num}).forEach(function(b){var bt=document.createElement('button');bt.className='choice';bt.type='button';bt.setAttribute('aria-pressed','false');bt.textContent=b.num+'. '+b.name;bt.dataset.choice=b.id;bt.addEventListener('click',function(){if(quizLocked)return;quizPick=b.id;document.querySelectorAll('.choice').forEach(function(el){el.setAttribute('aria-pressed',el===bt?'true':'false')})});$('quiz-choices').appendChild(bt)});document.querySelectorAll('[data-level]').forEach(function(el){el.classList.toggle('active',+el.dataset.level===state.level)});updateProgress()}
+function feedback(t,good){var e=$('quiz-feedback');e.textContent=t;e.className='feedback '+(good?'good':'bad')}
+$('quiz-check').addEventListener('click',function(){if(quizLocked){feedback('Ya se mostró la solución. Pulsa «Siguiente reto» para continuar.',false);return}if(!quizPick){feedback('Selecciona un bloque antes de comprobar.',false);return}quizAttempts++;state.attempts++;$('quiz-attempts').textContent=String(quizAttempts);var q=current();if(quizPick===q.a){var fresh=!state.solved[quizKey()];state.solved[quizKey()]=true;feedback('✓ Correcto. '+q.e+(fresh?' ¡Nuevo reto dominado!':''),true);quizLocked=true;sound(true)}else{feedback('Todavía no. '+(quizHints?'Revisa la pista e inténtalo de nuevo.':'¿Qué está describiendo realmente la frase?'),false);sound(false)}save();updateProgress()});
+$('quiz-hint').addEventListener('click',function(){var q=current();quizHints++;if(quizHints===1)feedback('Pista: '+q.h,false);else feedback('Pista más directa: '+byId[q.a].q,false)});
+$('quiz-solution').addEventListener('click',function(){var q=current();quizLocked=true;feedback('Solución: '+byId[q.a].name+'. '+q.e+' (Revelar no suma puntos.)',true)});
+$('quiz-next').addEventListener('click',function(){state.index++;if(state.index>=5){state.index=0;state.level=(state.level+1)%3}save();paintQuiz()});
+document.querySelectorAll('[data-level]').forEach(function(el){el.addEventListener('click',function(){state.level=+el.dataset.level;state.index=0;save();paintQuiz()})});
+$('quiz-reset').addEventListener('click',function(){if(!confirm('¿Reiniciar los 15 retos y la puntuación? Tu Canvas no se borrará.'))return;state.solved={};state.level=0;state.index=0;state.attempts=0;save();paintQuiz()});
+var config={transaction:{text:'Cobro por transacción: un usuario paga cada vez que usa un servicio. Ejemplo didáctico: una estación de sanitización de cascos.',users:1500,conversion:25,price:12000,variable:4000,fixed:2200000,frequency:1},subscription:{text:'Suscripción: el cliente paga periódicamente por acceso continuo. Ejemplo didáctico: plataforma educativa con cuota mensual.',users:2200,conversion:18,price:25000,variable:3000,fixed:4500000,frequency:1},freemium:{text:'Freemium: muchos usuarios usan funciones gratuitas y una parte paga por extras. Importante: el costo de atender usuarios gratuitos también puede importar.',users:3000,conversion:8,price:34000,variable:5000,fixed:5500000,frequency:1}};
+function money(n){return (n<0?'-':'')+'$'+Math.abs(Math.round(n)).toLocaleString('es-CO')}
+function setSim(type){var v=config[type];Object.keys(v).forEach(function(k){var el=$('sim-'+k);if(el)el.value=v[k]});$('sim-context').textContent=v.text;['frequency'].forEach(function(id){$('sim-'+id).disabled=type!=='transaction'});updateSim()}
+function updateSim(){var users=+$('sim-users').value,conversion=+$('sim-conversion').value,price=+$('sim-price').value,variable=+$('sim-variable').value,fixed=+$('sim-fixed').value,frequency=+$('sim-frequency').value,paying=Math.floor(users*conversion/100),actions=paying*frequency,revenue=actions*price,costs=fixed+actions*variable,profit=revenue-costs,margin=price-variable,breakEven=margin>0?Math.ceil(fixed/(margin*frequency)):null;
+['users','conversion','price','variable','fixed','frequency'].forEach(function(k){var v=+$('sim-'+k).value;$('sim-'+k+'-val').textContent=['price','variable','fixed'].includes(k)?money(v):k==='conversion'?v+'%':String(v)});
+$('m-revenue').textContent=money(revenue);$('m-costs').textContent=money(costs);$('m-profit').textContent=money(profit);$('m-profit').style.color=profit>=0?'#a3f4dc':'#ffa8a8';
+var info='Clientes de pago: '+paying+'. Margen por pago: '+money(margin)+'. ';
+if(margin<=0)info+='Atención: cada pago NO cubre su costo variable. No existe un punto de equilibrio positivo con estos supuestos.';
+else info+='Punto de equilibrio aproximado: '+breakEven+' clientes de pago por mes a '+frequency+' pago(s) cada uno. '+(profit>=0?'En este escenario los ingresos cubren los costos operativos.':'Faltan clientes de pago o margen para cubrir todos los costos.');
+if($('sim-type').value==='freemium')info+=' Ojo: no se modelan por separado los costos variables de usuarios gratuitos.';
+$('sim-feedback').textContent=info}
+['users','conversion','price','variable','fixed','frequency'].forEach(function(k){$('sim-'+k).addEventListener('input',updateSim)});
+$('sim-type').addEventListener('change',function(){setSim(this.value)});$('sim-reset').addEventListener('click',function(){setSim($('sim-type').value)});
+$('reset-all').addEventListener('click',function(){if(!confirm('¿Borrar tanto el modelo como los 15 retos guardados? No se puede deshacer.'))return;state={model:{},solved:{},attempts:0,level:0,index:0};save();renderBuilder();paintQuiz();status('Progreso local borrado.',true);route('explorar')});
+renderMap();renderDefinition();renderBuilder();paintQuiz();setSim('transaction');
+})();
+</script>
+</body>
+</html>
