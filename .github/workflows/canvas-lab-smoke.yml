@@ -1,0 +1,24 @@
+name: Canvas Lab smoke tests
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Proyectos-de-ingenieria/Modelo-Canvas-Lab/**'
+      - 'tests/canvas-lab.test.cjs'
+      - 'index.html'
+      - '.github/workflows/canvas-lab-smoke.yml'
+  workflow_dispatch:
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install testing dependency
+        run: npm install --no-save --no-package-lock jsdom@24
+      - name: Exercise Canvas Lab
+        run: node tests/canvas-lab.test.cjs
