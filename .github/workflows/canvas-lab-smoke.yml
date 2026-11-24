@@ -5,6 +5,8 @@ on:
     paths:
       - 'Proyectos-de-ingenieria/Modelo-Canvas-Lab/**'
       - 'tests/canvas-lab.test.cjs'
+      - 'tests/flujo-lab.test.cjs'
+      - 'Proyectos-de-Ingenieria/05-Flujo-de-Fondos/**'
       - 'index.html'
       - '.github/workflows/canvas-lab-smoke.yml'
   workflow_dispatch:
@@ -22,3 +24,6 @@ jobs:
         run: npm install --no-save --no-package-lock jsdom@24
       - name: Exercise Canvas Lab
         run: node tests/canvas-lab.test.cjs
+
+      - name: Exercise Flujo de Fondos Lab
+        run: node tests/flujo-lab.test.cjs

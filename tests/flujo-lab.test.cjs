@@ -1,0 +1,16 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const {JSDOM,VirtualConsole}=require('jsdom');
+const root=path.resolve(__dirname,'..'),dir=path.join(root,'Proyectos-de-Ingenieria','05-Flujo-de-Fondos');
+const html=fs.readFileSync(path.join(dir,'index.html'),'utf8'),index=fs.readFileSync(path.join(root,'index.html'),'utf8'),pdf=fs.readFileSync(path.join(dir,'Flujo-de-Fondos.pdf'));
+assert.equal(require('node:crypto').createHash('sha256').update(pdf).digest('hex'),'a11b3f82e33a7403722e1805f457ccda462f41d335cd80c429ba821d454a7152');
+assert.ok(index.includes('./Proyectos-de-Ingenieria/05-Flujo-de-Fondos/'));
+assert.ok(!html.includes('CentriHelmet'));
+const errors=[];const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));let downloads=0;
+const dom=new JSDOM(html,{url:'https://example.test/',runScripts:'dangerously',virtualConsole:vc,beforeParse(w){w.confirm=()=>true;w.URL.createObjectURL=()=> 'blob:test';w.URL.revokeObjectURL=()=>{};w.HTMLAnchorElement.prototype.click=()=>{downloads++}}});
+const d=dom.window.document,$=id=>d.getElementById(id),click=id=>$(id).click(),tab=id=>d.querySelector('[data-tab="'+id+'"]').click(),txt=id=>$(id).textContent;
+assert.match(txt('m0'),/-100/);assert.match(txt('m1'),/30,5/);
+tab('sim');assert.equal($('sim').hidden,false);click('stress');assert.match(txt('m1'),/3/);click('loan');assert.match(txt('m0'),/-40/);assert.match(txt('m1'),/13,46/);click('base');assert.match(txt('m0'),/-100/);click('csv');assert.equal(downloads,1);
+$('years').value='3';$('years').dispatchEvent(new dom.window.Event('input'));assert.equal(d.querySelectorAll('#flow thead th').length,5);
+tab('build');click('hintBuild');assert.match(txt('buildFeedback'),/Suma/);click('checkBuild');assert.match(txt('buildFeedback'),/0 de 12/);click('showBuild');assert.equal($('b20').value,'-300');assert.equal($('b23').value,'460');click('checkBuild');assert.match(txt('buildFeedback'),/12 de 12/);click('clearBuild');assert.equal($('b20').value,'');
+tab('quiz');click('check');assert.match(txt('qfeedback'),/Selecciona/);d.querySelectorAll('#options button')[0].click();click('check');assert.match(txt('qfeedback'),/Todavía no/);d.querySelectorAll('#options button')[1].click();click('check');assert.equal(txt('score'),'1 / 15 retos');click('check');assert.equal(txt('score'),'1 / 15 retos');click('next');click('hint');assert.match(txt('qfeedback'),/Pista/);click('solution');d.querySelectorAll('#options button')[0].click();click('check');assert.equal(txt('score'),'1 / 15 retos');$('level').value='2';$('level').dispatchEvent(new dom.window.Event('change'));assert.match(txt('qcount'),/Reto 11/);click('retry');click('prev');assert.match(txt('qcount'),/Reto 10/);click('reset');assert.equal(txt('score'),'0 / 15 retos');assert.equal(dom.window.localStorage.getItem('flujo-lab-v1'),'[]');tab('pdf');assert.equal($('pdf').hidden,false);assert.ok(d.querySelector('#pdf a[download]').href.endsWith('Flujo-de-Fondos.pdf'));
+assert.deepEqual(errors,[]);dom.window.close();console.log('OK: Flujo de Fondos Lab, escenarios, tabla, CSV, constructor, retos, persistencia, navegación y PDF original.');
