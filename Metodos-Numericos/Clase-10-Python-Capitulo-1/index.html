@@ -46,6 +46,14 @@
 .original-feedback[data-state=wrong]{background:#3b202b;color:#ffc0c0}
 .original-feedback[data-state=hint]{background:#322d20;color:#ffe0a3}
 #originalResults progress{display:block;margin:8px 0}
+
+.original-navigation .row{justify-content:space-between}
+.original-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.original-steps button{font-weight:700;min-width:0}
+.original-steps button[data-complete="true"]{border-color:#51d782;color:#b5f7c9}
+.original-steps button[aria-current="step"]{background:var(--mint);color:#102b28;border-color:var(--mint)}
+.original-bottom{margin-top:0}.original-bottom .row{flex-wrap:wrap}
+#origEndMessage{margin:12px 0 0}
 </style></head><body><main><a href="https://duvancalderon.github.io/Demos/">← Learning Studio</a><header><div class="eyebrow">Métodos numéricos / Clase 10 / Python</div><h1>Raíces<span style="color:var(--mint)">.</span> Python Lab</h1><p>Explora gráficas, aproxima soluciones y practica las llamadas de NumPy, Matplotlib y SciPy del capítulo 1.</p><div class="stats"><div><strong id="score">0 / 12</strong><br><small>Retos dominados sin revelar solución</small></div><div><strong id="pct">0%</strong><br><small>Progreso local</small></div></div><progress id="progress" max="12" value="0"></progress></header><nav class="row" aria-label="Secciones"><button data-tab="lab" aria-pressed="true">01 · Laboratorio</button><button data-tab="practice" aria-pressed="false">02 · Retos</button><button data-tab="exercises" aria-pressed="false">03 · Ejercicios</button><button data-tab="pythonPractice" aria-pressed="false">04 · Python práctico</button><button data-tab="guide" aria-pressed="false">05 · Guía Python</button><button id="soundToggle" type="button" aria-pressed="true" aria-label="Silenciar sonidos">🔊 Sonido activado</button></nav>
 <section id="lab" class="grid"><div class="panel"><h2>Configura el experimento</h2><label>Ejercicio<select id="case"><option value="0">1 · Ceros de h(x)</option><option value="1">2 · Números críticos</option><option value="2">3 · Punto fijo</option><option value="3">4 · Newton y raíces cercanas</option><option value="4">Extra · Raíz doble</option></select></label><p id="formula"></p><label>Método<select id="method"><option value="bisect">Bisección</option><option value="fixed">Punto fijo directo</option><option value="newton">Newton clásico</option><option value="modified">Newton modificado (extra)</option></select></label><div class="pair"><label>a (bisección)<input id="a" type="number" step="any"></label><label>b (bisección)<input id="b" type="number" step="any"></label></div><label>x₀ (punto fijo / Newton)<input id="x0" type="number" step="any"></label><div class="pair"><label>Tolerancia<input id="tol" type="number" min="1e-14" max="0.1" step="any" value="1e-8"></label><label>Máx. iteraciones<input id="limit" type="number" min="1" max="300" value="100"></label></div><div class="row spaced"><button id="step" class="primary">Siguiente paso</button><button id="run">Ejecutar</button><button id="clear">Reiniciar</button></div><p id="status" class="feedback" role="status"></p><p id="tip"></p></div><div class="panel"><h2>Explorador visual</h2><div class="row"><button id="full">Vista completa</button><button id="zoom">Zoom de detalle</button><button id="close">Zoom raíces cercanas</button><button id="scan">Buscar cruces</button></div><label>Muestras de la gráfica: <span id="samplesText">100</span><input id="samples" type="range" min="20" max="2000" step="20" value="100"></label><svg id="plot" viewBox="0 0 700 350" role="img" aria-label="Gráfica de la función, ejes y aproximaciones"></svg><p id="scanResult" role="status"></p><h3>Traza de iteraciones</h3><div class="scroll"><table><thead><tr><th>n</th><th>xₙ</th><th>|residual|</th><th>Δ / cota</th></tr></thead><tbody id="trace"></tbody></table></div><h3 class="spaced">Equivalente en Python</h3><pre id="python"></pre><button id="download">Descargar script .py</button><p><small>La simulación usa JavaScript; el script es Python real para Colab/Jupyter. Punto fijo directo se muestra con method='iteration', no con la aceleración predeterminada de SciPy.</small></p></div></section>
 <section id="practice" hidden><div class="panel"><p id="pendingInfo" class="muted" role="status"></p><div id="practiceComplete" hidden><h2>¡Completaste todos los retos! 🎉</h2><p>No quedan retos pendientes. Tu progreso está guardado. Puedes reiniciar esta sección si quieres volver a practicar.</p></div><div id="practiceWork"><div class="row"><h2 style="flex:1">Práctica progresiva</h2><label style="margin:0">Nivel<select id="level"><option value="0">Básico</option><option value="1">Intermedio</option><option value="2">Avanzado</option></select></label></div><small id="qnumber"></small><p class="question" id="prompt"></p><div class="choices" id="choices"></div><div class="row"><button id="check" class="primary">Comprobar</button><button id="hint">Pista</button><button id="solution">Mostrar solución</button><button id="retry">Repetir</button><button id="prev">Anterior</button><button id="next">Siguiente</button></div><p class="feedback" id="feedback" role="status"></p></div><button id="resetProgress">Reiniciar progreso</button></div></section>
@@ -56,10 +64,10 @@
     <p>Aquí tienes los enunciados de la clase tal como fueron trabajados en el PDF. La idea es que primero intentes resolverlos por tu cuenta y solo después pulses <b>Ver solución original del PDF</b>. Cuando abras una solución, se mostrará la imagen tal cual aparece en el material.</p>
     <div id="originalResults" class="note-box"><strong id="origProgress">0 de 8 apartados comprobados correctamente</strong><progress id="origBar" max="8" value="0"></progress><small>Las respuestas se guardan en este navegador. No modifica tu progreso de Retos ni de Python práctico.</small></div><div class="note-box" style="margin-top:12px"><b>Sugerencia de estudio:</b> intenta resolver cada apartado en una hoja o en Python, compara con la solución original y luego vuelve al laboratorio para comprobar si entiendes por qué funciona el método.</div>
   </div>
-  <div class="exercise-list">
-    <article class="panel exercise-card">
+  <div class="panel original-navigation" aria-label="Navegación de ejercicios originales"><div class="row"><strong id="origExerciseNumber" role="status">Ejercicio 1 de 4</strong><span id="origExerciseStatus" class="muted"></span></div><div class="original-steps" role="group" aria-label="Seleccionar ejercicio"><button type="button" data-original-step="0" aria-current="step" aria-label="Ejercicio 1">1</button><button type="button" data-original-step="1" aria-current="false" aria-label="Ejercicio 2">2</button><button type="button" data-original-step="2" aria-current="false" aria-label="Ejercicio 3">3</button><button type="button" data-original-step="3" aria-current="false" aria-label="Ejercicio 4">4</button></div></div><div class="exercise-list" id="originalExerciseList">
+    <article id="originalExercise1" class="panel exercise-card"  aria-labelledby="originalTitle1">
       <div class="exercise-meta"><span class="pill">Ejercicio 1</span><span class="pill alt">Ceros de una función</span></div>
-      <h3>Conteo de ceros en un intervalo</h3>
+      <h3 id="originalTitle1" tabindex="-1">Conteo de ceros en un intervalo</h3>
       <p class="lead">Considere la función <code>h(x) = cos(5x)(e^x - arctan(x)) + e^(-x)</code>.</p>
       <ol class="parts">
         <li>¿Cuántos ceros tiene la función <b>h</b> en el intervalo <b>[-1, 6]</b>?<div class="original-answer" data-original="1"><div class="original-answer-fields"><label for="orig-1-value">Número de ceros<input id="orig-1-value" type="text" inputmode="decimal" autocomplete="off" placeholder="Ej. escribe un entero"></label></div><div class="row spaced"><button class="primary" type="button" data-original-check="1">Comprobar resultado</button><button type="button" data-original-clear="1">Borrar respuesta</button></div><p id="orig-feedback-1" class="original-feedback" role="status" aria-live="polite"></p></div></li>
@@ -70,9 +78,9 @@
       </div>
     </article>
 
-    <article class="panel exercise-card">
+    <article id="originalExercise2" class="panel exercise-card" hidden aria-labelledby="originalTitle2">
       <div class="exercise-meta"><span class="pill">Ejercicio 2</span><span class="pill alt">Números críticos y bisección</span></div>
-      <h3>Números críticos de <code>h(x)</code></h3>
+      <h3 id="originalTitle2" tabindex="-1">Números críticos de <code>h(x)</code></h3>
       <p class="lead">Considere la función <code>h(x) = e^x cos(3x) - sen(5x + 1)</code> en el intervalo <code>I = [-2, 1.5]</code>.</p>
       <ol class="parts" type="a">
         <li>¿Cuántos números críticos tiene la función <b>h</b> en el intervalo <b>I</b>?<div class="original-answer" data-original="2a"><div class="original-answer-fields"><label for="orig-2a-value">Número de críticos<input id="orig-2a-value" type="text" inputmode="decimal" autocomplete="off" placeholder="Escribe un entero"></label></div><div class="row spaced"><button class="primary" type="button" data-original-check="2a">Comprobar resultado</button><button type="button" data-original-clear="2a">Borrar respuesta</button></div><p id="orig-feedback-2a" class="original-feedback" role="status" aria-live="polite"></p></div></li>
@@ -84,9 +92,9 @@
       </div>
     </article>
 
-    <article class="panel exercise-card">
+    <article id="originalExercise3" class="panel exercise-card" hidden aria-labelledby="originalTitle3">
       <div class="exercise-meta"><span class="pill">Ejercicio 3</span><span class="pill alt">Punto fijo</span></div>
-      <h3>Puntos fijos de <code>g(x)</code></h3>
+      <h3 id="originalTitle3" tabindex="-1">Puntos fijos de <code>g(x)</code></h3>
       <p class="lead">Considere la ecuación <code>g(x) = x - (1/4)cos(4x) + (3/2)e^(-x^2) arctan(x)</code>.</p>
       <ol class="parts" type="a">
         <li>¿Cuántos puntos fijos tiene la función <b>g</b> en el intervalo <b>[-1, 4]</b>?<div class="original-answer" data-original="3a"><div class="original-answer-fields"><label for="orig-3a-value">Número de puntos fijos<input id="orig-3a-value" type="text" inputmode="decimal" autocomplete="off" placeholder="Escribe un entero"></label></div><div class="row spaced"><button class="primary" type="button" data-original-check="3a">Comprobar resultado</button><button type="button" data-original-clear="3a">Borrar respuesta</button></div><p id="orig-feedback-3a" class="original-feedback" role="status" aria-live="polite"></p></div></li>
@@ -99,9 +107,9 @@
       </div>
     </article>
 
-    <article class="panel exercise-card">
+    <article id="originalExercise4" class="panel exercise-card" hidden aria-labelledby="originalTitle4">
       <div class="exercise-meta"><span class="pill">Ejercicio 4</span><span class="pill alt">Newton y clasificación de raíces</span></div>
-      <h3>Raíces simples, múltiples y método de Newton</h3>
+      <h3 id="originalTitle4" tabindex="-1">Raíces simples, múltiples y método de Newton</h3>
       <p class="lead">Considere la función <code>h(x) = e^(-2x) sen(3x) - 100 cos(2x) + 100</code>.</p>
       <ol class="parts" type="a">
         <li>¿Cuántas raíz/raíces simples y múltiples tiene la ecuación <b>h(x)=0</b> en el intervalo <b>[-5,4]</b>?<div class="original-answer" data-original="4a"><div class="original-answer-fields"><label for="orig-4a-simple">Raíces simples<input id="orig-4a-simple" type="text" inputmode="decimal" autocomplete="off" placeholder="Cantidad"></label><label for="orig-4a-multiple">Raíces múltiples<input id="orig-4a-multiple" type="text" inputmode="decimal" autocomplete="off" placeholder="Cantidad"></label></div><div class="row spaced"><button class="primary" type="button" data-original-check="4a">Comprobar resultado</button><button type="button" data-original-clear="4a">Borrar respuesta</button></div><p id="orig-feedback-4a" class="original-feedback" role="status" aria-live="polite"></p></div></li>
@@ -116,6 +124,7 @@
       </div>
     </article>
   </div>
+  <div class="panel original-navigation original-bottom"><div class="row"><button type="button" id="origPrevExercise" disabled>← Anterior</button><span id="origBottomNumber" class="muted">Ejercicio 1 de 4</span><button type="button" id="origNextExercise" class="primary">Siguiente →</button></div><p id="origEndMessage" class="muted" role="status" hidden></p></div>
 </section>
 
 <section id="pythonPractice" hidden class="stack">
@@ -250,13 +259,31 @@ function originalGrade(q,values){
 }
 function originalValues(q){return Object.fromEntries(q.fields.map(([key])=>[key,$('orig-'+q.id+'-'+key).value]))}
 function originalPaint(q,state,message){const panel=document.querySelector('[data-original="'+q.id+'"]'),fb=$('orig-feedback-'+q.id);panel.dataset.state=state;fb.dataset.state=state;fb.textContent=message;for(const [key] of q.fields)$('orig-'+q.id+'-'+key).setAttribute('aria-invalid',String(state==='wrong'))}
-function originalSave(){try{localStorage.setItem(originalKey,JSON.stringify(originalSaved))}catch(e){}const n=ORIGINAL_SPECS.filter(q=>originalSaved[q.id]?.state==='correct').length;$('origBar').value=n;$('origProgress').textContent=n+' de '+ORIGINAL_SPECS.length+' apartados comprobados correctamente'}
+function originalSave(){try{localStorage.setItem(originalKey,JSON.stringify(originalSaved))}catch(e){}const n=ORIGINAL_SPECS.filter(q=>originalSaved[q.id]?.state==='correct').length;$('origBar').value=n;$('origProgress').textContent=n+' de '+ORIGINAL_SPECS.length+' apartados comprobados correctamente';if(typeof originalIndex==='number')originalRenderNavigation()}
 for(const q of ORIGINAL_SPECS){const record=originalSaved[q.id];if(record&&record.values){for(const [key] of q.fields){const v=record.values[key];if(typeof v==='string')$('orig-'+q.id+'-'+key).value=v}if(record.state){const [state,message]=originalGrade(q,originalValues(q));record.state=state;originalPaint(q,state,message)}}
  const change=()=>{originalSaved[q.id]={values:originalValues(q),state:''};originalPaint(q,'','');originalSave()};
  for(const [key] of q.fields){const el=$('orig-'+q.id+'-'+key);el.addEventListener('input',change);el.addEventListener('keydown',e=>{if(e.key==='Enter'&&(el.tagName!=='TEXTAREA'||e.ctrlKey)){e.preventDefault();document.querySelector('[data-original-check="'+q.id+'"]').click()}})}
  document.querySelector('[data-original-check="'+q.id+'"]').onclick=()=>{const values=originalValues(q),[state,message]=originalGrade(q,values);originalSaved[q.id]={values,state};originalPaint(q,state,message);originalSave();if(state==='correct'||state==='wrong')playFeedback(state)};
  document.querySelector('[data-original-clear="'+q.id+'"]').onclick=()=>{for(const [key] of q.fields)$('orig-'+q.id+'-'+key).value='';change()};
 }
+const originalGroups=[['1'],['2a','2b'],['3a','3b'],['4a','4b','4c']];
+const originalNavKey='roots-original-active-exercise-v1';
+function originalCompleted(i){return originalGroups[i].every(id=>originalSaved[id]?.state==='correct')}
+function originalResume(saved){const pending=originalGroups.map((_,i)=>i).filter(i=>!originalCompleted(i));if(!pending.length)return Number.isInteger(saved)&&saved>=0&&saved<4?saved:3;if(Number.isInteger(saved)&&saved>=0&&saved<4&&!originalCompleted(saved))return saved;return pending.find(i=>i>saved)??pending[0]}
+let originalStoredIndex=-1;try{const raw=localStorage.getItem(originalNavKey);if(raw!==null)originalStoredIndex=Number(raw)}catch(e){}
+let originalIndex=originalResume(originalStoredIndex);
+function originalRenderNavigation(){
+ const i=originalIndex,ids=originalGroups[i],count=ids.filter(id=>originalSaved[id]?.state==='correct').length;
+ $('origExerciseNumber').textContent='Ejercicio '+(i+1)+' de 4';$('origBottomNumber').textContent='Ejercicio '+(i+1)+' de 4';$('origExerciseStatus').textContent=count+' / '+ids.length+' apartados correctos';
+ for(const b of document.querySelectorAll('[data-original-step]')){const step=Number(b.dataset.originalStep),done=originalCompleted(step);b.setAttribute('aria-current',step===i?'step':'false');b.dataset.complete=String(done);b.textContent=String(step+1)+(done?' ✓':'');b.setAttribute('aria-label','Ejercicio '+(step+1)+(done?' completado':''))}
+ $('origPrevExercise').disabled=i===0;$('origNextExercise').textContent=i===3?'Finalizar':'Siguiente →';
+ if(!$('origEndMessage').hidden){const remaining=originalGroups.map((_,k)=>k).filter(k=>!originalCompleted(k));$('origEndMessage').textContent=remaining.length?'Aún tienes '+remaining.length+' ejercicio(s) con apartados pendientes. Puedes volver a ellos con los botones numerados.':'¡Completaste los cuatro ejercicios originales! 🎉'}
+}
+function originalShowExercise(index,move=false){if(!Number.isInteger(index)||index<0||index>=4)return;const previous=originalIndex;originalIndex=index;for(let i=0;i<4;i++)$('originalExercise'+(i+1)).hidden=i!==index;if(previous!==index){const old=$('sol-'+(previous+1));old.hidden=true;const b=document.querySelector('[data-target="sol-'+(previous+1)+'"]');b.setAttribute('aria-expanded','false');b.textContent='Ver solución original del PDF'}$('origEndMessage').hidden=true;originalRenderNavigation();try{localStorage.setItem(originalNavKey,String(index))}catch(e){}if(move){const heading=$('originalTitle'+(index+1));heading.focus({preventScroll:true});heading.scrollIntoView({block:'center',behavior:window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}}
+for(const b of document.querySelectorAll('[data-original-step]'))b.onclick=()=>originalShowExercise(Number(b.dataset.originalStep),true);
+$('origPrevExercise').onclick=()=>originalShowExercise(originalIndex-1,true);
+$('origNextExercise').onclick=()=>{if(originalIndex<3)originalShowExercise(originalIndex+1,true);else{$('origEndMessage').hidden=false;originalRenderNavigation()}};
+originalShowExercise(originalIndex);
 originalSave();
 
 </script></body></html>
