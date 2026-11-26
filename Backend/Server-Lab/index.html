@@ -154,10 +154,10 @@ const translate = (raw) => {
   else if((m=t.match(/^Demanda atendida\. (\d+) solicitudes\/s de capacidad libre\.$/)))v="Demand served. "+m[1]+" requests/s of spare capacity.";
   else if((m=t.match(/^(Correcto\.|¡Correcto!|Pista:) (.+)$/)))v=dictionary[m[1]]+" "+(dictionary[m[2]]||m[2]);
   else if(t.startsWith("Solución: ")){const rest=t.slice(10);const q=questions[qi];const answer=q[1][q[2]];v="Solution: "+(dictionary[answer]||answer)+". "+(dictionary[q[4]]||q[4]);}
+  else if(t.includes("\n"))v=t.split("\n").map(line=>translate(line)).join("\n");
   else if(t.startsWith("Cliente → "))v="Client → "+t.slice(10);
   else if(t.startsWith("Servidor → cliente: "))v="Server → client: "+t.slice(20);
   else if(t.startsWith("SIN RESPUESTA HTTP\n"))v="NO HTTP RESPONSE\n"+translate(t.slice(19));
-  else if(t.includes("\n"))v=t.split("\n").map(line=>translate(line)).join("\n");
   else if((m=t.match(/^("error"\s*:\s*")([^"]+)(".*)$/))&&has(m[2]))v=m[1]+dictionary[m[2]]+m[3];
  }
  return raw.replace(t,()=>v);
@@ -175,7 +175,7 @@ function processNode(node){
 function scan(root){if(root.nodeType===3){processNode(root);return;}if(root.nodeType!==1)return;
  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;while((n=walker.nextNode()))processNode(n);
 }
-const attrs=[];document.querySelectorAll("[aria-label],[title]").forEach(el=>{["aria-label","title"].forEach(k=>{if(el.hasAttribute(k))attrs.push([el,k,el.getAttribute(k)]);});});
+const attrs=[];document.querySelectorAll("[aria-label],[title]").forEach(el=>{if(el===toggle)return;["aria-label","title"].forEach(k=>{if(el.hasAttribute(k))attrs.push([el,k,el.getAttribute(k)]);});});
 // Keep option values stable when the displayed label changes.
 document.querySelectorAll("option:not([value])").forEach(el=>el.value=el.value);
 const initialTitle=document.title;const description=document.querySelector('meta[name="description"]');const initialDescription=description.content;
