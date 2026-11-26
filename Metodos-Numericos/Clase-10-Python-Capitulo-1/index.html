@@ -55,6 +55,8 @@
 .original-bottom{margin-top:0}.original-bottom .row{flex-wrap:wrap}
 #origEndMessage{margin:12px 0 0}
 
+
+.py-output{margin:16px 0;border:1px solid #3c9d60;border-radius:14px;background:#112c29;padding:16px;min-width:0}.py-output h3{color:#b5f7c9}.py-output p{color:#d0e6df;overflow-wrap:anywhere}.py-output pre{background:#0b1722;white-space:pre-wrap;overflow-wrap:anywhere}.py-output .output-label{font-size:12px;color:#a6b8cf;text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-top:12px}.py-output svg{width:100%;height:auto}.py-output .output-note{font-size:12px;color:#a6b8cf}
 </style></head><body><main><a href="https://duvancalderon.github.io/Demos/">← Learning Studio</a><header><div class="eyebrow">Métodos numéricos / Clase 10 / Python</div><h1>Raíces<span style="color:var(--mint)">.</span> Python Lab</h1><p>Explora gráficas, aproxima soluciones y practica las llamadas de NumPy, Matplotlib y SciPy del capítulo 1.</p><div class="stats"><div><strong id="score">0 / 12</strong><br><small>Retos dominados sin revelar solución</small></div><div><strong id="pct">0%</strong><br><small>Progreso local</small></div></div><progress id="progress" max="12" value="0"></progress></header><nav class="row" aria-label="Secciones"><button data-tab="lab" aria-pressed="true">01 · Laboratorio</button><button data-tab="practice" aria-pressed="false">02 · Retos</button><button data-tab="exercises" aria-pressed="false">03 · Ejercicios</button><button data-tab="pythonPractice" aria-pressed="false">04 · Python práctico</button><button data-tab="guide" aria-pressed="false">05 · Guía Python</button><button id="soundToggle" type="button" aria-pressed="true" aria-label="Silenciar sonidos">🔊 Sonido activado</button></nav>
 <section id="lab" class="grid"><div class="panel"><h2>Configura el experimento</h2><label>Ejercicio<select id="case"><option value="0">1 · Ceros de h(x)</option><option value="1">2 · Números críticos</option><option value="2">3 · Punto fijo</option><option value="3">4 · Newton y raíces cercanas</option><option value="4">Extra · Raíz doble</option></select></label><p id="formula"></p><label>Método<select id="method"><option value="bisect">Bisección</option><option value="fixed">Punto fijo directo</option><option value="newton">Newton clásico</option><option value="modified">Newton modificado (extra)</option></select></label><div class="pair"><label>a (bisección)<input id="a" type="number" step="any"></label><label>b (bisección)<input id="b" type="number" step="any"></label></div><label>x₀ (punto fijo / Newton)<input id="x0" type="number" step="any"></label><div class="pair"><label>Tolerancia<input id="tol" type="number" min="1e-14" max="0.1" step="any" value="1e-8"></label><label>Máx. iteraciones<input id="limit" type="number" min="1" max="300" value="100"></label></div><div class="row spaced"><button id="step" class="primary">Siguiente paso</button><button id="run">Ejecutar</button><button id="clear">Reiniciar</button></div><p id="status" class="feedback" role="status"></p><p id="tip"></p></div><div class="panel"><h2>Explorador visual</h2><div class="row"><button id="full">Vista completa</button><button id="zoom">Zoom de detalle</button><button id="close">Zoom raíces cercanas</button><button id="scan">Buscar cruces</button></div><label>Muestras de la gráfica: <span id="samplesText">100</span><input id="samples" type="range" min="20" max="2000" step="20" value="100"></label><svg id="plot" viewBox="0 0 700 350" role="img" aria-label="Gráfica de la función, ejes y aproximaciones"></svg><p id="scanResult" role="status"></p><h3>Traza de iteraciones</h3><div class="scroll"><table><thead><tr><th>n</th><th>xₙ</th><th>|residual|</th><th>Δ / cota</th></tr></thead><tbody id="trace"></tbody></table></div><h3 class="spaced">Equivalente en Python</h3><pre id="python"></pre><button id="download">Descargar script .py</button><p><small>La simulación usa JavaScript; el script es Python real para Colab/Jupyter. Punto fijo directo se muestra con method='iteration', no con la aceleración predeterminada de SciPy.</small></p></div></section>
 <section id="practice" hidden><div class="panel"><p id="pendingInfo" class="muted" role="status"></p><div id="practiceComplete" hidden><h2>¡Completaste todos los retos! 🎉</h2><p>No quedan retos pendientes. Tu progreso está guardado. Puedes reiniciar esta sección si quieres volver a practicar.</p></div><div id="practiceWork"><div class="row"><h2 style="flex:1">Práctica progresiva</h2><label style="margin:0">Nivel<select id="level"><option value="0">Básico</option><option value="1">Intermedio</option><option value="2">Avanzado</option></select></label></div><small id="qnumber"></small><p class="question" id="prompt"></p><div class="choices" id="choices"></div><div class="row"><button id="check" class="primary">Comprobar</button><button id="hint">Pista</button><button id="solution">Mostrar solución</button><button id="retry">Repetir</button><button id="prev">Anterior</button><button id="next">Siguiente</button></div><p class="feedback" id="feedback" role="status"></p></div><button id="resetProgress">Reiniciar progreso</button></div></section>
@@ -133,6 +135,7 @@
 <div class="py-layout">
 <aside class="panel py-side"><h3>Ruta de práctica</h3><strong id="pyProgressText" class="py-counter">0 / 49</strong><progress id="pyProgress" max="49" value="0"></progress><small>Dominados sin revelar la solución</small><label>Bloque<select id="pyModule"></select></label><label>Ejercicio<select id="pySelect"></select></label><p id="pyModuleProgress" class="muted"></p><button id="pyReset" type="button">Reiniciar progreso Python</button></aside>
 <div class="panel"><p id="pyPendingInfo" class="muted" role="status"></p><div id="pyComplete" hidden><h2>¡Completaste Python práctico! 🎉</h2><p>Ya no quedan ejercicios pendientes. Tu progreso está guardado. Puedes reiniciar únicamente Python práctico si deseas volver a estudiar.</p></div><div id="pyWork"><div class="py-meta"><span id="pyNumber" class="pill"></span><span id="pySource" class="muted"></span></div><h2 id="pyTitle" style="margin-top:12px"></h2><p id="pyTask" class="question"></p><div id="pyContext" class="py-context"></div><label for="pyCode">Tu código Python</label><textarea id="pyCode" class="py-editor" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Escribe tu código Python" placeholder="# Escribe tu respuesta aquí"></textarea><small>Ctrl + Enter: comprobar · Tab: indentar · Esc: salir del editor</small><div class="row spaced"><button id="pyCheck" class="primary" type="button">Comprobar código</button><button id="pyHint" type="button">Pista</button><button id="pyReveal" type="button" aria-expanded="false" aria-controls="pySolution">Ver solución</button><button id="pyRetry" type="button">Repetir</button></div><div id="pyFeedback" class="py-feedback" role="status" aria-live="polite"></div>
+<div id="pyOutput" class="py-output" hidden><h3>Resultado esperado del código</h3><small>Vista didáctica calculada localmente · no es una ejecución real de Python.</small><p id="pyOutputExplain"></p><div id="pyOutputStateBlock"><div class="output-label">Variables / efecto</div><pre id="pyOutputState"></pre></div><div class="output-label">Salida de consola (stdout)</div><pre id="pyOutputConsole"></pre><div id="pyOutputPlotBlock" hidden><div class="output-label">Figura equivalente de Matplotlib</div><div id="pyOutputPlot"></div><div id="pyOutputLegend" class="row"></div><p id="pyOutputPlotNote" class="output-note"></p></div><p id="pyOutputContext" class="output-note"></p></div>
 <div id="pySolution" class="py-solution" hidden><h3>Solución de referencia</h3><pre id="pySolutionCode"></pre><p id="pyExplanation"></p><div class="row"><button id="pyDownload" type="button">Descargar código .py</button></div></div>
 <div class="row spaced"><button id="pyPrev" type="button">← Anterior</button><button id="pyNext" type="button">Siguiente →</button></div></div></div></div></section>
 <section id="guide" hidden class="panel"><h2>De la matemática al código</h2><p>Una raíz es una entrada que produce cero. Un número crítico de una función diferenciable se obtiene buscando ceros de su derivada. Un punto fijo es una entrada que sale igual: g(x)=x.</p><pre>import numpy as np
@@ -226,20 +229,114 @@ function pyUpdateProgress(){
  $('pyModule').disabled=false;const q=PY_DATA[pyIndex],indices=PY_DATA.map((v,i)=>v.module===q.module?i:-1).filter(i=>i>=0);$('pyModuleProgress').textContent=indices.filter(i=>pyDone.includes(i)).length+' de '+indices.length+' dominados en este bloque';$('pyModule').value=q.module;pyPopulateSelect(q.module);$('pySelect').value=pyDone.includes(pyIndex)?'':String(pyIndex);$('pySelect').disabled=!list.some(i=>PY_DATA[i].module===q.module);$('pyPrev').disabled=pendingMove(list,pyIndex,-1)<0;$('pyNext').disabled=pendingMove(list,pyIndex,1)<0&&!pyDone.includes(pyIndex);$('pyNext').textContent=list.length===0?'Finalizar':'Siguiente pendiente →';
 }
 function pyPopulateSelect(module){const el=$('pySelect');el.replaceChildren();if(pyDone.includes(pyIndex)){let opt=document.createElement('option');opt.value='';opt.textContent='Completado · continúa al siguiente';opt.disabled=true;el.append(opt)}for(const i of pythonPending()){const q=PY_DATA[i];if(q.module===module){let opt=document.createElement('option');opt.value=String(i);opt.textContent=(i+1)+'. '+q.title;el.append(opt)}}}
-function pyShow(i){pyIndex=i;pyHints=0;pyRevealed=false;const empty=i<0;$('pyComplete').hidden=!empty;$('pyWork').hidden=empty;if(empty){pyUpdateProgress();return}const q=PY_DATA[i];$('pyNumber').textContent='Reto '+(i+1)+' / '+PY_DATA.length;$('pySource').textContent=q.source;$('pyTitle').textContent=q.title;$('pyTask').textContent=q.task;$('pyContext').textContent=q.context;$('pyCode').value='';$('pyCode').style.minHeight=q.module.startsWith('06')?'340px':'200px';$('pySolution').hidden=true;$('pySolutionCode').textContent='';$('pyExplanation').textContent='';$('pyReveal').textContent='Ver solución';$('pyReveal').setAttribute('aria-expanded','false');pyMessage('','');pyUpdateProgress()}
+function pyShow(i){pyHideOutput();pyIndex=i;pyHints=0;pyRevealed=false;const empty=i<0;$('pyComplete').hidden=!empty;$('pyWork').hidden=empty;if(empty){pyUpdateProgress();return}const q=PY_DATA[i];$('pyNumber').textContent='Reto '+(i+1)+' / '+PY_DATA.length;$('pySource').textContent=q.source;$('pyTitle').textContent=q.title;$('pyTask').textContent=q.task;$('pyContext').textContent=q.context;$('pyCode').value='';$('pyCode').style.minHeight=q.module.startsWith('06')?'340px':'200px';$('pySolution').hidden=true;$('pySolutionCode').textContent='';$('pyExplanation').textContent='';$('pyReveal').textContent='Ver solución';$('pyReveal').setAttribute('aria-expanded','false');pyMessage('','');pyUpdateProgress()}
 for(const m of pyModules){let opt=document.createElement('option');opt.value=m;opt.textContent=m;$('pyModule').append(opt)}
 $('pyModule').onchange=()=>{const i=pythonPending().find(i=>PY_DATA[i].module===$('pyModule').value);if(i!==undefined)pyShow(i)};
 $('pySelect').onchange=()=>{const value=$('pySelect').value;if(value!==''){const i=Number(value);if(pythonPending().includes(i))pyShow(i)}};
-$('pyCheck').onclick=()=>{if(pyIndex<0)return;const q=PY_DATA[pyIndex],v=$('pyCode').value;if(!v.trim()){pyMessage('hint','Escribe tu código antes de comprobar.');return}const ok=pyValidate(v,q);if(ok){if(!pyRevealed&&!pyDone.includes(pyIndex))pyDone.push(pyIndex);pyMessage('correct','✓ ¡Correcto! '+q.explain+(pyRevealed?' Repite sin consultar la solución para sumar este reto.':''));pyUpdateProgress();playFeedback('correct')}else{pyMessage('wrong','✗ No coincide con las soluciones reconocidas. Revisa nombres, operadores, argumentos y orden solicitado. Si escribiste una variante equivalente, compruébala en Python; este corrector no ejecuta código.');playFeedback('wrong')}};
+$('pyCheck').onclick=()=>{if(pyIndex<0)return;const q=PY_DATA[pyIndex],v=$('pyCode').value;if(!v.trim()){pyHideOutput();pyMessage('hint','Escribe tu código antes de comprobar.');return}const ok=pyValidate(v,q);if(ok){if(!pyRevealed&&!pyDone.includes(pyIndex))pyDone.push(pyIndex);pyMessage('correct','✓ ¡Correcto! '+q.explain+(pyRevealed?' Repite sin consultar la solución para sumar este reto.':''));pyUpdateProgress();pyRenderOutput(pyIndex,v);playFeedback('correct')}else{pyHideOutput();pyMessage('wrong','✗ No coincide con las soluciones reconocidas. Revisa nombres, operadores, argumentos y orden solicitado. Si escribiste una variante equivalente, compruébala en Python; este corrector no ejecuta código.');playFeedback('wrong')}};
 $('pyHint').onclick=()=>{const q=PY_DATA[pyIndex];pyHints++;pyMessage('hint','Pista '+Math.min(pyHints,2)+': '+(pyHints===1?q.hint:q.hint+' Comprueba también los nombres, el número de argumentos y la sintaxis pedida.'))};
 $('pyReveal').onclick=()=>{const q=PY_DATA[pyIndex],show=$('pySolution').hidden;$('pySolution').hidden=!show;$('pyReveal').setAttribute('aria-expanded',String(show));$('pyReveal').textContent=show?'Ocultar solución':'Ver solución';if(show){pyRevealed=true;$('pySolutionCode').textContent=q.solution;$('pyExplanation').textContent=q.explain}};
 $('pyDownload').onclick=()=>{const q=PY_DATA[pyIndex],blob=new Blob([q.solution+'\n'],{type:'text/x-python;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='clase10-python-reto-'+(pyIndex+1)+'.py';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)};
 $('pyRetry').onclick=()=>{if(pyIndex>=0)pyShow(pyIndex)};$('pyPrev').onclick=()=>{const i=pendingMove(pythonPending(),pyIndex,-1);if(i>=0)pyShow(i)};$('pyNext').onclick=()=>{const list=pythonPending();const i=pendingMove(list,pyIndex,1);if(i>=0||!list.length)pyShow(i)};
 $('pyReset').onclick=()=>{if(confirm('¿Reiniciar únicamente el progreso de Python práctico?')){pyDone=[];pyShow(0)}};
 let pyTabEscape=false;
-$('pyCode').oninput=()=>pyMessage('','');
-$('pyCode').onkeydown=e=>{if(e.key==='Escape'){pyTabEscape=true;return}if(e.key==='Enter'&&e.ctrlKey){e.preventDefault();$('pyCheck').click()}else if(e.key==='Tab'&&!e.shiftKey&&!pyTabEscape){e.preventDefault();const t=$('pyCode');t.setRangeText('    ',t.selectionStart,t.selectionEnd,'end');pyMessage('','')}else if(e.key==='Tab'){pyTabEscape=false}};
+$('pyCode').oninput=()=>{pyHideOutput();pyMessage('','')};
+$('pyCode').onkeydown=e=>{if(e.key==='Escape'){pyTabEscape=true;return}if(e.key==='Enter'&&e.ctrlKey){e.preventDefault();$('pyCheck').click()}else if(e.key==='Tab'&&!e.shiftKey&&!pyTabEscape){e.preventDefault();const t=$('pyCode');t.setRangeText('    ',t.selectionStart,t.selectionEnd,'end');pyHideOutput();pyMessage('','')}else if(e.key==='Tab'){pyTabEscape=false}};
 $('pyCode').onblur=()=>{pyTabEscape=false};
+
+function pyOutNum(x,d=10){return Number(x.toPrecision(d)).toString()}
+function pyOutArray(name,a,b,n,fn=x=>x){const ids=n<=7?Array.from({length:n},(_,i)=>i):[0,1,2,3,-1,n-2,n-1];return name+' = ['+ids.map(i=>i<0?'…':pyOutNum(fn(i===n-1?b:a+(b-a)*i/(n-1)),9)).join(', ')+']\nshape = ('+n+',)'}
+function pyOutBisect(fn,a,b,tol){let fa=fn(a);for(let k=0;k<100;k++){let m=(a+b)/2,v=fn(m);if(v===0||(b-a)/2<=tol)return m;if(Math.sign(v)===Math.sign(fa)){a=m;fa=v}else b=m}throw Error('No converge')}
+function pyOutFixed(fn,x,tol){for(let k=0;k<100;k++){let p1=fn(x),p2=fn(p1),d=p2-2*p1+x,y=d!==0?x-(p1-x)**2/d:p2;if(Math.abs(x!==0?(y-x)/x:y-x)<=tol)return y;x=y}throw Error('No converge')}
+function pyOutNewton(fn,df,x,tol){for(let k=0;k<100;k++){let fx=fn(x);if(fx===0)return x;let y=x-fx/df(x);if(Math.abs(y-x)<=tol)return y;x=y}throw Error('No converge')}
+function pyBuildOutput(i){
+ const h=x=>Math.cos(5*x)*(Math.exp(x)-Math.atan(x))+Math.exp(-x),f=x=>Math.exp(x)*Math.cos(3*x)-Math.sin(5*x+1),df=x=>Math.exp(x)*(Math.cos(3*x)-3*Math.sin(3*x))-5*Math.cos(5*x+1),g=x=>x-Math.cos(4*x)/4+1.5*Math.exp(-x*x)*Math.atan(x),nw=x=>Math.exp(-2*x)*Math.sin(3*x)-100*Math.cos(2*x)+100,dn=x=>Math.exp(-2*x)*(3*Math.cos(3*x)-2*Math.sin(3*x))+200*Math.sin(2*x);
+ const blue='#70b2ff',green='#71e4aa',red='#ff8791',curve=(label,fn,color)=>({label,fn,color});
+ const ch=curve('h(x)',h,blue),cf=curve('f(x)',f,blue),cd=curve('f′(x)',df,green),cg=curve('g(x)',g,green),ci=curve('y = x',x=>x,red),cn=curve('f(x)',nw,blue);
+ const no='Sin salida de consola: la instrucción no imprime texto.',out={explain:'',state:'',console:no,plot:null,context:''};
+ const set=(explain,state='',console=no,context='')=>Object.assign(out,{explain,state,console,context});
+ const imp=(name,explain)=>set(explain,name+' disponible en memoria',no,'Una importación correcta normalmente no produce texto en consola.');
+ const expr=(explain,x)=>set(explain,'x = 1\nValor de la expresión = '+pyOutNum(x),'En una consola interactiva: '+pyOutNum(x)+'\nEn un script usa print(...) para mostrarlo.','x = 1 es un valor de ejemplo, no un dato fijado por el ejercicio.');
+ const def=(name,formula,fn)=>set('Crea una función reutilizable; no la evalúa hasta llamarla.',name+'(x) = '+formula+'\nEjemplo de llamada: '+name+'(1) = '+pyOutNum(fn(1)),no,'La llamada con x = 1 se añade únicamente como ejemplo.');
+ const domain=(a,b,n)=>set('linspace genera '+n+' muestras equiespaciadas, incluyendo ambos extremos. El paso es (b−a)/(n−1).',pyOutArray('xx',a,b,n)+'\nΔx = '+pyOutNum((b-a)/(n-1)));
+ const vals=(name,a,b,n,fn)=>set('Evalúa la función en todos los valores del arreglo xx y guarda las '+n+' respuestas en '+name+'.',pyOutArray(name,a,b,n,fn));
+ const graph=(a,b,n,curves,grid=false,ymin=null,ymax=null,note='')=>{out.plot={a,b,n,curves,grid,ymin,ymax,note}};
+ const br=()=>pyOutBisect(df,-2,-1.3,1e-8),fp=t=>pyOutFixed(g,2.5,t),nr=()=>pyOutNewton(nw,dn,-4.2,1e-8);
+ const value=(name,v,explain,print=false)=>set(explain,name+' ≈ '+pyOutNum(v,12),print?pyOutNum(v,12):no,'Aproximación local didáctica; los últimos dígitos pueden diferir de SciPy.');
+ switch(i){
+ case 0:imp('np','Importa NumPy con el alias np para usar funciones matemáticas y arreglos.');break;
+ case 1:imp('plt','Importa pyplot de Matplotlib con el alias plt, que permite construir figuras.');break;
+ case 2:imp('scipy','Carga el paquete SciPy para acceder a algoritmos científicos.');break;
+ case 3:expr('np.exp(-x) calcula e elevado a −x.',Math.exp(-1));break;
+ case 4:expr('arctan devuelve el ángulo cuya tangente vale x, en radianes; no es 1/tan(x).',Math.atan(1));break;
+ case 5:expr('Evalúa cos(5x) y sen(3x), en radianes, y resta los resultados.',Math.cos(5)-Math.sin(3));break;
+ case 6:expr('** calcula la potencia x²; se aplica el signo negativo antes de la exponencial.',Math.exp(-1));break;
+ case 7:def('h','cos(5x)',x=>Math.cos(5*x));break;
+ case 8:def('h','cos(5x)(eˣ−arctan(x))+e⁻ˣ',h);break;
+ case 9:domain(-1,6,1000);break;
+ case 10:vals('yy',-1,6,1000,h);break;
+ case 11:set('plot conecta los puntos (xx[i], yy[i]) para dibujar h.','Se añade una curva.');graph(-1,6,1000,[ch]);break;
+ case 12:set('grid activa la cuadrícula sin alterar los datos ni las raíces.','Cuadrícula activa.');graph(-1,6,1000,[ch],true,null,null,'Ejemplo sobre la figura previa del ejercicio 1.');break;
+ case 13:set('axis cambia los límites visibles, pero no aumenta la resolución.','x ∈ [−1,6]\ny ∈ [−1,1]');graph(-1,6,1000,[ch],true,-1,1);break;
+ case 14:set('show presenta la figura construida.','Figura mostrada.');graph(-1,6,1000,[ch],true,-1,1,'Contexto de las instrucciones anteriores.');break;
+ case 15:imp('bisect','Importa el método de bisección desde scipy.optimize.');break;
+ case 16:def('f','eˣcos(3x)−sen(5x+1)',f);break;
+ case 17:domain(-2,1.5,100);break;
+ case 18:vals('yy',-2,1.5,100,f);break;
+ case 19:set('Dibuja f en azul; color modifica la apariencia, no los datos.','Línea azul añadida.');graph(-2,1.5,100,[cf]);break;
+ case 20:def('df','eˣcos(3x)−3eˣsen(3x)−5cos(5x+1)',df);out.explain+=' Los ceros de df son los críticos interiores de f.';break;
+ case 21:vals('yyd',-2,1.5,100,df);break;
+ case 22:set('Añade la derivada en verde. Sus cruces con y=0 ayudan a identificar críticos.','Línea verde añadida.');graph(-2,1.5,100,[cf,cd],false,null,null,'La curva azul es la figura previa.');break;
+ case 23:value('raiz',br(),'Bisección aproxima un cero de df. xtol fija la tolerancia absoluta y maxiter limita las iteraciones.');break;
+ case 24:value('raiz',br(),'print muestra la variable raiz en consola.',true);break;
+ case 25:value('raiz',br(),'Redondea o formatea a seis decimales sin modificar la variable original.');out.console=br().toFixed(6);break;
+ case 26:imp('fixed_point','Importa la rutina que aproxima una solución de g(x)=x.');break;
+ case 27:def('g','x−cos(4x)/4+(3/2)e⁻ˣ²arctan(x)',g);break;
+ case 28:domain(-1,4,100);break;
+ case 29:vals('yy',-1,4,100,g);break;
+ case 30:set('Dibuja g(x) usando xx y yy en verde.','Línea verde añadida.');graph(-1,4,100,[cg]);break;
+ case 31:set('Al usar xx para ambos ejes, cada punto es (x,x). La recta roja y=x permite identificar las intersecciones con g(x).','Recta identidad añadida.\nEjemplos: (−1,−1), (0,0), (1,1), (4,4)');graph(-1,4,100,[cg,ci],false,null,null,'La curva verde es el contexto previo; la instrucción añade la recta roja.');break;
+ case 32:value('pf',fp(1e-8),'Aproxima el punto fijo desde 2.5 con la tolerancia de la captura (10⁻⁸).');break;
+ case 33:value('pf',fp(1e-9),'Aproxima el punto fijo desde 2.5 con la tolerancia solicitada (10⁻⁹).');break;
+ case 34:value('pf',fp(1e-9),'print muestra la aproximación del punto fijo.',true);break;
+ case 35:imp('newton','Importa la rutina de búsqueda de raíces. fprime permite utilizar Newton clásico.');break;
+ case 36:def('f','e⁻²ˣsen(3x)−100cos(2x)+100',nw);break;
+ case 37:domain(-5,4,100);break;
+ case 38:vals('yy',-5,4,100,nw);out.explain+=' Después se dibuja la curva azul.';graph(-5,4,100,[cn]);break;
+ case 39:set('axis recorta la gráfica a y entre −1 y 1 sin aumentar las 100 muestras.','x ∈ [−5,4]\ny ∈ [−1,1]');graph(-5,4,100,[cn],true,-1,1);break;
+ case 40:def('df','−2e⁻²ˣsen(3x)+3e⁻²ˣcos(3x)+200sen(2x)',dn);out.explain+=' Newton usa la derivada para calcular cada paso.';break;
+ case 41:vals('yyd',-5,4,100,dn);break;
+ case 42:value('raiz',nr(),'Newton usa xₖ₊₁=xₖ−f(xₖ)/f′(xₖ) desde −4.2; fprime es la derivada y tol controla el cambio.');break;
+ case 43:value('raiz',nr(),'print muestra la aproximación de la primera raíz.',true);break;
+ case 44:domain(-5,4,1000000);out.explain+=' Se muestra solo un extracto, no el millón de elementos.';break;
+ case 45:set('El programa define h, genera el dominio, evalúa la función y construye la gráfica con zoom y cuadrícula.','xx e yy: 1000 elementos cada uno');graph(-1,6,1000,[ch],true,-1,1);break;
+ case 46:value('raiz',br(),'El programa grafica f y df, busca un cero de df e imprime el resultado redondeado.');out.state+=' \nxx, yy, yyd: 100 elementos cada uno';out.console=br().toFixed(6);graph(-2,1.5,100,[cf,cd],true);break;
+ case 47:value('pf',fp(1e-9),'El programa compara g(x) con y=x y calcula el punto fijo desde 2.5.',true);graph(-1,4,100,[cg,ci],true);break;
+ case 48:value('raiz',nr(),'El programa construye la figura, define df y calcula la primera raíz desde −4.2; no encuentra todas automáticamente.',true);graph(-5,4,100,[cn],true,-1,1);break;
+ default:throw Error('Reto no reconocido');
+ }
+ return out;
+}
+function pyOutputGraph(p){
+ const W=640,H=350,L=70,R=620,T=24,B=300,xx=Array.from({length:p.n},(_,i)=>p.a+(p.b-p.a)*i/(p.n-1)),series=p.curves.map(c=>({...c,yy:xx.map(c.fn)}));
+ let ymin=p.ymin,ymax=p.ymax;if(ymin===null||ymax===null){ymin=Math.min(0,...series.flatMap(c=>c.yy));ymax=Math.max(0,...series.flatMap(c=>c.yy));const pad=(ymax-ymin)*.06||1;ymin-=pad;ymax+=pad}
+ const px=x=>L+(x-p.a)/(p.b-p.a)*(R-L),py=y=>B-(y-ymin)/(ymax-ymin)*(B-T);
+ let html='<defs><clipPath id="pyOutputClip"><rect x="'+L+'" y="'+T+'" width="'+(R-L)+'" height="'+(B-T)+'"/></clipPath></defs>';
+ for(let k=0;k<=5;k++){const x=p.a+(p.b-p.a)*k/5,y=ymin+(ymax-ymin)*k/5,X=px(x),Y=py(y);if(p.grid)html+='<path d="M'+X+' '+T+'V'+B+' M'+L+' '+Y+'H'+R+'" stroke="#334155" fill="none"/>';html+='<text x="'+X+'" y="'+(B+19)+'" font-size="12" fill="#b9c9db" text-anchor="middle">'+pyOutNum(x,4)+'</text><text x="'+(L-8)+'" y="'+(Y+4)+'" font-size="12" fill="#b9c9db" text-anchor="end">'+pyOutNum(y,4)+'</text>'}
+ html+='<rect x="'+L+'" y="'+T+'" width="'+(R-L)+'" height="'+(B-T)+'" fill="none" stroke="#64748b"/>';
+ if(ymin<=0&&ymax>=0)html+='<path d="M'+L+' '+py(0)+'H'+R+'" stroke="#b9c9db"/>';
+ if(p.a<=0&&p.b>=0)html+='<path d="M'+px(0)+' '+T+'V'+B+'" stroke="#b9c9db"/>';
+ for(const c of series){const path=xx.map((x,j)=>(j?'L':'M')+px(x).toFixed(2)+' '+Math.max(-100000,Math.min(100000,py(c.yy[j]))).toFixed(2)).join(' ');html+='<path d="'+path+'" stroke="'+c.color+'" fill="none" stroke-width="2.3" clip-path="url(#pyOutputClip)"/>'}
+ return html+'<text x="345" y="343" fill="#b9c9db" font-size="13">x</text><text x="13" y="17" fill="#b9c9db" font-size="13">y</text>';
+}
+function pyHideOutput(){$('pyOutput').hidden=true}
+function pyRenderOutput(i,submitted){
+ const r=pyBuildOutput(i);$('pyOutputExplain').textContent=r.explain;$('pyOutputStateBlock').hidden=!r.state;$('pyOutputState').textContent=r.state;$('pyOutputConsole').textContent=r.console;$('pyOutputContext').textContent=r.context;$('pyOutputContext').hidden=!r.context;
+ $('pyOutputPlotBlock').hidden=!r.plot;const box=$('pyOutputPlot'),legend=$('pyOutputLegend');box.replaceChildren();legend.replaceChildren();
+ if(r.plot){const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 640 350');svg.setAttribute('role','img');svg.setAttribute('aria-label','Resultado gráfico esperado: '+r.plot.curves.map(c=>c.label).join(', '));svg.innerHTML=pyOutputGraph(r.plot);box.append(svg);for(const c of r.plot.curves){const span=document.createElement('span');span.textContent='● '+c.label;span.style.color=c.color;legend.append(span)}$('pyOutputPlotNote').textContent=r.plot.n+' muestras'+(r.plot.grid?' · cuadrícula activa':'')+(r.plot.ymin!==null?' · zoom activo':'')+(r.plot.note?' · '+r.plot.note:'')}
+ $('pyOutput').hidden=false;
+}
+
 pyShow(pythonPending()[0]??-1);
 let savedLabTab='lab';try{const t=localStorage.getItem('roots-lab-active-tab-v1');if(['lab','practice','exercises','pythonPractice','guide'].includes(t))savedLabTab=t}catch(e){}
 selectLabTab(savedLabTab,false);
