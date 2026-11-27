@@ -171,7 +171,7 @@ textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 </section>
 
 <section id="pythonPractice" hidden class="stack">
-<div class="panel"><div class="eyebrow">Laboratorio de escritura · 49 retos</div><h2>Python práctico: escribe el código</h2><p>Sin selección múltiple ni completar huecos. Escribe las instrucciones tú mismo, desde una importación hasta un script completo de la clase 10.</p><small>Comprobación local de sintaxis esperada y variantes registradas: no ejecuta Python ni instala NumPy o SciPy. Una respuesta equivalente no prevista puede requerir comprobarla en Python. Los retos complementarios se indican expresamente.</small></div>
+<div class="panel"><div class="eyebrow">Laboratorio de escritura · 49 retos</div><h2>Python práctico: escribe el código</h2><p>Sin selección múltiple ni completar huecos. Escribe las instrucciones tú mismo, desde una importación hasta un script completo de la clase 10.</p><small>Comprobación local de sintaxis, variantes registradas y equivalencia numérica de expresiones matemáticas. Acepta def o lambda, factores en distinto orden y otras fórmulas equivalentes compatibles con el corrector. No ejecuta Python real; la comparación por muestras no es una demostración algebraica. Los retos complementarios se indican expresamente.</small></div>
 <div class="py-layout">
 <aside class="panel py-side"><h3>Ruta de práctica</h3><strong id="pyProgressText" class="py-counter">0 / 49</strong><progress id="pyProgress" max="49" value="0"></progress><small>Dominados sin revelar la solución</small><label>Bloque<select id="pyModule"></select></label><label>Ejercicio<select id="pySelect"></select></label><p id="pyModuleProgress" class="muted"></p><button id="pyReset" type="button">Reiniciar progreso Python</button><div class="py-review-panel" id="pyReviewPanel"><h3>↻ Ejercicios para repasar</h3><strong id="pyReviewCount">0 pendientes</strong><p id="pyReviewSummary">Los retos con errores se guardan automáticamente aquí.</p><div id="pyReviewItems" class="py-review-items" aria-label="Retos pendientes de repaso"></div><button id="pyStartReview" class="primary" type="button" disabled>Repasar errores</button><button id="pyExitReview" type="button" hidden>Volver a práctica principal</button></div></aside>
 <div class="panel"><p id="pyPendingInfo" class="muted" role="status"></p><div id="pyComplete" hidden><h2 id="pyCompleteTitle">¡Terminaste la práctica!</h2><p id="pyCompleteText"></p><button id="pyCompleteReview" class="primary" type="button" hidden>Repasar ejercicios incorrectos</button><button id="pyCompleteReturn" type="button" hidden>Volver a práctica principal</button></div><div id="pyWork"><p id="pyReviewTag" class="py-review-tag" hidden></p><div class="py-meta"><span id="pyNumber" class="pill"></span><span id="pySource" class="muted"></span></div><h2 id="pyTitle" style="margin-top:12px"></h2><p id="pyTask" class="question"></p><div id="pyContext" class="py-context"></div><label for="pyCode">Tu código Python</label><textarea id="pyCode" class="py-editor" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Escribe tu código Python" placeholder="# Escribe tu respuesta aquí"></textarea><small>Ctrl + Enter: comprobar · Tab: indentar · Esc: salir del editor</small><div class="row spaced"><button id="pyCheck" class="primary" type="button">Comprobar código</button><button id="pyHint" type="button">Pista</button><button id="pyReveal" type="button" aria-expanded="false" aria-controls="pySolution">Ver solución</button><button id="pyRetry" type="button">Repetir</button></div><div id="pyFeedback" class="py-feedback" role="status" aria-live="polite"></div>
@@ -272,10 +272,81 @@ function pyTokenize(code){
  return out;
 }
 function pySame(a,b){return a!==null&&b!==null&&JSON.stringify(a)===JSON.stringify(b)}
+
+/* Restricted mathematical expression evaluator; never eval user code. */
+const PY_MATH_FUNCS=Object.freeze({sin:[1,Math.sin],cos:[1,Math.cos],tan:[1,Math.tan],exp:[1,Math.exp],arctan:[1,Math.atan],sqrt:[1,Math.sqrt],log:[1,Math.log],abs:[1,Math.abs],absolute:[1,Math.abs],square:[1,x=>x*x],power:[2,Math.pow],multiply:[2,(a,b)=>a*b],divide:[2,(a,b)=>a/b],add:[2,(a,b)=>a+b],subtract:[2,(a,b)=>a-b],negative:[1,x=>-x]});
+function pyMathParse(tokens,variable='x'){
+ if(!tokens.length||tokens.length>256)throw Error('Expresión fuera del alcance');
+ let i=0;const peek=()=>tokens[i],take=()=>tokens[i++],expect=t=>{if(take()!==t)throw Error('Sintaxis')};
+ function primary(){
+  const t=take();if(!t)throw Error('Expresión incompleta');
+  if(t.startsWith('n:'))return ['n',Number(t.slice(2))];
+  if(t==='id:'+variable)return ['x'];
+  if(t==='('){let node=add();expect(')');return node}
+  if(t==='id:np'){expect('.');let name=take();if(!name?.startsWith('id:'))throw Error('Nombre');name=name.slice(3);
+   if(name==='pi'||name==='e')return ['n',name==='pi'?Math.PI:Math.E];
+   if(!Object.hasOwn(PY_MATH_FUNCS,name))throw Error('Función no admitida');
+   expect('(');const args=[add()];while(peek()===','){take();if(peek()===')')break;args.push(add())}expect(')');
+   if(args.length!==PY_MATH_FUNCS[name][0])throw Error('Argumentos');return ['call',name,...args];
+  }
+  throw Error('Nombre no admitido');
+ }
+ function power(){let a=primary();if(peek()==='**'){take();a=['**',a,unary()]}return a}
+ function unary(){if(peek()==='+'||peek()==='-'){const op=take();return [op==='+'?'pos':'neg',unary()]}return power()}
+ function mul(){let a=unary();while(peek()==='*'||peek()==='/'){let op=take();a=[op,a,unary()]}return a}
+ function add(){let a=mul();while(peek()==='+'||peek()==='-'){let op=take();a=[op,a,mul()]}return a}
+ const tree=add();if(i!==tokens.length)throw Error('Tokens sobrantes');return tree;
+}
+function pyMathValue(t,x){switch(t[0]){
+ case 'n':return t[1];case 'x':return x;
+ case 'pos':return +pyMathValue(t[1],x);case 'neg':return -pyMathValue(t[1],x);
+ case '+':return pyMathValue(t[1],x)+pyMathValue(t[2],x);case '-':return pyMathValue(t[1],x)-pyMathValue(t[2],x);
+ case '*':return pyMathValue(t[1],x)*pyMathValue(t[2],x);case '/':return pyMathValue(t[1],x)/pyMathValue(t[2],x);
+ case '**':return Math.pow(pyMathValue(t[1],x),pyMathValue(t[2],x));case 'call':return PY_MATH_FUNCS[t[1]][1](...t.slice(2).map(a=>pyMathValue(a,x)));
+ default:throw Error('Operación no admitida')
+}}
+function pyMathEquivalent(a,b,va='x',vb='x'){
+ try{const aa=pyMathParse(a,va),bb=pyMathParse(b,vb);
+  // A variety of deterministic inputs, including near zeros, and the class domains.
+  const samples=[-6,-5,-4.2,-Math.PI,-2.391525,-2,-1.783028,-1.3,-1,-.5,-.01546694,-1e-7,0,1e-7,.015,.25,.5,1,1.5,2,2.5,2.749846763,3,Math.PI,3.141620664,4,5,6];
+  for(let k=0;k<97;k++)samples.push(-6+12*((k*53%97)+.371)/97);
+  return samples.every(x=>{const p=pyMathValue(aa,x),q=pyMathValue(bb,x);return Number.isFinite(p)&&Number.isFinite(q)&&Math.abs(p-q)<=2e-11*Math.max(1,Math.abs(q))});
+ }catch(e){return false}
+}
+const PY_RESERVED=new Set('False None True and as assert async await break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with yield'.split(' '));
+function pyMathParameter(t){const n=t?.startsWith('id:')?t.slice(3):'';return n&&!PY_RESERVED.has(n)&&n!=='np'?n:null}
+function pyMathBlocks(rows){
+ const out=[];for(let i=0;i<rows.length;i++){
+  const [ind,t]=rows[i];if(ind) return null;
+  if(t[0]?.startsWith('id:')&&t[1]==='='&&t[2]==='id:lambda'){
+   const name=pyMathParameter(t[0]),v=pyMathParameter(t[3]);if(!name||!v||t[4]!==':'||t.length<6)return null;
+   out.push({kind:'function',name,v,expr:t.slice(5)});continue
+  }
+  if(t[0]==='id:def'){
+   const name=pyMathParameter(t[1]),v=pyMathParameter(t[3]);if(!name||!v||t[2]!=='('||t[4]!==')'||t[5]!==':')return null;
+   let expr;if(t.length>6){if(t[6]!=='id:return'||t.length<8)return null;expr=t.slice(7)}
+   else{const next=rows[++i];if(!next||next[0]!==1||next[1][0]!=='id:return'||next[1].length<2)return null;expr=next[1].slice(1)}
+   out.push({kind:'function',name,v,expr});continue
+  }
+  out.push({kind:'line',tokens:t});
+ }return out
+}
+function pySemanticMatch(actual,reference,allowExpression){
+ const a=pyMathBlocks(actual),b=pyMathBlocks(reference);
+ if(!a||!b||a.length!==b.length)return false;
+ return a.every((v,i)=>{const w=b[i];if(v.kind!==w.kind)return false;
+  if(v.kind==='function')return v.name===w.name&&pyMathEquivalent(v.expr,w.expr,v.v,w.v);
+  if(JSON.stringify(v.tokens)===JSON.stringify(w.tokens))return true;
+  return allowExpression&&a.length===1&&pyMathEquivalent(v.tokens,w.tokens);
+ });
+}
 function pyValidate(input,q){
+ if(typeof input!=='string'||input.length>16000)return false;
  const actual=pyTokenize(input);if(!actual||!actual.length)return false;
  const expected=[q.solution,...q.alts];
- return expected.some(v=>pySame(actual,pyTokenize(v)));
+ if(expected.some(v=>pySame(actual,pyTokenize(v))))return true;
+ const allowExpression=['np.exp(-x)','np.arctan(x)','np.cos(5*x) - np.sin(3*x)','np.exp(-x**2)'].includes(q.solution);
+ return expected.some(v=>{const ref=pyTokenize(v);return ref&&pySemanticMatch(actual,ref,allowExpression)});
 }
 function pyMessage(state,message){let el=$('pyFeedback');el.dataset.state=state;el.textContent=message;$('pyCode').dataset.state=state==='correct'||state==='wrong'?state:'';$('pyCode').setAttribute('aria-invalid',String(state==='wrong'))}
 function pyReviewUI(){
@@ -315,7 +386,7 @@ $('pyCheck').onclick=()=>{
  if(!v.trim()){pyHideOutput();pyMessage('hint','Escribe tu código antes de comprobar.');return}
  const ok=pyValidate(v,q);
  if(ok){let note='';if(!pyRevealed){if(!pyDone.includes(pyIndex))pyDone.push(pyIndex);if(pyMode==='review'){delete pyReview[pyIndex];note=' ✓ Retirado de tu lista de repaso.'}else if(pyReview[pyIndex])note=' Se conserva en tu lista para reforzarlo después.'}else{pyRecordReview(pyIndex,false,true);note=' Solución consultada: repítelo sin verla en modo repaso.'}pyMessage('correct','✓ ¡Correcto! '+q.explain+note);pyUpdateProgress();pyRenderOutput(pyIndex,v);playFeedback('correct')}
- else{pyRecordReview(pyIndex,true);pyHideOutput();pyMessage('wrong','✗ No coincide con las soluciones reconocidas. Reto guardado para repasar. Puedes corregirlo ahora o continuar y volver a él después. Si escribiste una variante equivalente, compruébala en Python.');pyUpdateProgress();playFeedback('wrong')}
+ else{pyRecordReview(pyIndex,true);pyHideOutput();pyMessage('wrong','✗ No coincide con las soluciones reconocidas. Reto guardado para repasar. Puedes corregirlo ahora o continuar y volver a él después. El corrector admite expresiones equivalentes compatibles, pero no todas las construcciones de Python; comprueba las variantes no reconocidas en Python.');pyUpdateProgress();playFeedback('wrong')}
 };
 $('pyHint').onclick=()=>{const q=PY_DATA[pyIndex];pyHints++;pyMessage('hint','Pista '+Math.min(pyHints,2)+': '+(pyHints===1?q.hint:q.hint+' Comprueba también los nombres, el número de argumentos y la sintaxis pedida.'))};
 $('pyReveal').onclick=()=>{const q=PY_DATA[pyIndex],show=$('pySolution').hidden;$('pySolution').hidden=!show;$('pyReveal').setAttribute('aria-expanded',String(show));$('pyReveal').textContent=show?'Ocultar solución':'Ver solución';if(show){pyRevealed=true;pyRecordReview(pyIndex,false,true);$('pySolutionCode').textContent=q.solution;$('pyExplanation').textContent=q.explain;pyUpdateProgress()}};
